@@ -215,6 +215,8 @@ Pronto quando: exercicios ja realizados mostrarem ultima carga, maior carga e ev
 
 Objetivo: mostrar quando esta na hora de gerar novo treino.
 
+Status: concluida em 2026-06-15. O progresso do ciclo foi isolado em servico testado, com total planejado, percentual, treinos restantes, indicador visual na tela inicial e aviso quando a meta do ciclo e atingida.
+
 Prompt sugerido:
 
 ```text

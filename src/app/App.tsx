@@ -27,6 +27,7 @@ import {
 } from "@/services/workoutImportService";
 import {
   createLoadHistoryMap,
+  getCycleProgressSummary,
   getExerciseLoadSummaries,
   type ExerciseLoadSummary,
 } from "@/services/progressService";
@@ -227,12 +228,9 @@ export function App() {
   const nextRecommendation = activePlan
     ? getNextRecommendedRoutineFromSnapshot(activePlan)
     : null;
-  const plannedSessions = activePlan
-    ? activePlan.plan.estimatedDurationWeeks * activePlan.plan.daysPerWeek
-    : 0;
-  const completedSessions = activePlan?.progress.completedSessionsCount ?? 0;
-  const cycleComplete =
-    Boolean(activePlan) && completedSessions >= plannedSessions;
+  const cycleProgress = activePlan
+    ? getCycleProgressSummary(activePlan)
+    : null;
 
   async function handleStartRecommendedWorkout() {
     if (!activePlan || !nextRecommendation) {
@@ -444,16 +442,33 @@ export function App() {
                   Ciclo
                 </p>
                 <p className="mt-1 text-sm font-semibold">
-                  {completedSessions} de {plannedSessions}
+                  {cycleProgress?.completedSessions ?? 0} de{" "}
+                  {cycleProgress?.plannedSessions ?? 0}
                 </p>
               </div>
             </div>
+
+            {cycleProgress ? (
+              <div className="mt-4">
+                <div className="h-2 overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full bg-primary"
+                    style={{ width: `${cycleProgress.percentage}%` }}
+                  />
+                </div>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {cycleProgress.isComplete
+                    ? "Meta de treinos do ciclo atingida."
+                    : `${cycleProgress.remainingSessions} treinos restantes no ciclo.`}
+                </p>
+              </div>
+            ) : null}
 
             <p className="mt-4 text-sm leading-6 text-muted-foreground">
               {getRecommendationReasonLabel(nextRecommendation.reason)}
             </p>
 
-            {cycleComplete ? (
+            {cycleProgress?.isComplete ? (
               <p className="mt-3 rounded-md border border-info bg-muted p-3 text-sm leading-6">
                 Ciclo concluido. Baixe o modelo e gere um novo treino.
               </p>

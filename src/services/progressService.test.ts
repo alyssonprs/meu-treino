@@ -2,9 +2,35 @@ import { describe, expect, it, vi } from "vitest";
 
 import type { ActiveWorkoutPlanSnapshot } from "@/storage/workoutPlanRepository";
 
-import { getExerciseLoadSummaries } from "./progressService";
+import {
+  getCycleProgressSummary,
+  getExerciseLoadSummaries,
+} from "./progressService";
 
 describe("progressService", () => {
+  it("calculates active plan cycle progress", () => {
+    const summary = getCycleProgressSummary(createSnapshot());
+
+    expect(summary).toEqual({
+      completedSessions: 1,
+      plannedSessions: 32,
+      percentage: 3,
+      remainingSessions: 31,
+      isComplete: false,
+    });
+  });
+
+  it("marks the cycle complete when completed sessions reach the plan target", () => {
+    const snapshot = createSnapshot();
+    snapshot.progress.completedSessionsCount = 32;
+
+    expect(getCycleProgressSummary(snapshot)).toMatchObject({
+      percentage: 100,
+      remainingSessions: 0,
+      isComplete: true,
+    });
+  });
+
   it("returns load summaries for exercises in the active plan", async () => {
     const repository = {
       getExerciseLoadHistory: vi.fn().mockResolvedValue([

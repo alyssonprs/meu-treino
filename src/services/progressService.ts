@@ -15,6 +15,34 @@ export type ExerciseLoadSummary = {
   updatedAt: string;
 };
 
+export type CycleProgressSummary = {
+  completedSessions: number;
+  plannedSessions: number;
+  percentage: number;
+  remainingSessions: number;
+  isComplete: boolean;
+};
+
+export function getCycleProgressSummary(
+  activePlan: ActiveWorkoutPlanSnapshot,
+): CycleProgressSummary {
+  const plannedSessions =
+    activePlan.plan.estimatedDurationWeeks * activePlan.plan.daysPerWeek;
+  const completedSessions = activePlan.progress.completedSessionsCount;
+  const percentage =
+    plannedSessions > 0
+      ? Math.min(100, Math.round((completedSessions / plannedSessions) * 100))
+      : 0;
+
+  return {
+    completedSessions,
+    plannedSessions,
+    percentage,
+    remainingSessions: Math.max(0, plannedSessions - completedSessions),
+    isComplete: completedSessions >= plannedSessions,
+  };
+}
+
 export async function getExerciseLoadSummaries({
   activePlan,
   repository,
