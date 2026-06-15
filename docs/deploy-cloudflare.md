@@ -24,7 +24,7 @@ Framework preset: Vite
 Build command: pnpm build
 Build output directory: dist
 Root directory: /
-Production branch: main
+Production branch: master
 ```
 
 ## Variaveis de ambiente
@@ -43,7 +43,7 @@ pnpm build
 ```
 
 3. Fazer commit e push para o GitHub.
-4. Cloudflare Pages publica automaticamente o novo build da branch de producao.
+4. Cloudflare Pages publica automaticamente o novo build da branch `master`.
 
 ## Preview de pull requests
 
@@ -57,6 +57,10 @@ Pull requests devem usar os preview deployments do Cloudflare Pages para validar
 
 ## Dominio
 
-O dominio inicial pode ser o subdominio gratuito `*.pages.dev`.
+Dominio inicial publicado:
+
+```text
+https://meu-treino-8gq.pages.dev/
+```
 
 Quando houver dominio proprio, configurar o dominio customizado no Cloudflare Pages e manter HTTPS ativo.
