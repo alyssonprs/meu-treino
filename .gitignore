@@ -1,0 +1,36 @@
+node_modules
+dist
+.pnpm-store
+.env
+.env.*
+!.env.example
+*.local
+vite-dev*.log
+coverage
+*.tsbuildinfo
+
+# Editor directories
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Caches and build tooling
+.cache/
+.parcel-cache/
+.turbo/
+.vite/
+
+# Package managers / pnp
+.pnp.*
+
+# Misc
+.history/
+.next/
+.expo/
