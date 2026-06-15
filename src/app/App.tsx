@@ -105,12 +105,25 @@ export function App() {
   useEffect(() => {
     let isMounted = true;
 
-    pwaWorkoutPlanRepository.getActivePlan().then((plan) => {
-      if (isMounted) {
-        setActivePlan(plan);
-        setIsLoadingActivePlan(false);
-      }
-    });
+    pwaWorkoutPlanRepository
+      .getActivePlan()
+      .then((plan) => {
+        if (isMounted) {
+          setActivePlan(plan);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setWorkoutMessage(
+            "Nao foi possivel carregar os dados locais agora.",
+          );
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsLoadingActivePlan(false);
+        }
+      });
 
     return () => {
       isMounted = false;

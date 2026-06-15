@@ -260,6 +260,8 @@ Pronto quando: o build web passar, o sync Android estiver funcional ou documenta
 
 Objetivo: revisar riscos antes de considerar a primeira versao pronta.
 
+Status: concluida em 2026-06-15. Revisao final registrada em `docs/revisao-final-primeira-versao.md`, sem bloqueadores criticos; foi adicionada uma protecao para falha de carregamento local inicial e os checks finais foram executados.
+
 Prompt sugerido:
 
 ```text
