@@ -91,6 +91,7 @@ export function App() {
   const [activePlan, setActivePlan] = useState<ActiveWorkoutPlanSnapshot | null>(
     null,
   );
+  const [isLoadingActivePlan, setIsLoadingActivePlan] = useState(true);
   const [activeWorkout, setActiveWorkout] =
     useState<WorkoutSessionDraft | null>(null);
   const [workoutLoadHistory, setWorkoutLoadHistory] = useState<
@@ -107,6 +108,7 @@ export function App() {
     pwaWorkoutPlanRepository.getActivePlan().then((plan) => {
       if (isMounted) {
         setActivePlan(plan);
+        setIsLoadingActivePlan(false);
       }
     });
 
@@ -360,12 +362,16 @@ export function App() {
               {hasActivePlan ? "Plano ativo" : "Nenhum plano ativo"}
             </p>
             <h2 className="text-3xl font-semibold leading-tight">
-              {activePlan?.plan.name ?? "Importe seu treino para comecar"}
+              {isLoadingActivePlan
+                ? "Carregando seu treino"
+                : activePlan?.plan.name ?? "Importe seu treino para comecar"}
             </h2>
             <p className="text-base leading-7 text-muted-foreground">
-              {activePlan
-                ? `${activePlan.plan.objective} - ${activePlan.routines.length} rotinas`
-                : "O app guarda treino, cargas e progresso no proprio dispositivo."}
+              {isLoadingActivePlan
+                ? "Buscando os dados salvos neste dispositivo."
+                : activePlan
+                  ? `${activePlan.plan.objective} - ${activePlan.routines.length} rotinas`
+                  : "O app guarda treino, cargas e progresso no proprio dispositivo."}
             </p>
           </div>
 
@@ -681,6 +687,8 @@ function ActiveWorkoutScreen({
                 {exercise.notes}
               </p>
             ) : null}
+
+            <RestTimer durationSeconds={exercise.rest_seconds ?? 90} />
           </article>
         );
       })}
@@ -705,7 +713,7 @@ function ActiveWorkoutScreen({
       ) : null}
 
       <Button
-        className="sticky bottom-20 h-14 w-full gap-3 text-base shadow-lg"
+        className="sticky bottom-20 h-14 w-full gap-3 text-base shadow-lg shadow-background"
         onClick={onFinish}
         type="button"
       >
@@ -716,13 +724,66 @@ function ActiveWorkoutScreen({
   );
 }
 
+function RestTimer({ durationSeconds }: { durationSeconds: number }) {
+  const [remainingSeconds, setRemainingSeconds] = useState(0);
+
+  useEffect(() => {
+    if (remainingSeconds <= 0) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setRemainingSeconds((current) => Math.max(0, current - 1));
+    }, 1000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [remainingSeconds]);
+
+  const isRunning = remainingSeconds > 0;
+
+  return (
+    <div className="mt-4 flex items-center justify-between gap-3 rounded-md border border-border bg-background p-3">
+      <div>
+        <p className="text-xs font-medium text-muted-foreground">Descanso</p>
+        <p className="mt-1 text-lg font-semibold tabular-nums">
+          {formatTimer(isRunning ? remainingSeconds : durationSeconds)}
+        </p>
+      </div>
+      <Button
+        className="h-11 shrink-0 gap-2"
+        onClick={() => setRemainingSeconds(durationSeconds)}
+        type="button"
+        variant={isRunning ? "secondary" : "default"}
+      >
+        <TimerReset className="h-4 w-4" aria-hidden="true" />
+        {isRunning ? "Reiniciar" : "Iniciar"}
+      </Button>
+    </div>
+  );
+}
+
 function LoadHistoryPanel({
   summaries,
 }: {
   summaries: ExerciseLoadSummary[];
 }) {
   if (summaries.length === 0) {
-    return null;
+    return (
+      <section className="mt-5 rounded-lg border border-border bg-card p-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-info">
+            <TrendingUp className="h-5 w-5" aria-hidden="true" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-info">Historico de cargas</p>
+            <h2 className="font-semibold">Sem registros ainda</h2>
+          </div>
+        </div>
+        <p className="mt-3 text-sm leading-6 text-muted-foreground">
+          Finalize um treino para ver ultima carga, maior carga e evolucao.
+        </p>
+      </section>
+    );
   }
 
   return (
@@ -798,6 +859,13 @@ function formatLoad(loadKg: number) {
   return new Intl.NumberFormat("pt-BR", {
     maximumFractionDigits: 2,
   }).format(loadKg);
+}
+
+function formatTimer(totalSeconds: number) {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
 
 function getRecommendationReasonLabel(

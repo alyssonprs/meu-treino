@@ -230,6 +230,8 @@ Pronto quando: a tela inicial mostrar treinos concluidos, total planejado e avis
 
 Objetivo: polir a experiencia de uso no celular.
 
+Status: concluida em 2026-06-15. Foram adicionados timer de descanso, estado de carregamento do plano, estado vazio de historico de cargas, ajustes de acao fixa na execucao e verificacao visual mobile com Playwright sem overflow horizontal.
+
 Prompt sugerido:
 
 ```text
