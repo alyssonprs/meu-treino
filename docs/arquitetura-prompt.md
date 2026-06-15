@@ -117,6 +117,18 @@ Criar tabelas locais aproximadas:
 
 O JSON importado deve seguir uma raiz `workout_plan` com metadados do plano, lista de `routines`, aquecimento, exercicios e cooldown.
 
+Contrato inicial validado pelo app:
+
+- Raiz obrigatoria: `workout_plan`.
+- Metadados obrigatorios do plano: `name`, `objective`, `level`, `estimated_duration_weeks`, `days_per_week` e `routines`.
+- Metadado opcional do plano: `plan_id`.
+- Cada rotina deve conter `routine_id`, `name`, `order` e pelo menos um item em `exercises`.
+- Cada rotina pode conter `warmup` e `cooldown` como listas de passos com `activity`, `duration_minutes`, `type` opcional (`warmup` ou `cooldown`) e `notes` opcional.
+- Cada exercicio planejado deve conter `name`, `muscle_group`, `equipment`, `is_unilateral`, `sets` e `target_reps`.
+- Campos opcionais do exercicio: `exercise_id`, `target_rir`, `rest_seconds`, `tempo`, `advanced_technique`, `notes` e `media_url`.
+- `estimated_duration_weeks`, `days_per_week`, `order`, `duration_minutes`, `sets` e `rest_seconds` devem ser inteiros positivos.
+- `target_rir` deve ser inteiro maior ou igual a zero quando informado.
+
 Fluxo esperado:
 
 1. Usuario escolhe um arquivo `.json`.

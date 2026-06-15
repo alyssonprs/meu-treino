@@ -125,6 +125,8 @@ Pronto quando: existir configuracao Capacitor, o comando de sync Android estiver
 
 Objetivo: modelar o dominio do plano de treino.
 
+Status: concluida em 2026-06-15. Foram criados tipos TypeScript inferidos de schemas Zod em `src/domain`, uma funcao de validacao com erros basicos, testes com JSON valido e invalido, e o contrato inicial de campos foi registrado na arquitetura.
+
 Prompt sugerido:
 
 ```text
