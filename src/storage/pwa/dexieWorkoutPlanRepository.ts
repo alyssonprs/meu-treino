@@ -7,6 +7,7 @@ import type {
   PlannedExerciseRecord,
   RoutineRecord,
   RoutineStepRecord,
+  MarkRoutineAsCompletedInput,
   SaveActiveWorkoutPlanInput,
   SaveActiveWorkoutPlanResult,
   WorkoutPlanProgressRecord,
@@ -123,6 +124,22 @@ export class DexieWorkoutPlanRepository implements WorkoutPlanRepository {
           planId: plan.id,
         }),
     };
+  }
+
+  async markRoutineAsCompleted(
+    input: MarkRoutineAsCompletedInput,
+  ): Promise<void> {
+    const currentProgress =
+      (await this.database.workoutPlanProgress.get(input.planId)) ??
+      createInitialProgress({ planId: input.planId });
+
+    await this.database.workoutPlanProgress.put({
+      planId: input.planId,
+      completedSessionsCount: currentProgress.completedSessionsCount + 1,
+      lastCompletedRoutineId: input.routineId,
+      lastCompletedRoutineOrder: input.routineOrder,
+      lastCompletedAt: input.completedAt,
+    });
   }
 
   async clearAllWorkoutData(): Promise<void> {

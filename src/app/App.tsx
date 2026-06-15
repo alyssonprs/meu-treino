@@ -20,6 +20,10 @@ import {
   parseWorkoutPlanImport,
   type WorkoutPlanPreview,
 } from "@/services/workoutImportService";
+import {
+  getNextRecommendedRoutineFromSnapshot,
+  type NextRoutineRecommendation,
+} from "@/services/workoutRecommendationService";
 import { pwaWorkoutPlanRepository } from "@/storage/pwa/dexieWorkoutPlanRepository";
 import type { ActiveWorkoutPlanSnapshot } from "@/storage/workoutPlanRepository";
 
@@ -170,6 +174,15 @@ export function App() {
   }
 
   const hasActivePlan = Boolean(activePlan);
+  const nextRecommendation = activePlan
+    ? getNextRecommendedRoutineFromSnapshot(activePlan)
+    : null;
+  const plannedSessions = activePlan
+    ? activePlan.plan.estimatedDurationWeeks * activePlan.plan.daysPerWeek
+    : 0;
+  const completedSessions = activePlan?.progress.completedSessionsCount ?? 0;
+  const cycleComplete =
+    Boolean(activePlan) && completedSessions >= plannedSessions;
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -250,20 +263,48 @@ export function App() {
           onReset={() => setImportStatus(idleImportStatus)}
         />
 
-        {activePlan ? (
-          <section className="mt-5 rounded-lg border border-border bg-card p-4">
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-primary">
+        {activePlan && nextRecommendation ? (
+          <section className="mt-5 rounded-lg border border-info bg-card p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-info">
                 <CalendarCheck2 className="h-5 w-5" aria-hidden="true" />
               </div>
-              <div>
-                <h3 className="font-medium">Primeira rotina pronta</h3>
-                <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                  {activePlan.routines[0]?.name ?? "Rotina importada"} aparece
-                  como proximo treino na etapa de recomendacao.
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-info">Proximo treino</p>
+                <h3 className="truncate text-xl font-semibold">
+                  {nextRecommendation.routineName}
+                </h3>
+              </div>
+            </div>
+
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <div className="rounded-md bg-muted p-3">
+                <p className="text-xs font-medium text-muted-foreground">
+                  Ordem
+                </p>
+                <p className="mt-1 text-sm font-semibold">
+                  {nextRecommendation.routineOrder} de {activePlan.routines.length}
+                </p>
+              </div>
+              <div className="rounded-md bg-muted p-3">
+                <p className="text-xs font-medium text-muted-foreground">
+                  Ciclo
+                </p>
+                <p className="mt-1 text-sm font-semibold">
+                  {completedSessions} de {plannedSessions}
                 </p>
               </div>
             </div>
+
+            <p className="mt-4 text-sm leading-6 text-muted-foreground">
+              {getRecommendationReasonLabel(nextRecommendation.reason)}
+            </p>
+
+            {cycleComplete ? (
+              <p className="mt-3 rounded-md border border-info bg-muted p-3 text-sm leading-6">
+                Ciclo concluido. Baixe o modelo e gere um novo treino.
+              </p>
+            ) : null}
           </section>
         ) : null}
 
@@ -288,6 +329,24 @@ export function App() {
       </nav>
     </main>
   );
+}
+
+function getRecommendationReasonLabel(
+  reason: NextRoutineRecommendation["reason"],
+) {
+  if (reason === "first-workout") {
+    return "Comece pela primeira rotina do plano ativo.";
+  }
+
+  if (reason === "cycle-restarted") {
+    return "Ultima rotina concluida. O ciclo volta para o inicio.";
+  }
+
+  if (reason === "missing-last-routine") {
+    return "Rotina anterior ausente. Recomendacao reiniciada pela primeira.";
+  }
+
+  return "Sequencia calculada a partir da ultima rotina finalizada.";
 }
 
 type ImportPanelProps = {

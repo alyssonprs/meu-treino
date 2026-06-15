@@ -92,6 +92,7 @@ describe("workoutImportService", () => {
     const repository = {
       saveActivePlan: vi.fn().mockResolvedValue({ planId: "plan-1" }),
       getActivePlan: vi.fn(),
+      markRoutineAsCompleted: vi.fn(),
       clearAllWorkoutData: vi.fn(),
     };
 

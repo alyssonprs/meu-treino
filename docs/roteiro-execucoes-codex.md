@@ -170,6 +170,8 @@ Pronto quando: o usuario conseguir baixar o modelo, importar um JSON valido, ver
 
 Objetivo: implementar a logica de recomendacao da rotina.
 
+Status: concluida em 2026-06-15. Entregue controle da ultima rotina finalizada, recomendacao automatica pela ordem das rotinas, card da proxima rotina na tela inicial e testes para primeiro treino, treino seguinte, ciclo reiniciado e rotina anterior ausente.
+
 Prompt sugerido:
 
 ```text

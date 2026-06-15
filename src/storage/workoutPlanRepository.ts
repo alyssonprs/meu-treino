@@ -85,10 +85,18 @@ export type SaveActiveWorkoutPlanResult = {
   planId: string;
 };
 
+export type MarkRoutineAsCompletedInput = {
+  planId: string;
+  routineId: string;
+  routineOrder: number;
+  completedAt: string;
+};
+
 export interface WorkoutPlanRepository {
   saveActivePlan(
     input: SaveActiveWorkoutPlanInput,
   ): Promise<SaveActiveWorkoutPlanResult>;
   getActivePlan(): Promise<ActiveWorkoutPlanSnapshot | null>;
+  markRoutineAsCompleted(input: MarkRoutineAsCompletedInput): Promise<void>;
   clearAllWorkoutData(): Promise<void>;
 }

@@ -185,4 +185,33 @@ describe("DexieWorkoutPlanRepository", () => {
       exerciseId: "remada curvada|costas|barra|bilateral",
     });
   });
+
+  it("marks a routine as completed and updates active plan progress", async () => {
+    const repository = createRepository();
+
+    await repository.saveActivePlan({ plan: basePlan });
+    const activePlan = await repository.getActivePlan();
+    const completedRoutine = activePlan?.routines[0];
+
+    if (!activePlan || !completedRoutine) {
+      throw new Error("Fixture should create an active plan with routines");
+    }
+
+    await repository.markRoutineAsCompleted({
+      planId: activePlan.plan.id,
+      routineId: completedRoutine.id,
+      routineOrder: completedRoutine.order,
+      completedAt: "2026-06-15T13:00:00.000Z",
+    });
+
+    const updatedPlan = await repository.getActivePlan();
+
+    expect(updatedPlan?.progress).toEqual({
+      planId: activePlan.plan.id,
+      completedSessionsCount: 1,
+      lastCompletedRoutineId: completedRoutine.id,
+      lastCompletedRoutineOrder: 1,
+      lastCompletedAt: "2026-06-15T13:00:00.000Z",
+    });
+  });
 });
