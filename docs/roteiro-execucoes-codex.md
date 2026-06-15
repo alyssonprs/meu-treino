@@ -155,6 +155,8 @@ Pronto quando: for possivel salvar, consultar e substituir plano ativo localment
 
 Objetivo: criar o fluxo principal de entrada de dados.
 
+Status: concluida em 2026-06-15. Foi implementado o download do JSON modelo, importacao local de arquivo JSON, validacao com preview, ativacao/substituicao do plano ativo via repositorio PWA e estados de erro/sucesso no fluxo inicial.
+
 Prompt sugerido:
 
 ```text
