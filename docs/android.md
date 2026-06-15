@@ -22,12 +22,29 @@ pnpm run android:open
 
 `android:sync` executa o build web e depois `cap sync android`, copiando a PWA compilada para o projeto Android.
 
+Validacao local em 2026-06-15:
+
+```text
+pnpm run android:sync
+```
+
+Resultado: build Vite concluido e `cap sync android` executado com sucesso, copiando `dist` para `android/app/src/main/assets/public`.
+
 ## Geracao de APK/AAB
 
-Depois de `pnpm run android:open`, use o Android Studio para:
+Depois de `pnpm run android:sync`, abra o projeto nativo:
+
+```bash
+pnpm run android:open
+```
+
+No Android Studio:
 
 - rodar o app em emulador ou dispositivo fisico;
-- gerar APK de instalacao direta;
-- gerar AAB para publicacao futura na Google Play.
+- gerar APK de instalacao direta em `Build > Build Bundle(s) / APK(s) > Build APK(s)`;
+- gerar AAB para publicacao futura em `Build > Generate Signed Bundle / APK > Android App Bundle`;
+- criar uma chave de assinatura somente quando a publicacao ou distribuicao exigir.
+
+Para teste local rapido, use APK debug gerado pelo Android Studio. Para Google Play no futuro, use AAB assinado e mantenha a chave de assinatura fora do repositorio.
 
 Nao ha configuracao iOS neste projeto nesta fase.

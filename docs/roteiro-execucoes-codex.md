@@ -245,6 +245,8 @@ Pronto quando: as telas principais estiverem responsivas, sem texto cortado, com
 
 Objetivo: validar o caminho para APK.
 
+Status: concluida em 2026-06-15. O build web e `pnpm run android:sync` foram validados com sucesso, os assets web foram sincronizados para o projeto Android e `docs/android.md` foi atualizado com instrucoes de APK/AAB.
+
 Prompt sugerido:
 
 ```text
