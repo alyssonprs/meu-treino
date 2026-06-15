@@ -18,6 +18,7 @@ Use [docs/arquitetura-prompt.md](docs/arquitetura-prompt.md) as the canonical pr
 ## Preferred Stack
 
 - React + Vite + TypeScript for the app foundation.
+- Use `pnpm` as the project package manager; do not add npm/yarn lockfiles.
 - Tailwind CSS for styling and responsive layout.
 - shadcn/ui as the base for modern, accessible, customizable UI components.
 - lucide-react for icons.
@@ -58,6 +59,8 @@ Use [docs/arquitetura-prompt.md](docs/arquitetura-prompt.md) as the canonical pr
 - Design mobile-first for use during an actual workout.
 - Use large touch targets and fast numeric entry for sets, reps, load, and RIR.
 - Keep the first screen useful, not a marketing landing page.
+- Use the approved identity assets in `assets/identity` when configuring app branding, PWA icons, Android adaptive icons, splash screens, and any explicit brand/logo display.
+- Do not generate or introduce new brand icons when the existing `assets/identity` files cover the need.
 - Use [docs/ux-prototipo-aprovado.md](docs/ux-prototipo-aprovado.md) as the UX approval contract before implementing final screens.
 - Use Excalidraw as the default tool for UX wireframes before coding final screens.
 - Base the first version on the approved guided usability model: the home screen should focus on the next recommended workout.

@@ -59,6 +59,8 @@ Pronto quando: houver uma lista curta de ajustes recomendados ou a confirmacao d
 
 Objetivo: criar o projeto base React + Vite + TypeScript.
 
+Status: concluida em 2026-06-15. O scaffold React + Vite + TypeScript foi criado com Tailwind CSS, base shadcn/ui, lucide-react, estrutura inicial de pastas, scripts de verificacao e uma primeira tela mobile de estado vazio.
+
 Prompt sugerido:
 
 ```text
@@ -83,7 +85,7 @@ Prompt sugerido:
 Use AGENTS.md e docs/arquitetura-prompt.md como referencia.
 Objetivo: configurar manifest, icones, service worker e suporte offline basico para PWA.
 Restricoes: nao implementar regra de treino ainda; foque na base PWA.
-Pronto quando: o build gerar uma PWA instalavel com manifest valido e cache offline inicial.
+Pronto quando: o build gerar uma PWA instalavel com manifest valido, usando os assets de `assets/identity`, e cache offline inicial.
 ```
 
 ## Execucao 3 - Design tokens e temas

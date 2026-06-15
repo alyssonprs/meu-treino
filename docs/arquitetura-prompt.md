@@ -43,6 +43,29 @@ npx cap open android
 
 Para PWA, publicar o build estatico em hospedagem com HTTPS, manifest, service worker e icones do aplicativo.
 
+### Assets de identidade
+
+Os assets oficiais de identidade visual ficam em `assets/identity` e devem ser usados quando a aplicacao precisar de marca, logo, icones de instalacao, icones Android ou splash screens.
+
+Arquivos disponiveis:
+
+- `brand-mark.svg`: marca principal aprovada.
+- `logo-horizontal.svg`: logo horizontal com o texto "Meu Treino".
+- `app-icon-source.png`: fonte raster principal do icone do app, em 1024 x 1024 px.
+- `pwa-icon-any-192.png` e `pwa-icon-any-512.png`: icones PWA comuns para o manifest.
+- `pwa-icon-maskable-512.png` e `pwa-icon-maskable-1024.png`: icones PWA maskable para instalacao.
+- `android-icon-foreground.png`: camada frontal do icone adaptativo Android.
+- `android-icon-background.png`: camada de fundo do icone adaptativo Android.
+- `android-icon-monochrome.svg`: versao monocromatica para icone tematico Android.
+- `splash.png` e `splash-dark.png`: splash screens claro e escuro.
+
+Regras:
+
+- Reutilizar esses arquivos antes de gerar ou desenhar novos assets de marca.
+- Usar esses arquivos no `manifest.webmanifest`, na configuracao PWA e na configuracao Android/Capacitor quando aplicavel.
+- Nao usar os assets de marca como substitutos para icones internos de interface; a UI deve continuar usando `lucide-react` para navegacao, botoes e acoes.
+- Se a identidade visual mudar, atualizar `assets/identity`, este documento e `docs/identidade-visual-opcoes.md`.
+
 ### Separacao em camadas
 
 Organizar o projeto em camadas simples:
@@ -211,6 +234,7 @@ O app deve suportar dois temas selecionaveis:
 
 Regras:
 
+- A identidade de marca oficial ja possui arquivos prontos em `assets/identity` e eles devem ser usados para branding, icones PWA, icones Android e splash screens.
 - Usar o tema escuro como padrao na primeira abertura.
 - Permitir que o usuario alterne entre claro e escuro nas configuracoes.
 - Salvar a preferencia localmente em `app_settings`.

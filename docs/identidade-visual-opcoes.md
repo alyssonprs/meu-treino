@@ -206,6 +206,27 @@ Para este app, a decisao oficial e oferecer dois temas selecionaveis:
 
 O tema escuro deve ser o padrao inicial, porque combina melhor com uso em academia e reduz brilho durante o treino. O usuario deve poder trocar para o tema claro nas configuracoes.
 
+## Assets oficiais de identidade
+
+A identidade visual aprovada possui arquivos prontos em `assets/identity`.
+
+Usar esses arquivos como fonte oficial para marca, logo, icones de instalacao, Android adaptive icon e splash screens:
+
+- `brand-mark.svg`
+- `logo-horizontal.svg`
+- `app-icon-source.png`
+- `pwa-icon-any-192.png`
+- `pwa-icon-any-512.png`
+- `pwa-icon-maskable-512.png`
+- `pwa-icon-maskable-1024.png`
+- `android-icon-foreground.png`
+- `android-icon-background.png`
+- `android-icon-monochrome.svg`
+- `splash.png`
+- `splash-dark.png`
+
+Regra: nao criar uma nova identidade visual, novos icones de marca ou novas imagens promocionais quando esses arquivos atenderem ao uso. Para icones internos da interface, como navegacao, acoes, treino, historico, importar e configuracoes, usar `lucide-react`, nao imagens geradas.
+
 ## Decisao oficial de tema
 
 ### Tema claro

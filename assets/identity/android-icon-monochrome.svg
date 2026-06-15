@@ -1,0 +1,10 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">meu-treino monochrome icon</title>
+  <desc id="desc">Single-color Android themed icon using the approved icon silhouette.</desc>
+  <defs>
+    <mask id="approved-icon-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024">
+      <image href="android-icon-foreground.png" x="0" y="0" width="1024" height="1024" preserveAspectRatio="xMidYMid meet"/>
+    </mask>
+  </defs>
+  <rect width="1024" height="1024" fill="currentColor" mask="url(#approved-icon-mask)"/>
+</svg>
