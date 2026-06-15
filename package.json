@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint src vite.config.ts tailwind.config.ts postcss.config.js eslint.config.js",
     "test": "vitest run",
+    "visual:check": "playwright test --config playwright.visual.config.ts",
     "preview": "vite preview --host 127.0.0.1",
     "android:sync": "tsc -b && vite build && cap sync android",
     "android:open": "cap open android"
@@ -28,6 +29,7 @@
   "devDependencies": {
     "@capacitor/cli": "^8.4.0",
     "@eslint/js": "^9.39.4",
+    "@playwright/test": "^1.60.0",
     "@types/node": "^25.9.3",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
