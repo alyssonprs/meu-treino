@@ -82,6 +82,7 @@ Use [docs/arquitetura-prompt.md](docs/arquitetura-prompt.md) as the canonical pr
 - Do not rewrite unrelated files or make broad refactors unless they are necessary for the current task.
 - Ask before adding new production dependencies after the initial project scaffold.
 - When a recurring decision is discovered, update this file or the architecture document so future Codex runs inherit it.
+- At the end of each execution, create a Git commit with the completed changes and push it to the configured remote.
 
 ## Verification
 

@@ -110,6 +110,8 @@ Pronto quando: existir uma estrutura de tema em src/theme, variaveis CSS para cl
 
 Objetivo: deixar o app pronto para virar APK no futuro.
 
+Status: concluida em 2026-06-15. Capacitor foi configurado com alvo Android, `appId` `com.meutreino.app`, scripts de sync/open, projeto nativo em `android/`, assets oficiais de identidade e instrucoes em `docs/android.md`.
+
 Prompt sugerido:
 
 ```text
