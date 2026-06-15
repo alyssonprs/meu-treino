@@ -74,6 +74,7 @@ Use [docs/arquitetura-prompt.md](docs/arquitetura-prompt.md) as the canonical pr
 - Base the dark theme on `Tema 5 - Hibrido recomendado` from `docs/identidade-visual-opcoes.md`.
 - Store the user's theme preference locally and apply it without restarting the app.
 - Use design tokens/CSS variables for colors instead of hard-coded colors in components.
+- In mobile cards with detailed content, do not keep the main content inside a side column next to an icon; use a compact header for the icon/title and let previews, summaries, errors, and action buttons use the full card width.
 
 ## Codex Workflow
 
