@@ -200,7 +200,7 @@ export function App() {
             </h2>
             <p className="text-base leading-7 text-muted-foreground">
               {activePlan
-                ? `${activePlan.plan.objective} · ${activePlan.routines.length} rotinas`
+                ? `${activePlan.plan.objective} - ${activePlan.routines.length} rotinas`
                 : "O app guarda treino, cargas e progresso no proprio dispositivo."}
             </p>
           </div>
@@ -327,29 +327,32 @@ function ImportPanel({
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-destructive">
             <AlertCircle className="h-5 w-5" aria-hidden="true" />
           </div>
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0">
             <h2 className="font-medium">JSON nao importado</h2>
             <p className="mt-1 text-sm text-muted-foreground">
               {importStatus.fileName ?? "Arquivo selecionado"}
             </p>
-            <ul className="mt-4 space-y-2">
-              {importStatus.errors.slice(0, 4).map((error) => (
-                <li className="text-sm leading-6" key={`${error.path}-${error.message}`}>
-                  <span className="font-medium">{error.path}:</span>{" "}
-                  <span className="text-muted-foreground">{error.message}</span>
-                </li>
-              ))}
-            </ul>
-            <Button
-              className="mt-5 h-12 w-full gap-2"
-              onClick={onChooseAnotherFile}
-              type="button"
-            >
-              <RotateCcw className="h-5 w-5" aria-hidden="true" />
-              Tentar outro arquivo
-            </Button>
           </div>
         </div>
+        <ul className="mt-4 space-y-2">
+          {importStatus.errors.slice(0, 4).map((error) => (
+            <li
+              className="text-sm leading-6"
+              key={`${error.path}-${error.message}`}
+            >
+              <span className="font-medium">{error.path}:</span>{" "}
+              <span className="text-muted-foreground">{error.message}</span>
+            </li>
+          ))}
+        </ul>
+        <Button
+          className="mt-5 h-12 w-full gap-2"
+          onClick={onChooseAnotherFile}
+          type="button"
+        >
+          <RotateCcw className="h-5 w-5" aria-hidden="true" />
+          Tentar outro arquivo
+        </Button>
       </section>
     );
   }
@@ -367,34 +370,34 @@ function ImportPanel({
             <FileInput className="h-5 w-5" aria-hidden="true" />
           )}
         </div>
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0">
           <p className="text-sm text-muted-foreground">{importStatus.fileName}</p>
           <h2 className="mt-1 font-medium">
             {isSaved ? "Plano ativo atualizado" : "Preview do treino"}
           </h2>
-          <PreviewSummary preview={importStatus.preview} />
-          <div className="mt-5 grid gap-2">
-            {!isSaved ? (
-              <Button
-                className="h-12 w-full gap-2"
-                disabled={isSaving}
-                onClick={onActivatePlan}
-                type="button"
-              >
-                <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
-                {isSaving ? "Ativando..." : "Ativar novo plano"}
-              </Button>
-            ) : null}
-            <Button
-              className="h-12 w-full gap-2"
-              onClick={isSaved ? onReset : onChooseAnotherFile}
-              type="button"
-              variant="secondary"
-            >
-              {isSaved ? "Fechar preview" : "Escolher outro JSON"}
-            </Button>
-          </div>
         </div>
+      </div>
+      <PreviewSummary preview={importStatus.preview} />
+      <div className="mt-5 grid gap-2">
+        {!isSaved ? (
+          <Button
+            className="h-12 w-full gap-2"
+            disabled={isSaving}
+            onClick={onActivatePlan}
+            type="button"
+          >
+            <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
+            {isSaving ? "Ativando..." : "Ativar novo plano"}
+          </Button>
+        ) : null}
+        <Button
+          className="h-12 w-full gap-2"
+          onClick={isSaved ? onReset : onChooseAnotherFile}
+          type="button"
+          variant="secondary"
+        >
+          {isSaved ? "Fechar preview" : "Escolher outro JSON"}
+        </Button>
       </div>
     </section>
   );
