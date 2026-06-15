@@ -200,6 +200,8 @@ Pronto quando: o usuario conseguir iniciar a rotina recomendada, registrar serie
 
 Objetivo: preservar e exibir evolucao de carga.
 
+Status: concluida em 2026-06-15. Foi adicionada leitura de historico de cargas no repositorio, servico de resumo de cargas, sugestao da ultima carga na execucao do treino e painel de historico com ultima carga, maior carga e series registradas.
+
 Prompt sugerido:
 
 ```text

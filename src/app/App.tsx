@@ -13,6 +13,7 @@ import {
   Save,
   Settings,
   ShieldCheck,
+  TrendingUp,
   TimerReset,
   X,
 } from "lucide-react";
@@ -25,6 +26,11 @@ import {
   type WorkoutPlanPreview,
 } from "@/services/workoutImportService";
 import {
+  createLoadHistoryMap,
+  getExerciseLoadSummaries,
+  type ExerciseLoadSummary,
+} from "@/services/progressService";
+import {
   getNextRecommendedRoutineFromSnapshot,
   type NextRoutineRecommendation,
 } from "@/services/workoutRecommendationService";
@@ -35,7 +41,10 @@ import {
   type WorkoutSetDraft,
 } from "@/services/workoutSessionService";
 import { pwaWorkoutPlanRepository } from "@/storage/pwa/dexieWorkoutPlanRepository";
-import type { ActiveWorkoutPlanSnapshot } from "@/storage/workoutPlanRepository";
+import type {
+  ActiveWorkoutPlanSnapshot,
+  ExerciseLoadHistoryRecord,
+} from "@/storage/workoutPlanRepository";
 
 type ImportStatus =
   | {
@@ -83,6 +92,10 @@ export function App() {
   );
   const [activeWorkout, setActiveWorkout] =
     useState<WorkoutSessionDraft | null>(null);
+  const [workoutLoadHistory, setWorkoutLoadHistory] = useState<
+    Map<string, ExerciseLoadHistoryRecord>
+  >(new Map());
+  const [loadSummaries, setLoadSummaries] = useState<ExerciseLoadSummary[]>([]);
   const [workoutMessage, setWorkoutMessage] = useState<string | null>(null);
   const [importStatus, setImportStatus] =
     useState<ImportStatus>(idleImportStatus);
@@ -100,6 +113,30 @@ export function App() {
       isMounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    if (!activePlan) {
+      setLoadSummaries([]);
+      return () => {
+        isMounted = false;
+      };
+    }
+
+    getExerciseLoadSummaries({
+      activePlan,
+      repository: pwaWorkoutPlanRepository,
+    }).then((summaries) => {
+      if (isMounted) {
+        setLoadSummaries(summaries);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [activePlan]);
 
   async function handleImportFile(file: File) {
     const fileName = file.name;
@@ -197,7 +234,7 @@ export function App() {
   const cycleComplete =
     Boolean(activePlan) && completedSessions >= plannedSessions;
 
-  function handleStartRecommendedWorkout() {
+  async function handleStartRecommendedWorkout() {
     if (!activePlan || !nextRecommendation) {
       return;
     }
@@ -210,12 +247,19 @@ export function App() {
       return;
     }
 
+    const history = await pwaWorkoutPlanRepository.getExerciseLoadHistory(
+      routine.exercises.map((exercise) => exercise.exerciseId),
+    );
+    const loadHistoryByExerciseId = createLoadHistoryMap(history);
+
+    setWorkoutLoadHistory(loadHistoryByExerciseId);
     setWorkoutMessage(null);
     setActiveWorkout(
       createWorkoutSessionDraft({
         planId: activePlan.plan.id,
         routine,
         startedAt: new Date().toISOString(),
+        loadHistoryByExerciseId,
       }),
     );
   }
@@ -239,6 +283,7 @@ export function App() {
     const updatedPlan = await pwaWorkoutPlanRepository.getActivePlan();
     setActivePlan(updatedPlan);
     setActiveWorkout(null);
+    setWorkoutLoadHistory(new Map());
     setWorkoutMessage("Treino finalizado e salvo neste dispositivo.");
   }
 
@@ -294,6 +339,7 @@ export function App() {
         {activeWorkout ? (
           <ActiveWorkoutScreen
             draft={activeWorkout}
+            loadHistoryByExerciseId={workoutLoadHistory}
             message={workoutMessage}
             onCancel={() => {
               setActiveWorkout(null);
@@ -415,7 +461,9 @@ export function App() {
 
             <Button
               className="mt-4 h-14 w-full justify-start gap-3 text-base"
-              onClick={handleStartRecommendedWorkout}
+              onClick={() => {
+                void handleStartRecommendedWorkout();
+              }}
               type="button"
             >
               <Play className="h-5 w-5" aria-hidden="true" />
@@ -429,6 +477,8 @@ export function App() {
             {workoutMessage}
           </p>
         ) : null}
+
+        <LoadHistoryPanel summaries={loadSummaries} />
 
         <section className="mt-5 rounded-lg border border-border bg-card p-4">
           <div className="mb-3">
@@ -457,6 +507,7 @@ export function App() {
 
 type ActiveWorkoutScreenProps = {
   draft: WorkoutSessionDraft;
+  loadHistoryByExerciseId: Map<string, ExerciseLoadHistoryRecord>;
   message: string | null;
   onCancel: () => void;
   onFinish: () => void;
@@ -470,6 +521,7 @@ type ActiveWorkoutScreenProps = {
 
 function ActiveWorkoutScreen({
   draft,
+  loadHistoryByExerciseId,
   message,
   onCancel,
   onFinish,
@@ -513,6 +565,7 @@ function ActiveWorkoutScreen({
 
       {draft.routine.exercises.map((exercise, exerciseIndex) => {
         const exerciseDraft = draft.exercises[exerciseIndex];
+        const loadHistory = loadHistoryByExerciseId.get(exercise.exerciseId);
 
         return (
           <article
@@ -536,6 +589,28 @@ function ActiveWorkoutScreen({
                 {exercise.rest_seconds ?? 90}s
               </span>
             </div>
+
+            {loadHistory ? (
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <div className="rounded-md bg-muted p-3">
+                  <p className="text-xs font-medium text-muted-foreground">
+                    Ultima carga
+                  </p>
+                  <p className="mt-1 text-sm font-semibold">
+                    {formatLoad(loadHistory.lastLoadKg)} kg x{" "}
+                    {loadHistory.lastReps}
+                  </p>
+                </div>
+                <div className="rounded-md bg-muted p-3">
+                  <p className="text-xs font-medium text-muted-foreground">
+                    Maior carga
+                  </p>
+                  <p className="mt-1 text-sm font-semibold">
+                    {formatLoad(loadHistory.maxLoadKg)} kg
+                  </p>
+                </div>
+              </div>
+            ) : null}
 
             <div className="mt-4 space-y-3">
               {exerciseDraft.sets.map((set, setIndex) => (
@@ -626,6 +701,59 @@ function ActiveWorkoutScreen({
   );
 }
 
+function LoadHistoryPanel({
+  summaries,
+}: {
+  summaries: ExerciseLoadSummary[];
+}) {
+  if (summaries.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="mt-5 rounded-lg border border-border bg-card p-4">
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-info">
+          <TrendingUp className="h-5 w-5" aria-hidden="true" />
+        </div>
+        <div>
+          <p className="text-sm font-medium text-info">Historico de cargas</p>
+          <h2 className="font-semibold">Ultimos exercicios</h2>
+        </div>
+      </div>
+
+      <div className="mt-4 space-y-3">
+        {summaries.slice(0, 4).map((summary) => (
+          <article className="rounded-md bg-muted p-3" key={summary.exerciseId}>
+            <div className="flex items-start justify-between gap-3">
+              <h3 className="min-w-0 text-sm font-semibold">
+                {summary.exerciseName}
+              </h3>
+              <span className="shrink-0 text-xs font-medium text-muted-foreground">
+                {summary.completedSetsCount} series
+              </span>
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+              <p>
+                <span className="text-muted-foreground">Ultima: </span>
+                <span className="font-semibold">
+                  {formatLoad(summary.lastLoadKg)} kg x {summary.lastReps}
+                </span>
+              </p>
+              <p>
+                <span className="text-muted-foreground">Maior: </span>
+                <span className="font-semibold">
+                  {formatLoad(summary.maxLoadKg)} kg
+                </span>
+              </p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function SetInput({
   label,
   value,
@@ -649,6 +777,12 @@ function SetInput({
       />
     </label>
   );
+}
+
+function formatLoad(loadKg: number) {
+  return new Intl.NumberFormat("pt-BR", {
+    maximumFractionDigits: 2,
+  }).format(loadKg);
 }
 
 function getRecommendationReasonLabel(

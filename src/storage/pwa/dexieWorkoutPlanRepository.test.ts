@@ -262,6 +262,9 @@ describe("DexieWorkoutPlanRepository", () => {
     });
 
     const updatedPlan = await repository.getActivePlan();
+    const loadHistory = await repository.getExerciseLoadHistory([
+      completedExercise.exerciseId,
+    ]);
 
     expect(result.sessionId).toBe("id-8");
     expect(updatedPlan?.progress).toMatchObject({
@@ -269,5 +272,18 @@ describe("DexieWorkoutPlanRepository", () => {
       lastCompletedRoutineId: completedRoutine.id,
       lastCompletedRoutineOrder: completedRoutine.order,
     });
+    expect(loadHistory).toEqual([
+      {
+        exerciseId: completedExercise.exerciseId,
+        sourceExerciseId: completedExercise.sourceExerciseId,
+        exerciseName: completedExercise.name,
+        lastLoadKg: 62.5,
+        maxLoadKg: 62.5,
+        lastReps: 7,
+        lastRir: 1,
+        completedSetsCount: 2,
+        updatedAt: "2026-06-15T13:00:00.000Z",
+      },
+    ]);
   });
 });

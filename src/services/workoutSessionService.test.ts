@@ -8,6 +8,35 @@ import {
 } from "./workoutSessionService";
 
 describe("workoutSessionService", () => {
+  it("prefills set load from previous exercise history", () => {
+    const snapshot = createSnapshot();
+
+    const draft = createWorkoutSessionDraft({
+      planId: snapshot.plan.id,
+      routine: snapshot.routines[0],
+      startedAt: "2026-06-15T12:00:00.000Z",
+      loadHistoryByExerciseId: new Map([
+        [
+          "supino-reto",
+          {
+            exerciseId: "supino-reto",
+            sourceExerciseId: "supino-reto",
+            exerciseName: "Supino reto",
+            lastLoadKg: 62.5,
+            maxLoadKg: 70,
+            lastReps: 8,
+            lastRir: 1,
+            completedSetsCount: 6,
+            updatedAt: "2026-06-14T12:00:00.000Z",
+          },
+        ],
+      ]),
+    });
+
+    expect(draft.exercises[0].sets[0].loadKg).toBe("62.5");
+    expect(draft.exercises[0].sets[0].reps).toBe("");
+  });
+
   it("finishes a workout session with completed sets", async () => {
     const snapshot = createSnapshot();
     const draft = createWorkoutSessionDraft({

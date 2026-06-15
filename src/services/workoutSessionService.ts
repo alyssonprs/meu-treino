@@ -1,4 +1,5 @@
 import type {
+  ExerciseLoadHistoryRecord,
   PlannedExerciseRecord,
   RoutineWithDetails,
   SaveCompletedWorkoutSessionInput,
@@ -39,27 +40,36 @@ export function createWorkoutSessionDraft({
   planId,
   routine,
   startedAt,
+  loadHistoryByExerciseId,
 }: {
   planId: string;
   routine: RoutineWithDetails;
   startedAt: string;
+  loadHistoryByExerciseId?: Map<string, ExerciseLoadHistoryRecord>;
 }): WorkoutSessionDraft {
   return {
     planId,
     routine,
     startedAt,
-    exercises: routine.exercises.map((exercise) => ({
-      plannedExerciseId: exercise.id,
-      sets: Array.from({ length: exercise.sets }, () => ({
-        loadKg: "",
-        reps: "",
-        rir:
-          typeof exercise.target_rir === "number"
-            ? String(exercise.target_rir)
-            : "",
-        notes: "",
-      })),
-    })),
+    exercises: routine.exercises.map((exercise) => {
+      const loadHistory = loadHistoryByExerciseId?.get(exercise.exerciseId);
+
+      return {
+        plannedExerciseId: exercise.id,
+        sets: Array.from({ length: exercise.sets }, () => ({
+          loadKg:
+            typeof loadHistory?.lastLoadKg === "number"
+              ? String(loadHistory.lastLoadKg)
+              : "",
+          reps: "",
+          rir:
+            typeof exercise.target_rir === "number"
+              ? String(exercise.target_rir)
+              : "",
+          notes: "",
+        })),
+      };
+    }),
   };
 }
 

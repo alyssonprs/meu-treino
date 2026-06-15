@@ -234,6 +234,23 @@ export class DexieWorkoutPlanRepository implements WorkoutPlanRepository {
     return { sessionId };
   }
 
+  async getExerciseLoadHistory(
+    exerciseIds?: string[],
+  ): Promise<ExerciseLoadHistoryRecord[]> {
+    if (!exerciseIds) {
+      return this.database.exerciseLoadHistory.toArray();
+    }
+
+    const uniqueExerciseIds = Array.from(new Set(exerciseIds));
+    const history = await Promise.all(
+      uniqueExerciseIds.map((exerciseId) =>
+        this.database.exerciseLoadHistory.get(exerciseId),
+      ),
+    );
+
+    return history.filter((item) => item !== undefined);
+  }
+
   async clearAllWorkoutData(): Promise<void> {
     await this.database.transaction(
       "rw",

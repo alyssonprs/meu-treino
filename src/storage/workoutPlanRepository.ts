@@ -177,5 +177,8 @@ export interface WorkoutPlanRepository {
   saveCompletedWorkoutSession(
     input: SaveCompletedWorkoutSessionInput,
   ): Promise<SaveCompletedWorkoutSessionResult>;
+  getExerciseLoadHistory(
+    exerciseIds?: string[],
+  ): Promise<ExerciseLoadHistoryRecord[]>;
   clearAllWorkoutData(): Promise<void>;
 }
