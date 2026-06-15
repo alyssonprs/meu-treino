@@ -32,6 +32,7 @@ O app tambem deve disponibilizar para download um JSON de modelo, para que o alu
 - Evitar dependencias exclusivas de iOS ou recursos que compliquem a entrega PWA/Android.
 - Toda funcionalidade essencial deve funcionar no PWA antes de ser empacotada como Android.
 - Quando houver diferenca entre PWA e Android, isolar a diferenca em adaptadores de plataforma.
+- Hospedagem PWA escolhida: Cloudflare Pages conectado ao repositorio GitHub, com deploy automatico por push e previews para pull requests.
 
 Fluxo de build previsto para Android:
 
@@ -41,7 +42,7 @@ npx cap sync android
 npx cap open android
 ```
 
-Para PWA, publicar o build estatico em hospedagem com HTTPS, manifest, service worker e icones do aplicativo.
+Para PWA, publicar o build estatico em Cloudflare Pages com HTTPS, manifest, service worker e icones do aplicativo. A configuracao operacional fica em `docs/deploy-cloudflare.md`.
 
 ### Assets de identidade
 

@@ -9,6 +9,7 @@ Use [docs/arquitetura-prompt.md](docs/arquitetura-prompt.md) as the canonical pr
 ## Delivery Strategy
 
 - Build the first usable version as an installable PWA.
+- Host the PWA on Cloudflare Pages, connected to the GitHub repository, unless the user explicitly changes deployment target.
 - Keep the same codebase ready for Android packaging with Capacitor.
 - Prepare for APK generation and possible future Google Play publishing.
 - Do not implement iPhone/App Store distribution in the first phase.
