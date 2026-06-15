@@ -140,6 +140,8 @@ Pronto quando: houver schemas, tipos inferidos, mensagens de erro basicas e test
 
 Objetivo: implementar a primeira persistencia real usando IndexedDB/Dexie.
 
+Status: concluida em 2026-06-15. Foram criadas interfaces de repositorio em `src/storage`, adaptador PWA com IndexedDB/Dexie, schema inicial do banco local, persistencia e substituicao do plano ativo, progresso inicial do plano e testes automatizados com IndexedDB simulado.
+
 Prompt sugerido:
 
 ```text
