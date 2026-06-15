@@ -11,6 +11,7 @@
     "visual:check": "playwright test --config playwright.visual.config.ts",
     "preview": "vite preview --host 127.0.0.1",
     "android:sync": "tsc -b && vite build && cap sync android",
+    "android:apk": "powershell -ExecutionPolicy Bypass -File scripts/build-android-apk.ps1",
     "android:open": "cap open android"
   },
   "dependencies": {
