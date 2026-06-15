@@ -3,13 +3,19 @@ import { createExerciseCanonicalKey } from "@/domain/exerciseKey";
 import { MeuTreinoDatabase, workoutDatabase } from "./workoutDatabase";
 import type {
   ActiveWorkoutPlanSnapshot,
+  ExerciseLoadHistoryRecord,
+  ExerciseLogRecord,
   ExerciseRecord,
   PlannedExerciseRecord,
   RoutineRecord,
   RoutineStepRecord,
   MarkRoutineAsCompletedInput,
+  SaveCompletedWorkoutSessionInput,
+  SaveCompletedWorkoutSessionResult,
   SaveActiveWorkoutPlanInput,
   SaveActiveWorkoutPlanResult,
+  SetLogRecord,
+  WorkoutSessionRecord,
   WorkoutPlanProgressRecord,
   WorkoutPlanRecord,
   WorkoutPlanRepository,
@@ -142,6 +148,92 @@ export class DexieWorkoutPlanRepository implements WorkoutPlanRepository {
     });
   }
 
+  async saveCompletedWorkoutSession(
+    input: SaveCompletedWorkoutSessionInput,
+  ): Promise<SaveCompletedWorkoutSessionResult> {
+    const sessionId = this.createId();
+    const session: WorkoutSessionRecord = {
+      id: sessionId,
+      planId: input.planId,
+      routineId: input.routineId,
+      routineName: input.routineName,
+      routineOrder: input.routineOrder,
+      startedAt: input.startedAt,
+      completedAt: input.completedAt,
+      status: "completed",
+    };
+
+    const exerciseLogs: ExerciseLogRecord[] = [];
+    const setLogs: SetLogRecord[] = [];
+
+    input.exercises.forEach((exercise) => {
+      const exerciseLogId = this.createId();
+
+      exerciseLogs.push({
+        id: exerciseLogId,
+        sessionId,
+        planId: input.planId,
+        routineId: input.routineId,
+        plannedExerciseId: exercise.plannedExerciseId,
+        exerciseId: exercise.exerciseId,
+        exerciseName: exercise.exerciseName,
+        order: exercise.order,
+      });
+
+      exercise.sets.forEach((set) => {
+        setLogs.push({
+          id: this.createId(),
+          sessionId,
+          exerciseLogId,
+          exerciseId: exercise.exerciseId,
+          setNumber: set.setNumber,
+          loadKg: set.loadKg,
+          reps: set.reps,
+          rir: set.rir,
+          notes: set.notes,
+          completedAt: input.completedAt,
+        });
+      });
+    });
+
+    await this.database.transaction(
+      "rw",
+      [
+        this.database.workoutSessions,
+        this.database.exerciseLogs,
+        this.database.setLogs,
+        this.database.exerciseLoadHistory,
+        this.database.workoutPlanProgress,
+      ],
+      async () => {
+        await this.database.workoutSessions.add(session);
+
+        if (exerciseLogs.length > 0) {
+          await this.database.exerciseLogs.bulkAdd(exerciseLogs);
+        }
+
+        if (setLogs.length > 0) {
+          await this.database.setLogs.bulkAdd(setLogs);
+        }
+
+        await Promise.all(
+          input.exercises.map((exercise) =>
+            this.upsertExerciseLoadHistory(exercise, input.completedAt),
+          ),
+        );
+
+        await this.markRoutineAsCompleted({
+          planId: input.planId,
+          routineId: input.routineId,
+          routineOrder: input.routineOrder,
+          completedAt: input.completedAt,
+        });
+      },
+    );
+
+    return { sessionId };
+  }
+
   async clearAllWorkoutData(): Promise<void> {
     await this.database.transaction(
       "rw",
@@ -152,6 +244,10 @@ export class DexieWorkoutPlanRepository implements WorkoutPlanRepository {
         this.database.exercises,
         this.database.plannedExercises,
         this.database.workoutPlanProgress,
+        this.database.workoutSessions,
+        this.database.exerciseLogs,
+        this.database.setLogs,
+        this.database.exerciseLoadHistory,
       ],
       async () => {
         await Promise.all([
@@ -161,6 +257,10 @@ export class DexieWorkoutPlanRepository implements WorkoutPlanRepository {
           this.database.exercises.clear(),
           this.database.plannedExercises.clear(),
           this.database.workoutPlanProgress.clear(),
+          this.database.workoutSessions.clear(),
+          this.database.exerciseLogs.clear(),
+          this.database.setLogs.clear(),
+          this.database.exerciseLoadHistory.clear(),
         ]);
       },
     );
@@ -266,6 +366,42 @@ export class DexieWorkoutPlanRepository implements WorkoutPlanRepository {
       plannedExercises,
       progress: createInitialProgress({ planId }),
     };
+  }
+
+  private async upsertExerciseLoadHistory(
+    exercise: SaveCompletedWorkoutSessionInput["exercises"][number],
+    completedAt: string,
+  ) {
+    const completedSets = exercise.sets;
+
+    if (completedSets.length === 0) {
+      return;
+    }
+
+    const lastSet = completedSets[completedSets.length - 1];
+    const current = await this.database.exerciseLoadHistory.get(
+      exercise.exerciseId,
+    );
+    const maxLoadKg = Math.max(
+      current?.maxLoadKg ?? 0,
+      ...completedSets.map((set) => set.loadKg),
+    );
+    const completedSetsCount =
+      (current?.completedSetsCount ?? 0) + completedSets.length;
+
+    const nextHistory: ExerciseLoadHistoryRecord = {
+      exerciseId: exercise.exerciseId,
+      sourceExerciseId: exercise.sourceExerciseId,
+      exerciseName: exercise.exerciseName,
+      lastLoadKg: lastSet.loadKg,
+      maxLoadKg,
+      lastReps: lastSet.reps,
+      lastRir: lastSet.rir,
+      completedSetsCount,
+      updatedAt: completedAt,
+    };
+
+    await this.database.exerciseLoadHistory.put(nextHistory);
   }
 }
 

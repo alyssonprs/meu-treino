@@ -93,6 +93,7 @@ describe("workoutImportService", () => {
       saveActivePlan: vi.fn().mockResolvedValue({ planId: "plan-1" }),
       getActivePlan: vi.fn(),
       markRoutineAsCompleted: vi.fn(),
+      saveCompletedWorkoutSession: vi.fn(),
       clearAllWorkoutData: vi.fn(),
     };
 

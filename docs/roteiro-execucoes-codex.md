@@ -185,6 +185,8 @@ Pronto quando: a tela inicial mostrar a proxima rotina correta e existirem teste
 
 Objetivo: permitir que o aluno registre um treino real.
 
+Status: concluida em 2026-06-15. Foi implementada a tela de execucao do treino recomendado com aquecimento, exercicios, entrada rapida de carga, repeticoes e RIR, finalizacao de sessao com logs locais, atualizacao de progresso e testes automatizados do servico e persistencia.
+
 Prompt sugerido:
 
 ```text

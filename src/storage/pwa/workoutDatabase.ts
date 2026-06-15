@@ -2,9 +2,13 @@ import Dexie, { type EntityTable } from "dexie";
 
 import type {
   ExerciseRecord,
+  ExerciseLoadHistoryRecord,
+  ExerciseLogRecord,
   PlannedExerciseRecord,
   RoutineRecord,
   RoutineStepRecord,
+  SetLogRecord,
+  WorkoutSessionRecord,
   WorkoutPlanProgressRecord,
   WorkoutPlanRecord,
 } from "../workoutPlanRepository";
@@ -16,6 +20,10 @@ export class MeuTreinoDatabase extends Dexie {
   exercises!: EntityTable<ExerciseRecord, "id">;
   plannedExercises!: EntityTable<PlannedExerciseRecord, "id">;
   workoutPlanProgress!: EntityTable<WorkoutPlanProgressRecord, "planId">;
+  workoutSessions!: EntityTable<WorkoutSessionRecord, "id">;
+  exerciseLogs!: EntityTable<ExerciseLogRecord, "id">;
+  setLogs!: EntityTable<SetLogRecord, "id">;
+  exerciseLoadHistory!: EntityTable<ExerciseLoadHistoryRecord, "exerciseId">;
 
   constructor(databaseName = "meu-treino") {
     super(databaseName);
@@ -27,6 +35,19 @@ export class MeuTreinoDatabase extends Dexie {
       exercises: "id, sourceExerciseId, canonicalKey",
       plannedExercises: "id, planId, routineId, exerciseId, order",
       workoutPlanProgress: "planId",
+    });
+
+    this.version(2).stores({
+      workoutPlans: "id, importedAt, sourcePlanId",
+      routines: "id, planId, order, sourceRoutineId",
+      routineSteps: "id, planId, routineId, kind, order",
+      exercises: "id, sourceExerciseId, canonicalKey",
+      plannedExercises: "id, planId, routineId, exerciseId, order",
+      workoutPlanProgress: "planId",
+      workoutSessions: "id, planId, routineId, completedAt",
+      exerciseLogs: "id, sessionId, planId, routineId, exerciseId, order",
+      setLogs: "id, sessionId, exerciseLogId, exerciseId, completedAt",
+      exerciseLoadHistory: "exerciseId, sourceExerciseId, updatedAt",
     });
   }
 }

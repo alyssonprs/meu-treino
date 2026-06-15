@@ -64,6 +64,53 @@ export type WorkoutPlanProgressRecord = {
   lastCompletedAt: string | null;
 };
 
+export type WorkoutSessionRecord = {
+  id: string;
+  planId: string;
+  routineId: string;
+  routineName: string;
+  routineOrder: number;
+  startedAt: string;
+  completedAt: string;
+  status: "completed";
+};
+
+export type ExerciseLogRecord = {
+  id: string;
+  sessionId: string;
+  planId: string;
+  routineId: string;
+  plannedExerciseId: string;
+  exerciseId: string;
+  exerciseName: string;
+  order: number;
+};
+
+export type SetLogRecord = {
+  id: string;
+  sessionId: string;
+  exerciseLogId: string;
+  exerciseId: string;
+  setNumber: number;
+  loadKg: number;
+  reps: number;
+  rir: number | null;
+  notes: string | null;
+  completedAt: string;
+};
+
+export type ExerciseLoadHistoryRecord = {
+  exerciseId: string;
+  sourceExerciseId: string | null;
+  exerciseName: string;
+  lastLoadKg: number;
+  maxLoadKg: number;
+  lastReps: number;
+  lastRir: number | null;
+  completedSetsCount: number;
+  updatedAt: string;
+};
+
 export type RoutineWithDetails = RoutineRecord & {
   warmup: RoutineStepRecord[];
   exercises: PlannedExerciseRecord[];
@@ -92,11 +139,43 @@ export type MarkRoutineAsCompletedInput = {
   completedAt: string;
 };
 
+export type CompletedWorkoutExerciseInput = {
+  plannedExerciseId: string;
+  exerciseId: string;
+  sourceExerciseId: string | null;
+  exerciseName: string;
+  order: number;
+  sets: {
+    setNumber: number;
+    loadKg: number;
+    reps: number;
+    rir: number | null;
+    notes: string | null;
+  }[];
+};
+
+export type SaveCompletedWorkoutSessionInput = {
+  planId: string;
+  routineId: string;
+  routineName: string;
+  routineOrder: number;
+  startedAt: string;
+  completedAt: string;
+  exercises: CompletedWorkoutExerciseInput[];
+};
+
+export type SaveCompletedWorkoutSessionResult = {
+  sessionId: string;
+};
+
 export interface WorkoutPlanRepository {
   saveActivePlan(
     input: SaveActiveWorkoutPlanInput,
   ): Promise<SaveActiveWorkoutPlanResult>;
   getActivePlan(): Promise<ActiveWorkoutPlanSnapshot | null>;
   markRoutineAsCompleted(input: MarkRoutineAsCompletedInput): Promise<void>;
+  saveCompletedWorkoutSession(
+    input: SaveCompletedWorkoutSessionInput,
+  ): Promise<SaveCompletedWorkoutSessionResult>;
   clearAllWorkoutData(): Promise<void>;
 }

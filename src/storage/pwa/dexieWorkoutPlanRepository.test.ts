@@ -214,4 +214,60 @@ describe("DexieWorkoutPlanRepository", () => {
       lastCompletedAt: "2026-06-15T13:00:00.000Z",
     });
   });
+
+  it("saves a completed workout session with set logs and load history", async () => {
+    const repository = createRepository();
+
+    await repository.saveActivePlan({ plan: basePlan });
+    const activePlan = await repository.getActivePlan();
+    const completedRoutine = activePlan?.routines[0];
+    const completedExercise = completedRoutine?.exercises[0];
+
+    if (!activePlan || !completedRoutine || !completedExercise) {
+      throw new Error("Fixture should create an active routine with exercises");
+    }
+
+    const result = await repository.saveCompletedWorkoutSession({
+      planId: activePlan.plan.id,
+      routineId: completedRoutine.id,
+      routineName: completedRoutine.name,
+      routineOrder: completedRoutine.order,
+      startedAt: "2026-06-15T12:00:00.000Z",
+      completedAt: "2026-06-15T13:00:00.000Z",
+      exercises: [
+        {
+          plannedExerciseId: completedExercise.id,
+          exerciseId: completedExercise.exerciseId,
+          sourceExerciseId: completedExercise.sourceExerciseId,
+          exerciseName: completedExercise.name,
+          order: completedExercise.order,
+          sets: [
+            {
+              setNumber: 1,
+              loadKg: 60,
+              reps: 8,
+              rir: 2,
+              notes: null,
+            },
+            {
+              setNumber: 2,
+              loadKg: 62.5,
+              reps: 7,
+              rir: 1,
+              notes: "Pesado",
+            },
+          ],
+        },
+      ],
+    });
+
+    const updatedPlan = await repository.getActivePlan();
+
+    expect(result.sessionId).toBe("id-8");
+    expect(updatedPlan?.progress).toMatchObject({
+      completedSessionsCount: 1,
+      lastCompletedRoutineId: completedRoutine.id,
+      lastCompletedRoutineOrder: completedRoutine.order,
+    });
+  });
 });
