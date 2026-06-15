@@ -16,6 +16,7 @@ Pronto quando: [criterios objetivos de conclusao].
 - Faca uma execucao por etapa.
 - Deixe o Codex implementar, rodar checks e resumir o que mudou.
 - Revise o diff antes de pedir a proxima etapa.
+- Sempre que uma execucao for finalizada e validada, atualize este roteiro marcando a etapa com `Status: concluida em AAAA-MM-DD` e um resumo curto do que foi entregue.
 - Se uma etapa ficar grande demais, peca para o Codex dividir em subetapas.
 - Evite pedir "faca o app inteiro" em uma unica execucao.
 - Antes de criar a interface final, aprove o fluxo e as telas em `docs/ux-prototipo-aprovado.md`.
@@ -79,6 +80,8 @@ Notas:
 
 Objetivo: deixar a instalabilidade PWA pronta desde cedo.
 
+Status: concluida em 2026-06-15. A base PWA foi configurada com manifest, icones oficiais de `assets/identity`, service worker, registro em producao e cache offline inicial.
+
 Prompt sugerido:
 
 ```text
@@ -91,6 +94,8 @@ Pronto quando: o build gerar uma PWA instalavel com manifest valido, usando os a
 ## Execucao 3 - Design tokens e temas
 
 Objetivo: preparar a base visual antes das telas principais.
+
+Status: concluida em 2026-06-15. Foram criados tokens de tema em `src/theme`, suporte a tema claro/escuro com escuro como padrao, persistencia local da preferencia e controle simples de alternancia na tela inicial.
 
 Prompt sugerido:
 

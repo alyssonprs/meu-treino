@@ -9,6 +9,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeSegmentedControl } from "@/features/settings/ThemeSegmentedControl";
 
 const nextSteps = [
   {
@@ -87,6 +88,15 @@ export function App() {
           ))}
         </section>
 
+        <section className="mt-5 rounded-lg border border-border bg-card p-4">
+          <div className="mb-3">
+            <h2 className="font-medium">Tema do app</h2>
+            <p className="mt-1 text-sm leading-6 text-muted-foreground">
+              A preferencia fica salva neste dispositivo.
+            </p>
+          </div>
+          <ThemeSegmentedControl />
+        </section>
       </div>
 
       <nav className="fixed inset-x-0 bottom-0 border-t border-border bg-card/95 backdrop-blur">

@@ -1,51 +1,12 @@
+@import "@/theme/tokens.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 220 17% 7%;
-    --foreground: 210 33% 98%;
-    --card: 220 15% 12%;
-    --card-foreground: 210 33% 98%;
-    --border: 220 15% 24%;
-    --muted: 220 14% 16%;
-    --muted-foreground: 216 15% 70%;
-    --primary: 80 78% 55%;
-    --primary-foreground: 220 17% 7%;
-    --secondary: 220 15% 18%;
-    --secondary-foreground: 210 33% 98%;
-    --info: 187 86% 53%;
-    --warning: 38 92% 50%;
-    --destructive: 347 89% 60%;
-    --ring: 80 78% 55%;
-    --radius: 0.5rem;
-  }
-
-  .light {
-    --background: 210 29% 97%;
-    --foreground: 204 14% 10%;
-    --card: 0 0% 100%;
-    --card-foreground: 204 14% 10%;
-    --border: 213 20% 87%;
-    --muted: 210 31% 95%;
-    --muted-foreground: 218 15% 46%;
-    --primary: 221 83% 53%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 210 31% 95%;
-    --secondary-foreground: 204 14% 10%;
-    --info: 192 91% 36%;
-    --warning: 38 92% 50%;
-    --destructive: 0 72% 51%;
-    --ring: 221 83% 53%;
-  }
-
   * {
     @apply border-border;
-  }
-
-  html {
-    color-scheme: dark;
   }
 
   body {
