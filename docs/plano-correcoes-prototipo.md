@@ -37,7 +37,7 @@ O Excalidraw aprovado contem as telas `UX-01` a `UX-14`:
 
 1. `UX-01 Inicio sem treino`: estado vazio com acao principal `Importar JSON`, acao secundaria `Baixar modelo`, reforcos de dados locais/offline e bottom nav.
 2. `UX-02 Inicio com treino`: plano ativo, progresso do ciclo, proximo treino recomendado, resumo de ultimo treino/proxima troca/carga preservada e atalhos.
-3. `UX-03 Detalhe do treino`: tela intermediaria antes da execucao, com aquecimento, exercicios, cargas sugeridas e botao `Iniciar treino`.
+3. `UX-03 Detalhe do treino`: tela intermediaria antes da execucao, com aquecimento, lista de exercicios, cargas sugeridas, escolha do exercicio inicial e botao `Iniciar treino`.
 4. `UX-04 Execucao do treino`: experiencia focada durante a academia, sem bottom nav, com progresso da rotina, timer, exercicio atual, um conjunto principal de campos para carga/reps/RIR, `Salvar serie` e `Proximo exercicio`.
 5. `UX-05 Timer de descanso`: descanso entre series com `+30s`, `Pular` e `Iniciar proxima serie`.
 6. `UX-06 Finalizacao`: confirmacao de treino concluido, resumo salvo e proxima recomendacao.
@@ -66,7 +66,7 @@ Com treino ativo: bottom nav `Ajustes` -> `UX-13 Configuracoes` -> area de trein
 
 ### Treino recomendado
 
-`UX-02 Inicio com treino` -> `UX-03 Detalhe do treino` -> `UX-04 Execucao do treino` -> salvar series -> `UX-05 Timer de descanso` entre series -> finalizar rotina -> `UX-06 Finalizacao` -> voltar ao inicio ou ver historico.
+`UX-02 Inicio com treino` -> `UX-03 Detalhe do treino` -> usuario revisa a lista de exercicios e escolhe por qual comecar -> `UX-04 Execucao do treino` no exercicio escolhido -> salvar series -> `UX-05 Timer de descanso` entre series -> seguir para proximo exercicio disponivel ou voltar a lista -> finalizar rotina -> `UX-06 Finalizacao` -> voltar ao inicio ou ver historico.
 
 ### Historico
 
@@ -107,7 +107,7 @@ Troca de tema em `UX-13 Configuracoes` deve aplicar sem reiniciar e persistir lo
 ### Detalhe do treino
 
 - `UX-03 Detalhe do treino` nao existe.
-- O botao `Iniciar treino` da home abre diretamente a execucao, sem mostrar aquecimento, lista de exercicios, cargas sugeridas e contexto da rotina.
+- O botao `Iniciar treino` da home abre diretamente a execucao, sem mostrar aquecimento, lista de exercicios, cargas sugeridas, contexto da rotina ou opcao de escolher o exercicio inicial.
 
 ### Execucao do treino
 
@@ -175,6 +175,13 @@ Decisao de execucao para `UX-04`:
 
 - A tela de execucao deve ter um conjunto principal de campos de carga, reps e RIR para o exercicio em andamento.
 - Nao criar uma grade repetida de campos por repeticao ou por todos os exercicios ao mesmo tempo.
+
+Decisao de entrada na execucao:
+
+- Clicar em `Iniciar treino` na home nao deve abrir direto `UX-04`.
+- O app deve abrir primeiro `UX-03 Detalhe do treino`, mostrando a lista de exercicios da rotina.
+- Em `UX-03`, o usuario deve poder escolher por qual exercicio comecar, porque um aparelho pode estar ocupado e outro livre.
+- Ao entrar em `UX-04`, a execucao deve iniciar no exercicio escolhido, nao necessariamente no primeiro exercicio pela ordem do plano.
 
 ## Execucao 1 - Criar shell de navegacao e separar telas
 
@@ -257,7 +264,10 @@ Escopo:
 - Exibir resumo de ultimo treino, proxima troca e carga preservada.
 - Implementar atalhos `Ver plano` e `Historico`; a acao `Importar novo` deve ficar em `Ajustes`.
 - Criar tela de detalhe do treino recomendado `UX-03`.
-- O botao da home deve ir para detalhe; o botao do detalhe inicia a execucao.
+- O botao da home deve ir para detalhe, nao direto para `UX-04`.
+- `UX-03` deve mostrar a lista completa de exercicios do treino, com carga sugerida/ultima carga quando existir.
+- `UX-03` deve permitir selecionar o exercicio inicial ou acionar `Comecar por aqui` em um item da lista.
+- O botao do detalhe inicia a execucao no exercicio selecionado; se nenhum estiver selecionado, usar o primeiro exercicio da rotina como padrao.
 
 Pronto quando:
 
@@ -266,6 +276,7 @@ Pronto quando:
 - O card principal de `Proximo treino` bate com a hierarquia aprovada.
 - `Iniciar treino` na home abre detalhe antes da execucao.
 - `UX-03` lista aquecimento, exercicios, cargas sugeridas e cooldown.
+- `UX-03` permite escolher o exercicio inicial antes de abrir `UX-04`.
 - Checks passam e capturas mobile sao atualizadas.
 
 ## Execucao 4 - Refatorar execucao para fluxo guiado por serie
@@ -281,6 +292,7 @@ Arquivos provaveis:
 Escopo:
 
 - Introduzir estado de sessao ativa com `currentExerciseIndex`, status do exercicio em andamento e timer atual.
+- Inicializar `currentExerciseIndex` a partir do exercicio escolhido em `UX-03`, nao fixar sempre no primeiro exercicio.
 - Mostrar apenas o exercicio atual com contexto de progresso da rotina.
 - Implementar cabecalho com voltar, pausar e parar/cancelar.
 - Implementar um conjunto principal de controles grandes de incremento/decremento para carga, reps e RIR do exercicio atual.
@@ -289,11 +301,13 @@ Escopo:
 - `Salvar serie` deve salvar os valores atuais do exercicio em andamento, sem pedir campos separados por repeticao.
 - Apos salvar serie, abrir estado de descanso `UX-05`.
 - Implementar `+30s`, `Pular` e `Iniciar proxima serie`.
+- Permitir voltar a lista/detalhe ou escolher outro exercicio quando o proximo aparelho estiver ocupado.
 - Manter os dados no draft ate finalizar a rotina.
 
 Pronto quando:
 
 - A execucao nao lista todos os exercicios ao mesmo tempo.
+- A execucao inicia no exercicio escolhido no detalhe do treino.
 - Usuario registra serie em poucos toques.
 - O exercicio atual apresenta carga, reps e RIR em um unico bloco de entrada.
 - Estados de progresso deixam claro o que ja foi concluido, o que esta em execucao e o que esta pendente.
@@ -401,7 +415,7 @@ Escopo:
   - importacao/preview
   - inicio com plano ativo
   - importacao/modelo dentro de ajustes quando ha treino ativo
-  - detalhe do treino
+  - detalhe do treino com escolha do exercicio inicial
   - execucao
   - descanso
   - finalizacao
