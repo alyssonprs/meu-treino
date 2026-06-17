@@ -537,37 +537,46 @@ function screen04(index) {
     ),
   );
   add(progressBar("routine-progress", x + 32, y + 124, 326, 0.33, c, { h: 8 }));
-  add(rect("timer-compact", x + 32, y + 150, 326, 78, c, { stroke: c.info }));
-  add(text("timer-compact-copy", x + 56, y + 156, "Descanso", c, {
-    width: 120,
+  add(rect("timer-compact", x + 32, y + 150, 326, 142, c, { stroke: c.info }));
+  add(text("timer-compact-copy", x + 56, y + 160, "Descanso apos serie salva", c, {
+    width: 210,
     size: 15,
     color: c.info,
   }));
-  add(text("timer-compact-time", x + 56, y + 180, "01:20", c, {
+  add(text("timer-compact-time", x + 56, y + 184, "01:20", c, {
     width: 130,
     size: 31,
     color: c.info,
   }));
-  add(button("skip-rest", x + 234, y + 162, 100, "Pular", c, "info"));
-  add(rect("active-exercise", x + 32, y + 254, 326, 112, c));
-  add(text("active-ex-title", x + 56, y + 276, "Remada baixa", c, { width: 220, size: 22 }));
+  add(text("timer-next-copy", x + 198, y + 174, "Proxima serie\n45 kg sugerido", c, {
+    width: 128,
+    size: 13,
+    color: c.muted,
+    lineHeight: 1.35,
+    align: "right",
+  }));
+  add(button("add-rest", x + 52, y + 230, 86, "+30s", c, "secondary"));
+  add(button("skip-rest", x + 148, y + 230, 78, "Pular", c, "info"));
+  add(button("start-next-set", x + 236, y + 230, 98, "Prox. serie", c));
+  add(rect("active-exercise", x + 32, y + 318, 326, 102, c));
+  add(text("active-ex-title", x + 56, y + 338, "Remada baixa", c, { width: 220, size: 22 }));
   add(
     text(
       "active-ex-meta",
       x + 56,
-      y + 312,
+      y + 374,
       "3 series | 10-12 reps | RIR alvo 2\nUltima carga: 45 kg",
       c,
       { width: 260, size: 14, color: c.muted, lineHeight: 1.35 },
     ),
   );
-  add(rect("set-card", x + 32, y + 396, 326, 254, c));
-  add(text("set-title", x + 56, y + 420, "Entrada do exercicio", c, {
+  add(rect("set-card", x + 32, y + 446, 326, 206, c));
+  add(text("set-title", x + 56, y + 464, "Entrada do exercicio", c, {
     width: 190,
     size: 18,
     color: c.primary,
   }));
-  add(text("set-helper", x + 56, y + 448, "Carga, reps e RIR pertencem ao exercicio atual.", c, {
+  add(text("set-helper", x + 56, y + 492, "Carga, reps e RIR pertencem ao exercicio atual.", c, {
     width: 255,
     size: 12,
     color: c.weak,
@@ -578,94 +587,43 @@ function screen04(index) {
     ["RIR", "2"],
   ].forEach(([label, value], idx) => {
     const bx = x + 56 + idx * 96;
-    add(text(`set-label-${idx}`, bx, y + 474, label, c, {
+    add(text(`set-label-${idx}`, bx, y + 516, label, c, {
       width: 76,
       size: 13,
       color: c.muted,
       align: "center",
     }));
-    add(rect(`set-value-${idx}`, bx, y + 500, 76, 54, c, {
+    add(rect(`set-value-${idx}`, bx, y + 540, 76, 48, c, {
       fill: c.elevated,
       stroke: c.border,
     }));
-    add(text(`set-value-text-${idx}`, bx + 4, y + 514, value, c, {
+    add(text(`set-value-text-${idx}`, bx + 4, y + 552, value, c, {
       width: 68,
       size: 22,
       align: "center",
     }));
-    add(rect(`minus-${idx}`, bx, y + 568, 34, 34, c, { fill: "transparent" }));
-    add(text(`minus-text-${idx}`, bx + 9, y + 573, "-", c, {
+    add(rect(`minus-${idx}`, bx, y + 598, 34, 30, c, { fill: "transparent" }));
+    add(text(`minus-text-${idx}`, bx + 9, y + 602, "-", c, {
       width: 16,
       size: 18,
       align: "center",
       color: c.muted,
     }));
-    add(rect(`plus-${idx}`, bx + 42, y + 568, 34, 34, c, { fill: "transparent" }));
-    add(text(`plus-text-${idx}`, bx + 50, y + 573, "+", c, {
+    add(rect(`plus-${idx}`, bx + 42, y + 598, 34, 30, c, { fill: "transparent" }));
+    add(text(`plus-text-${idx}`, bx + 50, y + 602, "+", c, {
       width: 18,
       size: 18,
       align: "center",
       color: c.primary,
     }));
   });
-  add(text("set-row-1", x + 56, y + 622, "Serie 1 concluida   45 kg   10   RIR 2", c, {
+  add(text("set-row-1", x + 56, y + 630, "Serie 1 concluida   45 kg   10   RIR 2", c, {
     width: 270,
     size: 13,
     color: c.weak,
   }));
   add(button("save-set", x + 32, y + 684, 326, "Salvar serie", c));
   add(button("next-exercise", x + 32, y + 752, 326, "Voltar a lista", c, "secondary"));
-}
-
-function screen05(index) {
-  const [x, y] = pos(index);
-  const c = dark;
-  add(phoneFrame(x, y, "UX-05 Timer de descanso", c));
-  add(text("timer-head", x + 24, y + 74, "Descanso entre series", c, {
-    width: 270,
-    size: 18,
-  }));
-  add(rect("big-timer-card", x + 32, y + 140, 326, 326, c, {
-    stroke: c.info,
-    strokeWidth: 2,
-  }));
-  add(text("timer-label", x + 72, y + 178, "Supino reto - Serie 2 salva", c, {
-    width: 250,
-    size: 15,
-    align: "center",
-    color: c.muted,
-  }));
-  add(text("big-time", x + 74, y + 230, "01:20", c, {
-    width: 250,
-    size: 58,
-    align: "center",
-    color: c.info,
-    lineHeight: 1.05,
-  }));
-  add(progressBar("rest-progress", x + 76, y + 332, 238, 0.45, c, {
-    fill: c.info,
-    h: 14,
-  }));
-  add(text("rest-target", x + 96, y + 368, "Descanso recomendado: 90s", c, {
-    width: 200,
-    size: 14,
-    align: "center",
-    color: c.muted,
-  }));
-  add(button("add-30", x + 62, y + 498, 126, "+30s", c, "secondary"));
-  add(button("skip-timer", x + 202, y + 498, 126, "Pular", c, "info"));
-  add(rect("next-set-card", x + 32, y + 600, 326, 100, c));
-  add(
-    text(
-      "next-set-text",
-      x + 56,
-      y + 624,
-      "Proxima serie\nCarga sugerida: 52.5 kg | reps 8-10",
-      c,
-      { width: 260, size: 17, lineHeight: 1.35 },
-    ),
-  );
-  add(button("start-next-set", x + 32, y + 730, 326, "Iniciar proxima serie", c));
 }
 
 function screen06(index) {
@@ -1221,7 +1179,7 @@ function screen15(index) {
       "flow-execution-copy",
       x + 56,
       y + 646,
-      "Mostrar um exercicio por vez.\nCarga, reps e RIR sao campos do exercicio atual.",
+      "Mostrar um exercicio por vez.\nDescanso fica em card dentro da UX-04.",
       c,
       { width: 260, size: 14, color: c.muted, lineHeight: 1.35 },
     ),
@@ -1234,7 +1192,6 @@ function screen15(index) {
   screen02,
   screen03,
   screen04,
-  screen05,
   screen06,
   screen07,
   screen08,

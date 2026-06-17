@@ -79,8 +79,8 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 | UX-01 | Inicio sem treino importado | Explicar estado vazio e levar para importar JSON ou baixar modelo | Aprovada |
 | UX-02 | Inicio com treino ativo | Mostrar plano ativo, proximo treino recomendado, progresso do ciclo e botao iniciar | Aprovada |
 | UX-03 | Detalhe do treino recomendado | Mostrar aquecimento, exercicios, cargas sugeridas e iniciar sessao | Aprovada |
-| UX-04 | Execucao do treino | Registrar series, reps, carga, RIR e descanso durante o treino | Aprovada |
-| UX-05 | Timer de descanso | Controlar descanso entre series com acao rapida para pular | Aprovada |
+| UX-04 | Execucao do treino | Registrar series, reps, carga, RIR e descanso integrado por card na propria tela | Aprovada |
+| UX-05 | Descanso integrado na UX-04 | Nao criar tela separada; controlar descanso entre series dentro da UX-04 | Substituida pela UX-04 |
 | UX-06 | Finalizacao do treino | Confirmar treino concluido, salvar ultima rotina e mostrar proxima recomendacao | Aprovada |
 | UX-07 | Historico | Listar treinos concluidos e evolucao basica de carga | Aprovada |
 | UX-08 | Detalhe de exercicio no historico | Mostrar ultima carga, maior carga e progresso por exercicio | Aprovada |
@@ -141,7 +141,7 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 - Lista compacta de exercicios.
 - Registro de serie com carga, reps e RIR.
 - Controles de incremento/decremento para carga e reps.
-- Timer de descanso.
+- Card de descanso dentro da execucao.
 - Estado vazio para nenhum treino importado.
 - Preview de importacao do JSON.
 - Mensagem de erro de JSON invalido.
@@ -227,7 +227,7 @@ Pontos aprovados:
 
 Pontos aprovados:
 
-- O timer de descanso esta visivel sem atrapalhar o registro.
+- O card de descanso esta visivel sem atrapalhar o registro.
 - A serie atual tem destaque suficiente.
 - Os controles de carga, reps e RIR parecem confortaveis para uso com uma mao.
 - A navegacao inferior some durante o treino para reduzir distracao.

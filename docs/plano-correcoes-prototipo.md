@@ -38,8 +38,8 @@ O Excalidraw aprovado contem as telas `UX-01` a `UX-14`:
 1. `UX-01 Inicio sem treino`: estado vazio com acao principal `Importar JSON`, acao secundaria `Baixar modelo`, reforcos de dados locais/offline e bottom nav.
 2. `UX-02 Inicio com treino`: plano ativo, progresso do ciclo, proximo treino recomendado, resumo de ultimo treino/proxima troca/carga preservada e atalhos.
 3. `UX-03 Detalhe do treino`: tela intermediaria antes da execucao, com aquecimento, lista de exercicios tocaveis e cargas sugeridas; tocar em um exercicio abre `UX-04` naquele exercicio.
-4. `UX-04 Execucao do treino`: experiencia focada durante a academia, sem bottom nav, com progresso da rotina, timer, exercicio atual, um conjunto principal de campos para carga/reps/RIR, `Salvar serie` e `Proximo exercicio`.
-5. `UX-05 Timer de descanso`: descanso entre series com `+30s`, `Pular` e `Iniciar proxima serie`.
+4. `UX-04 Execucao do treino`: experiencia focada durante a academia, sem bottom nav, com progresso da rotina, exercicio atual, um conjunto principal de campos para carga/reps/RIR, `Salvar serie`, card de descanso e `Proximo exercicio`.
+5. `UX-05`: nao deve ser implementada como tela separada. O descanso entre series foi absorvido pela `UX-04` como card/estado interno com `+30s`, `Pular` e `Iniciar proxima serie`.
 6. `UX-06 Finalizacao`: confirmacao de treino concluido, resumo salvo e proxima recomendacao.
 7. `UX-07 Historico`: resumo do ciclo, evolucao de carga e ultimos treinos.
 8. `UX-08 Progresso do exercicio`: detalhe de um exercicio no historico, com ultima carga, maior carga e registros recentes.
@@ -66,7 +66,7 @@ Com treino ativo: bottom nav `Ajustes` -> `UX-13 Configuracoes` -> area de trein
 
 ### Treino recomendado
 
-`UX-02 Inicio com treino` -> `UX-03 Detalhe do treino` -> usuario revisa a lista de exercicios e toca no exercicio que vai fazer -> `UX-04 Execucao do treino` naquele exercicio -> salvar series -> `UX-05 Timer de descanso` entre series -> seguir para proximo exercicio disponivel ou voltar a lista -> finalizar rotina -> `UX-06 Finalizacao` -> voltar ao inicio ou ver historico.
+`UX-02 Inicio com treino` -> `UX-03 Detalhe do treino` -> usuario revisa a lista de exercicios e toca no exercicio que vai fazer -> `UX-04 Execucao do treino` naquele exercicio -> salvar serie -> card de descanso dentro da propria `UX-04` -> iniciar proxima serie, seguir para proximo exercicio disponivel ou voltar a lista -> finalizar rotina -> `UX-06 Finalizacao` -> voltar ao inicio ou ver historico.
 
 ### Historico
 
@@ -86,7 +86,7 @@ Troca de tema em `UX-13 Configuracoes` deve aplicar sem reiniciar e persistir lo
 
 - `src/app/App.tsx` concentra quase toda a UI em um unico arquivo e alterna apenas entre home e treino ativo.
 - A bottom nav existe visualmente, mas os itens `Treino`, `Historico` e `Ajustes` nao mudam de tela.
-- Nao ha rotas ou estado de tela para `UX-03`, `UX-05`, `UX-06`, `UX-07`, `UX-08`, `UX-09`, `UX-11`, `UX-12` e `UX-13`.
+- Nao ha rotas ou estado de tela para `UX-03`, `UX-06`, `UX-07`, `UX-08`, `UX-09`, `UX-11`, `UX-12` e `UX-13`.
 - A bottom nav continua visivel durante a execucao do treino, contrariando `UX-04`.
 
 ### Inicio sem treino
@@ -120,11 +120,11 @@ Troca de tema em `UX-13 Configuracoes` deve aplicar sem reiniciar e persistir lo
 - A bottom nav fica visivel durante o treino.
 - O botao principal atual e `Finalizar treino`, mas o fluxo aprovado prioriza salvar serie e avancar.
 
-### Timer e descanso
+### Descanso durante a execucao
 
-- `UX-05 Timer de descanso` nao existe como estado dedicado.
 - O timer atual aparece dentro de cada card de exercicio, sem relacao clara com a serie recem-salva.
 - Faltam `+30s`, `Pular`, proxima serie e carga sugerida.
+- Nao criar uma tela dedicada para `UX-05`; o descanso deve aparecer como card/estado dentro da `UX-04`, ligado a serie recem-salva.
 
 ### Finalizacao
 
@@ -175,6 +175,8 @@ Decisao de execucao para `UX-04`:
 
 - A tela de execucao deve ter um conjunto principal de campos de carga, reps e RIR para o exercicio em andamento.
 - Nao criar uma grade repetida de campos por repeticao ou por todos os exercicios ao mesmo tempo.
+- O descanso deve ficar dentro da propria `UX-04` como card/estado apos salvar serie.
+- Nao criar rota/tela separada para `UX-05`.
 
 Decisao de entrada na execucao:
 
@@ -203,7 +205,7 @@ Escopo:
 - Criar um tipo de rota local, por exemplo `AppScreen`.
 - Implementar `AppShell` com header, conteudo e bottom nav.
 - Fazer bottom nav mudar entre `Inicio`, `Treino`, `Historico` e `Ajustes`.
-- Esconder bottom nav durante execucao de treino, timer e finalizacao.
+- Esconder bottom nav durante execucao de treino e finalizacao.
 - Mover componentes grandes de `App.tsx` para arquivos de feature.
 - Manter os servicos e repositorios existentes.
 
@@ -282,7 +284,7 @@ Pronto quando:
 
 ## Execucao 4 - Refatorar execucao para fluxo guiado por serie
 
-Objetivo: implementar `UX-04` e `UX-05` como fluxo real de treino.
+Objetivo: implementar `UX-04` como fluxo real de treino, com descanso integrado na propria tela.
 
 Arquivos provaveis:
 
@@ -292,7 +294,7 @@ Arquivos provaveis:
 
 Escopo:
 
-- Introduzir estado de sessao ativa com `currentExerciseIndex`, status do exercicio em andamento e timer atual.
+- Introduzir estado de sessao ativa com `currentExerciseIndex`, status do exercicio em andamento e timer/card de descanso atual.
 - Inicializar `currentExerciseIndex` a partir do exercicio tocado na lista de `UX-03`, nao fixar sempre no primeiro exercicio.
 - Mostrar apenas o exercicio atual com contexto de progresso da rotina.
 - Implementar cabecalho com voltar, pausar e parar/cancelar.
@@ -300,8 +302,8 @@ Escopo:
 - Nao renderizar campos de carga/reps/RIR para todos os exercicios ou repeticoes ao mesmo tempo.
 - Implementar `Salvar serie`.
 - `Salvar serie` deve salvar os valores atuais do exercicio em andamento, sem pedir campos separados por repeticao.
-- Apos salvar serie, abrir estado de descanso `UX-05`.
-- Implementar `+30s`, `Pular` e `Iniciar proxima serie`.
+- Apos salvar serie, exibir card/estado de descanso dentro da propria `UX-04`.
+- Implementar `+30s`, `Pular` e `Iniciar proxima serie` nesse card de descanso.
 - Permitir voltar a lista/detalhe e tocar em outro exercicio quando o proximo aparelho estiver ocupado.
 - Manter os dados no draft ate finalizar a rotina.
 
@@ -312,7 +314,7 @@ Pronto quando:
 - Usuario registra serie em poucos toques.
 - O exercicio atual apresenta carga, reps e RIR em um unico bloco de entrada.
 - Estados de progresso deixam claro o que ja foi concluido, o que esta em execucao e o que esta pendente.
-- Timer esta ligado a serie recem-salva.
+- Card de descanso esta ligado a serie recem-salva.
 - Bottom nav nao aparece durante treino.
 - Testes cobrem conversao do draft em sessao salva.
 
@@ -417,8 +419,7 @@ Escopo:
   - inicio com plano ativo
   - importacao/modelo dentro de ajustes quando ha treino ativo
   - detalhe do treino com lista tocavel de exercicios
-  - execucao
-  - descanso
+  - execucao com card de descanso integrado
   - finalizacao
   - historico
   - ajustes
@@ -439,7 +440,7 @@ Pronto quando:
 1. Execucao 1: navegacao e separacao de telas.
 2. Execucao 2: primeiro uso/importacao/modelo.
 3. Execucao 3: home ativa/detalhe do treino.
-4. Execucao 4: execucao guiada/timer.
+4. Execucao 4: execucao guiada com descanso integrado.
 5. Execucao 5: finalizacao.
 6. Execucao 6: historico.
 7. Execucao 7: ajustes.
