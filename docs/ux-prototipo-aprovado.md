@@ -87,8 +87,7 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 | UX-08 | Detalhe de exercicio no historico | Mostrar ultima carga, maior carga e progresso por exercicio | Aprovada |
 | UX-10 | Preview do JSON importado | Mostrar resumo do plano e confirmar substituicao do treino atual | Aprovada |
 | UX-11 | Erro de importacao | Explicar problema no JSON e orientar nova tentativa | Aprovada |
-| UX-12 | Baixar modelo JSON | Permitir baixar ou compartilhar o arquivo modelo | Aprovada |
-| UX-13 | Configuracoes | Trocar tema, exportar backup, apagar dados e ver versao | Aprovada |
+| UX-13 | Configuracoes | Trocar tema, substituir treino atual, baixar modelo, exportar backup, apagar dados e ver versao | Aprovada |
 | UX-14 | Tema claro | Validar a aparencia das telas principais no tema claro | Aprovada |
 
 ## Fluxos principais
@@ -97,7 +96,7 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 
 1. Usuario abre o app.
 2. App mostra `Inicio sem treino importado`.
-3. Usuario pode baixar modelo JSON.
+3. Usuario pode baixar modelo JSON por acao direta na propria tela.
 4. Usuario importa um treino.
 5. App valida e mostra preview.
 6. Usuario confirma.
@@ -117,7 +116,7 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 
 ### Troca de treino
 
-1. Usuario toca em `Importar JSON` na Home sem treino ou na area de JSON em Configuracoes.
+1. Usuario toca em `Importar JSON` na Home sem treino ou em `Substituir treino atual` na area de JSON em Configuracoes.
 2. App valida novo plano.
 3. App mostra preview.
 4. Usuario confirma substituicao.
@@ -193,11 +192,11 @@ Atualize esta tabela quando cada tela for aprovada.
 | ID | Decisao | Observacoes | Data |
 | --- | --- | --- | --- |
 | UX-00 | Modelo Guiada escolhido como base | Combinar tela inicial do modelo 1 com execucao focada inspirada no modelo 3 | 2026-06-15 |
-| UX-01..UX-14 | Prototipos aprovados, com UX-09 removida na V2 | Usar `docs/prototipos/meu-treino-wireframes.excalidraw` como guia base e `docs/prototipos/meu-treino-wireframes-v2.excalidraw` para as correcoes de fluxo | 2026-06-17 |
+| UX-01..UX-14 | Prototipos aprovados, com UX-09 e UX-12 removidas na V2 | Usar `docs/prototipos/meu-treino-wireframes.excalidraw` como guia base e `docs/prototipos/meu-treino-wireframes-v2.excalidraw` para as correcoes de fluxo | 2026-06-17 |
 
 ## Prototipos aprovados
 
-Os wireframes das telas `UX-01` a `UX-14` foram aprovados pelo usuario em 2026-06-15. A implementacao visual deve seguir o arquivo editavel `docs/prototipos/meu-treino-wireframes.excalidraw`, respeitando os tokens definidos em `docs/identidade-visual-opcoes.md`.
+Os wireframes das telas `UX-01` a `UX-14` foram aprovados pelo usuario em 2026-06-15. A implementacao visual deve seguir o arquivo editavel `docs/prototipos/meu-treino-wireframes.excalidraw`, respeitando os tokens definidos em `docs/identidade-visual-opcoes.md`. No fluxo V2, `UX-09` e `UX-12` nao existem como telas: selecionar JSON e baixar modelo sao acoes diretas a partir de `UX-01` ou `UX-13`.
 
 ### UX-01 - Inicio sem treino importado
 

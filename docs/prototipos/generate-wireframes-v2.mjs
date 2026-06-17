@@ -908,46 +908,6 @@ function screen11(index) {
   add(nav(x, y, c, "Treino"));
 }
 
-function screen12(index) {
-  const [x, y] = pos(index);
-  const c = dark;
-  add(phoneFrame(x, y, "UX-12 Baixar modelo JSON v2", c), header(x, y, c, "Modelo JSON", "Dados locais"));
-  add(rect("model-card", x + 32, y + 160, 326, 252, c));
-  add(ellipse("model-icon", x + 154, y + 190, 82, 82, c, {
-    fill: c.elevated,
-    stroke: c.info,
-  }));
-  add(text("model-title", x + 62, y + 294, "Modelo para gerar treino", c, {
-    width: 266,
-    size: 21,
-    align: "center",
-  }));
-  add(
-    text(
-      "model-copy",
-      x + 62,
-      y + 330,
-      "Sem treino ativo: acesso pela Home. Com treino ativo: acesso por Ajustes.",
-      c,
-      { width: 266, size: 14, align: "center", color: c.muted, lineHeight: 1.35 },
-    ),
-  );
-  add(button("download-template", x + 48, y + 450, 294, "Baixar JSON modelo", c));
-  add(button("share-template", x + 48, y + 520, 294, "Compartilhar modelo", c, "info"));
-  add(rect("model-steps", x + 32, y + 612, 326, 110, c));
-  add(
-    text(
-      "model-steps-copy",
-      x + 56,
-      y + 636,
-      "1. Baixe o modelo\n2. Gere um treino novo\n3. Importe o JSON final",
-      c,
-      { width: 260, size: 15, color: c.muted, lineHeight: 1.45 },
-    ),
-  );
-  add(nav(x, y, c, "Ajustes"));
-}
-
 function screen13(index) {
   const [x, y] = pos(index);
   const c = dark;
@@ -987,14 +947,13 @@ function screen13(index) {
       "json-copy",
       x + 56,
       y + 356,
-      "Com plano ativo, baixar modelo e importar novo treino ficam aqui. Importar abre o seletor direto.",
+      "Com plano ativo, a troca de treino fica aqui. Substituir abre o seletor direto.",
       c,
       { width: 260, size: 14, color: c.muted, lineHeight: 1.35 },
     ),
   );
-  add(button("settings-download-model", x + 56, y + 416, 126, "Modelo", c, "info"));
-  add(button("settings-import-json", x + 196, y + 416, 126, "Importar", c));
-  add(button("settings-replace-plan", x + 56, y + 476, 266, "Substituir treino atual", c, "secondary"));
+  add(button("settings-replace-plan", x + 56, y + 416, 266, "Substituir treino atual", c, "secondary"));
+  add(button("settings-download-model", x + 56, y + 476, 266, "Baixar modelo", c, "info"));
   add(rect("data-settings", x + 32, y + 552, 326, 112, c));
   add(text("data-title", x + 56, y + 574, "Dados locais", c, { width: 180, size: 18 }));
   add(
@@ -1080,7 +1039,7 @@ function screen15(index) {
     size: 19,
     color: c.info,
   }));
-  add(text("flow-home-empty-copy", x + 56, y + 204, "Home mostra Importar e Modelo.\nImportar abre seletor de arquivo direto.", c, {
+  add(text("flow-home-empty-copy", x + 56, y + 204, "Home mostra Importar e Baixar modelo.\nAmbas sao acoes diretas.", c, {
     width: 260,
     size: 14,
     color: c.muted,
@@ -1097,7 +1056,7 @@ function screen15(index) {
       "flow-home-active-copy",
       x + 56,
       y + 328,
-      "Home prioriza o proximo treino.\nJSON, modelo e troca de treino ficam em Ajustes.",
+      "Home prioriza o proximo treino.\nSubstituir treino e modelo ficam em Ajustes.",
       c,
       { width: 260, size: 14, color: c.muted, lineHeight: 1.35 },
     ),
@@ -1147,7 +1106,6 @@ function screen15(index) {
   screen08,
   screen10,
   screen11,
-  screen12,
   screen13,
   screen14,
   screen15,

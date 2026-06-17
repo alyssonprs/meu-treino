@@ -213,7 +213,7 @@ Regra simples para aviso de novo treino:
 - Execucao de exercicio: registro rapido de cada serie, com carga, repeticoes e observacoes.
 - Historico: treinos concluidos e evolucao de carga por exercicio.
 - Importar treino: acao contextual na Home sem treino ou em Configuracoes com treino ativo; selecionar JSON, validar, mostrar preview e substituir plano atual.
-- Baixar modelo: baixar ou compartilhar `meu-treino-modelo.json`.
+- Baixar modelo: acao contextual na Home sem treino ou em Configuracoes com treino ativo; executa download direto de `meu-treino-modelo.json`.
 - Configuracoes: exportar backup local, apagar dados locais e informacoes da versao.
 
 ### Direcao de usabilidade aprovada
