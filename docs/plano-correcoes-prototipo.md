@@ -38,7 +38,7 @@ O Excalidraw aprovado contem as telas `UX-01` a `UX-14`:
 1. `UX-01 Inicio sem treino`: estado vazio com acao principal `Importar JSON`, acao secundaria `Baixar modelo`, reforcos de dados locais/offline e bottom nav.
 2. `UX-02 Inicio com treino`: plano ativo, progresso do ciclo, proximo treino recomendado, resumo de ultimo treino/proxima troca/carga preservada e atalhos.
 3. `UX-03 Detalhe do treino`: tela intermediaria antes da execucao, com aquecimento, exercicios, cargas sugeridas e botao `Iniciar treino`.
-4. `UX-04 Execucao do treino`: experiencia focada durante a academia, sem bottom nav, com progresso da rotina, timer, serie atual, controles de carga/reps/RIR, `Salvar serie` e `Proximo exercicio`.
+4. `UX-04 Execucao do treino`: experiencia focada durante a academia, sem bottom nav, com progresso da rotina, timer, exercicio atual, um conjunto principal de campos para carga/reps/RIR, `Salvar serie` e `Proximo exercicio`.
 5. `UX-05 Timer de descanso`: descanso entre series com `+30s`, `Pular` e `Iniciar proxima serie`.
 6. `UX-06 Finalizacao`: confirmacao de treino concluido, resumo salvo e proxima recomendacao.
 7. `UX-07 Historico`: resumo do ciclo, evolucao de carga e ultimos treinos.
@@ -47,7 +47,7 @@ O Excalidraw aprovado contem as telas `UX-01` a `UX-14`:
 10. `UX-10 Preview do JSON`: resumo do plano valido e confirmacao de substituicao.
 11. `UX-11 Erro de importacao`: erro claro de JSON invalido, detalhe tecnico e recuperacao.
 12. `UX-12 Baixar modelo JSON`: tela dedicada para baixar/compartilhar o modelo e orientar o uso.
-13. `UX-13 Configuracoes`: tema, backup, restauracao, apagar dados locais e informacoes do app.
+13. `UX-13 Configuracoes`: tema, funcoes de JSON/troca de treino quando houver plano ativo, backup, restauracao, apagar dados locais e informacoes do app.
 14. `UX-14 Tema claro`: validacao visual das telas principais no tema claro.
 
 ## Navegacao esperada
@@ -60,7 +60,9 @@ Caminho alternativo: `UX-09 Importar JSON` -> erro de validacao -> `UX-11 Erro d
 
 ### Baixar modelo
 
-`UX-01 Inicio sem treino` ou `UX-09 Importar JSON` -> `UX-12 Baixar modelo JSON` -> baixar ou compartilhar modelo -> voltar.
+Sem treino ativo: `UX-01 Inicio sem treino` ou `UX-09 Importar JSON` -> `UX-12 Baixar modelo JSON` -> baixar ou compartilhar modelo -> voltar.
+
+Com treino ativo: bottom nav `Ajustes` -> `UX-13 Configuracoes` -> area de treino/JSON -> baixar modelo, importar novo JSON ou substituir treino atual.
 
 ### Treino recomendado
 
@@ -72,7 +74,7 @@ Bottom nav `Historico` -> `UX-07 Historico` -> selecionar exercicio -> `UX-08 Pr
 
 ### Ajustes
 
-Bottom nav `Ajustes` -> `UX-13 Configuracoes` -> alternar tema, exportar/importar backup, apagar dados ou ver versao.
+Bottom nav `Ajustes` -> `UX-13 Configuracoes` -> alternar tema, baixar modelo JSON, importar/substituir treino, exportar/importar backup, apagar dados ou ver versao.
 
 ### Tema
 
@@ -98,9 +100,9 @@ Troca de tema em `UX-13 Configuracoes` deve aplicar sem reiniciar e persistir lo
 
 - A tela atual nao segue `UX-02`: falta o card superior de progresso do ciclo com destaque, semana atual e contador.
 - O card de proximo treino nao exibe duracao, volume, descanso, relacao com treino anterior e hierarquia visual aprovada.
-- O app mantem `Importar JSON` e `Baixar modelo` como destaque principal mesmo com plano ativo.
+- O app mantem `Importar JSON` e `Baixar modelo` como destaque principal mesmo com plano ativo; com treino ativo, essas acoes e toda troca de treino devem ficar em `Ajustes`.
 - O preview `Plano ativo atualizado` permanece na home ate o usuario fechar, criando um estado intermediario que nao aparece no fluxo aprovado.
-- Faltam os blocos/atalhos de `Ultimo treino`, `Proxima troca`, `Carga preservada`, `Ver plano`, `Importar novo` e `Historico` conforme o prototipo.
+- Faltam os blocos/atalhos de `Ultimo treino`, `Proxima troca`, `Carga preservada`, `Ver plano` e `Historico` conforme o prototipo; `Importar novo` deve sair da home ativa e ficar em `Ajustes`.
 
 ### Detalhe do treino
 
@@ -110,7 +112,8 @@ Troca de tema em `UX-13 Configuracoes` deve aplicar sem reiniciar e persistir lo
 ### Execucao do treino
 
 - A tela atual mostra todos os exercicios e todas as series em uma lista longa.
-- O prototipo exige uma experiencia guiada por exercicio/serie atual, com progresso da rotina, timer em destaque, `Salvar serie` e `Proximo exercicio`.
+- O prototipo exige uma experiencia guiada por exercicio atual, com progresso da rotina, timer em destaque, um conjunto principal de campos para carga/reps/RIR, `Salvar serie` e `Proximo exercicio`.
+- A entrada de carga, reps e RIR deve ser preenchida para o exercicio em execucao, sem repetir uma grade de campos para cada repeticao ou para todos os exercicios ao mesmo tempo.
 - Nao ha controles de incremento/decremento para carga, reps e RIR.
 - Nao ha estados visuais de serie concluida, serie em execucao e serie pendente como em `UX-04`.
 - Nao ha cabecalho com voltar, pausar e parar.
@@ -137,6 +140,7 @@ Troca de tema em `UX-13 Configuracoes` deve aplicar sem reiniciar e persistir lo
 ### Importacao e modelo
 
 - `UX-09`, `UX-10`, `UX-11` e `UX-12` estao implementadas como paineis embutidos na home, nao como fluxo dedicado.
+- A home sem treino ativo deve ter importacao/modelo em destaque; a home com treino ativo nao deve exibir esse card. Com treino ativo, importacao, download do modelo e substituicao de treino pertencem a `Ajustes`.
 - O erro de importacao nao foi validado visualmente nesta auditoria, mas o codigo mostra que ele tambem fica embutido na home.
 - A tela dedicada de baixar/compartilhar modelo nao existe.
 
@@ -144,6 +148,7 @@ Troca de tema em `UX-13 Configuracoes` deve aplicar sem reiniciar e persistir lo
 
 - `UX-13 Configuracoes` nao existe como tela.
 - O tema fica embutido na home.
+- As funcoes de JSON e troca de treino nao estao centralizadas em `Ajustes` quando ja existe treino ativo.
 - Backup, importar backup, apagar dados locais e versao nao estao entregues como experiencia de ajustes.
 - O repositorio ja possui `clearAllWorkoutData`, mas nao ha UI dedicada para acionar essa limpeza com confirmacao.
 
@@ -159,6 +164,17 @@ Troca de tema em `UX-13 Configuracoes` deve aplicar sem reiniciar e persistir lo
 Preservar a logica de dominio, validacao, importacao, repositorio Dexie, recomendacao e progresso ja existentes. Corrigir principalmente a arquitetura de telas, navegacao e experiencia de treino.
 
 Nao adicionar novas dependencias de producao sem aprovacao. A principio, as correcoes podem ser feitas com React, Tailwind, shadcn/ui base existente e lucide-react.
+
+Decisao de fluxo para JSON:
+
+- Sem treino ativo, a tela inicial deve manter o card de `Importar JSON` e `Baixar modelo`.
+- Com treino ativo, a tela inicial deve priorizar o proximo treino recomendado e nao deve exibir card de importacao/modelo.
+- Com treino ativo, todas as funcoes de JSON, download de modelo, importacao de novo plano e troca/substituicao de treino devem ficar em `Ajustes`.
+
+Decisao de execucao para `UX-04`:
+
+- A tela de execucao deve ter um conjunto principal de campos de carga, reps e RIR para o exercicio em andamento.
+- Nao criar uma grade repetida de campos por repeticao ou por todos os exercicios ao mesmo tempo.
 
 ## Execucao 1 - Criar shell de navegacao e separar telas
 
@@ -192,7 +208,7 @@ Pronto quando:
 
 ## Execucao 2 - Corrigir primeiro uso, importacao e modelo
 
-Objetivo: implementar `UX-01`, `UX-09`, `UX-10`, `UX-11` e `UX-12` como fluxo dedicado.
+Objetivo: implementar `UX-01`, `UX-09`, `UX-10`, `UX-11` e `UX-12` como fluxo dedicado para quando ainda nao ha treino ativo.
 
 Arquivos provaveis:
 
@@ -204,6 +220,7 @@ Arquivos provaveis:
 Escopo:
 
 - Refazer inicio sem treino conforme `UX-01`.
+- Manter o card de `Importar JSON` e `Baixar modelo` na home somente no estado sem treino ativo.
 - Remover cards duplicados que competem com a acao principal.
 - Criar tela `Importar JSON` com escolha de arquivo e validacao local.
 - Criar tela de preview com confirmacao de substituicao.
@@ -214,6 +231,7 @@ Escopo:
 Pronto quando:
 
 - Primeiro uso segue `UX-01`.
+- Home sem treino ativo mostra importacao/modelo; home com treino ativo nao mostra esse card.
 - Importacao valida segue `UX-09` -> `UX-10` -> `UX-02`.
 - Importacao invalida segue `UX-09` -> `UX-11`.
 - Baixar modelo abre `UX-12` ou executa download a partir dela.
@@ -234,15 +252,17 @@ Escopo:
 
 - Refazer home ativa conforme `UX-02`.
 - Dar prioridade ao proximo treino recomendado.
+- Remover da home ativa o card de `Importar JSON` e `Baixar modelo`.
 - Exibir progresso do ciclo, contador de treinos, semana aproximada e dias por semana.
 - Exibir resumo de ultimo treino, proxima troca e carga preservada.
-- Implementar atalhos `Ver plano`, `Importar novo` e `Historico`.
+- Implementar atalhos `Ver plano` e `Historico`; a acao `Importar novo` deve ficar em `Ajustes`.
 - Criar tela de detalhe do treino recomendado `UX-03`.
 - O botao da home deve ir para detalhe; o botao do detalhe inicia a execucao.
 
 Pronto quando:
 
 - Home com plano ativo nao prioriza importacao.
+- Home com plano ativo nao mostra `Importar JSON`, `Baixar modelo` ou troca de treino.
 - O card principal de `Proximo treino` bate com a hierarquia aprovada.
 - `Iniciar treino` na home abre detalhe antes da execucao.
 - `UX-03` lista aquecimento, exercicios, cargas sugeridas e cooldown.
@@ -260,11 +280,13 @@ Arquivos provaveis:
 
 Escopo:
 
-- Introduzir estado de sessao ativa com `currentExerciseIndex`, `currentSetIndex`, status de series e timer atual.
+- Introduzir estado de sessao ativa com `currentExerciseIndex`, status do exercicio em andamento e timer atual.
 - Mostrar apenas o exercicio atual com contexto de progresso da rotina.
 - Implementar cabecalho com voltar, pausar e parar/cancelar.
-- Implementar controles grandes de incremento/decremento para carga, reps e RIR.
+- Implementar um conjunto principal de controles grandes de incremento/decremento para carga, reps e RIR do exercicio atual.
+- Nao renderizar campos de carga/reps/RIR para todos os exercicios ou repeticoes ao mesmo tempo.
 - Implementar `Salvar serie`.
+- `Salvar serie` deve salvar os valores atuais do exercicio em andamento, sem pedir campos separados por repeticao.
 - Apos salvar serie, abrir estado de descanso `UX-05`.
 - Implementar `+30s`, `Pular` e `Iniciar proxima serie`.
 - Manter os dados no draft ate finalizar a rotina.
@@ -273,7 +295,8 @@ Pronto quando:
 
 - A execucao nao lista todos os exercicios ao mesmo tempo.
 - Usuario registra serie em poucos toques.
-- Series aparecem como concluida, em execucao e pendente.
+- O exercicio atual apresenta carga, reps e RIR em um unico bloco de entrada.
+- Estados de progresso deixam claro o que ja foi concluido, o que esta em execucao e o que esta pendente.
 - Timer esta ligado a serie recem-salva.
 - Bottom nav nao aparece durante treino.
 - Testes cobrem conversao do draft em sessao salva.
@@ -346,6 +369,7 @@ Arquivos provaveis:
 Escopo:
 
 - Mover seletor de tema para tela `Ajustes`.
+- Criar area de treino/JSON em `Ajustes` com `Baixar modelo`, `Importar novo JSON` e confirmacao de substituicao quando ja houver treino ativo.
 - Exibir versao do app.
 - Implementar apagar dados locais com confirmacao.
 - Planejar ou implementar exportar/importar backup local, conforme escopo aprovado antes da execucao.
@@ -355,6 +379,7 @@ Escopo:
 Pronto quando:
 
 - Bottom nav `Ajustes` abre configuracoes reais.
+- Com treino ativo, funcoes de JSON e troca de treino ficam em `Ajustes`, nao na home.
 - Tema claro/escuro funciona e persiste.
 - Apagar dados locais limpa plano, progresso e historico apos confirmacao.
 - Acoes nao implementadas nao devem aparecer como funcionais falsas.
@@ -375,6 +400,7 @@ Escopo:
   - inicio sem treino
   - importacao/preview
   - inicio com plano ativo
+  - importacao/modelo dentro de ajustes quando ha treino ativo
   - detalhe do treino
   - execucao
   - descanso
