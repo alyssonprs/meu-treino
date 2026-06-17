@@ -4,6 +4,8 @@ import {
   idleImportStatus,
   type ImportStatus,
 } from "@/features/import-export/importStatus";
+import { ImportErrorScreen } from "@/features/import-export/ImportErrorScreen";
+import { ImportPreviewScreen } from "@/features/import-export/ImportPreviewScreen";
 import { AppShell } from "@/features/navigation/AppShell";
 import type {
   AppScreen,
@@ -131,7 +133,7 @@ export function App() {
           preview: null,
           errors: result.errors,
         });
-        setActiveScreen("home");
+        setActiveScreen("import-error");
         return;
       }
 
@@ -141,7 +143,7 @@ export function App() {
         preview: result.preview,
         errors: [],
       });
-      setActiveScreen("home");
+      setActiveScreen("import-preview");
     } catch {
       setImportStatus({
         state: "error",
@@ -154,7 +156,7 @@ export function App() {
           },
         ],
       });
-      setActiveScreen("home");
+      setActiveScreen("import-error");
     } finally {
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
@@ -184,12 +186,7 @@ export function App() {
       });
       const savedPlan = await pwaWorkoutPlanRepository.getActivePlan();
       setActivePlan(savedPlan);
-      setImportStatus({
-        state: "saved",
-        fileName,
-        preview,
-        errors: [],
-      });
+      setImportStatus(idleImportStatus);
       setActiveScreen("home");
     } catch {
       setImportStatus({
@@ -354,20 +351,39 @@ export function App() {
       return <SettingsScreen />;
     }
 
+    if (
+      activeScreen === "import-preview" &&
+      (importStatus.state === "preview" || importStatus.state === "saving")
+    ) {
+      return (
+        <ImportPreviewScreen
+          importStatus={importStatus}
+          onActivatePlan={() => {
+            void handleActivatePlan();
+          }}
+          onChooseAnotherFile={() => fileInputRef.current?.click()}
+        />
+      );
+    }
+
+    if (activeScreen === "import-error" && importStatus.state === "error") {
+      return (
+        <ImportErrorScreen
+          importStatus={importStatus}
+          onChooseAnotherFile={() => fileInputRef.current?.click()}
+        />
+      );
+    }
+
     return (
       <HomeScreen
         activePlan={activePlan}
         cycleProgress={cycleProgress}
-        importStatus={importStatus}
         isLoadingActivePlan={isLoadingActivePlan}
         loadSummaries={loadSummaries}
         nextRecommendation={nextRecommendation}
         workoutMessage={workoutMessage}
-        onActivatePlan={() => {
-          void handleActivatePlan();
-        }}
         onChooseImportFile={() => fileInputRef.current?.click()}
-        onResetImport={() => setImportStatus(idleImportStatus)}
         onStartRecommendedWorkout={() => {
           void handleStartRecommendedWorkout();
         }}

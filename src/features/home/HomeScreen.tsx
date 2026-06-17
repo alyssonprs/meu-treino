@@ -7,8 +7,6 @@ import {
 } from "lucide-react";
 import modelJsonUrl from "@/assets/meu-treino-modelo.json?url";
 import { Button } from "@/components/ui/button";
-import { ImportPanel } from "@/features/import-export/ImportPanel";
-import type { ImportStatus } from "@/features/import-export/importStatus";
 import { LoadHistoryPanel } from "@/features/progress/LoadHistoryPanel";
 import type {
   CycleProgressSummary,
@@ -21,31 +19,97 @@ import { getRecommendationReasonLabel } from "@/features/workouts/workoutFormatt
 type HomeScreenProps = {
   activePlan: ActiveWorkoutPlanSnapshot | null;
   cycleProgress: CycleProgressSummary | null;
-  importStatus: ImportStatus;
   isLoadingActivePlan: boolean;
   loadSummaries: ExerciseLoadSummary[];
   nextRecommendation: NextRoutineRecommendation | null;
   workoutMessage: string | null;
-  onActivatePlan: () => void;
   onChooseImportFile: () => void;
-  onResetImport: () => void;
   onStartRecommendedWorkout: () => void;
 };
 
 export function HomeScreen({
   activePlan,
   cycleProgress,
-  importStatus,
   isLoadingActivePlan,
   loadSummaries,
   nextRecommendation,
   workoutMessage,
-  onActivatePlan,
   onChooseImportFile,
-  onResetImport,
   onStartRecommendedWorkout,
 }: HomeScreenProps) {
-  const hasActivePlan = Boolean(activePlan);
+  if (!activePlan) {
+    return (
+      <>
+        <section className="mt-6 rounded-lg border border-border bg-card p-5 shadow-sm">
+          <div className="flex items-center gap-2 text-sm font-medium text-info">
+            <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+            Dados locais
+          </div>
+
+          <div className="mt-5 space-y-3">
+            <p className="text-sm text-muted-foreground">
+              {isLoadingActivePlan ? "Carregando" : "Primeiro uso"}
+            </p>
+            <h2 className="text-3xl font-semibold leading-tight">
+              {isLoadingActivePlan
+                ? "Carregando seu treino"
+                : "Importe seu treino para comecar"}
+            </h2>
+            <p className="text-base leading-7 text-muted-foreground">
+              {isLoadingActivePlan
+                ? "Buscando os dados salvos neste dispositivo."
+                : "Escolha um JSON de treino. Antes de salvar, o app valida o arquivo e mostra um resumo para confirmacao."}
+            </p>
+          </div>
+
+          <div className="mt-6 grid gap-3">
+            <Button
+              className="h-14 justify-start gap-3 text-base"
+              disabled={isLoadingActivePlan}
+              onClick={onChooseImportFile}
+              type="button"
+            >
+              <FileInput className="h-5 w-5" aria-hidden="true" />
+              Importar JSON
+            </Button>
+            <Button
+              asChild
+              className="h-14 justify-start gap-3 text-base"
+              variant="secondary"
+            >
+              <a download="meu-treino-modelo.json" href={modelJsonUrl}>
+                <Download className="h-5 w-5" aria-hidden="true" />
+                Baixar modelo
+              </a>
+            </Button>
+          </div>
+        </section>
+
+        <section className="mt-5 rounded-lg border border-border bg-card p-4">
+          <div className="grid gap-3">
+            <BenefitItem
+              description="Treino e cargas ficam neste dispositivo."
+              title="100% local"
+            />
+            <BenefitItem
+              description="Depois de instalado, o app abre mesmo sem internet."
+              title="Funciona offline"
+            />
+            <BenefitItem
+              description="Baixe o JSON base para gerar um plano compativel."
+              title="Modelo pronto"
+            />
+          </div>
+        </section>
+
+        {workoutMessage ? (
+          <p className="mt-5 rounded-lg border border-info bg-card p-4 text-sm leading-6">
+            {workoutMessage}
+          </p>
+        ) : null}
+      </>
+    );
+  }
 
   return (
     <>
@@ -55,51 +119,19 @@ export function HomeScreen({
           Offline pronto
         </div>
         <div className="mt-5 space-y-3">
-          <p className="text-sm text-muted-foreground">
-            {hasActivePlan ? "Plano ativo" : "Nenhum plano ativo"}
-          </p>
+          <p className="text-sm text-muted-foreground">Plano ativo</p>
           <h2 className="text-3xl font-semibold leading-tight">
             {isLoadingActivePlan
               ? "Carregando seu treino"
-              : activePlan?.plan.name ?? "Importe seu treino para comecar"}
+              : activePlan.plan.name}
           </h2>
           <p className="text-base leading-7 text-muted-foreground">
             {isLoadingActivePlan
               ? "Buscando os dados salvos neste dispositivo."
-              : activePlan
-                ? `${activePlan.plan.objective} - ${activePlan.routines.length} rotinas`
-                : "O app guarda treino, cargas e progresso no proprio dispositivo."}
+              : `${activePlan.plan.objective} - ${activePlan.routines.length} rotinas`}
           </p>
         </div>
-
-        <div className="mt-6 grid gap-3">
-          <Button
-            className="h-14 justify-start gap-3 text-base"
-            onClick={onChooseImportFile}
-            type="button"
-          >
-            <FileInput className="h-5 w-5" aria-hidden="true" />
-            Importar JSON
-          </Button>
-          <Button
-            asChild
-            className="h-14 justify-start gap-3 text-base"
-            variant="secondary"
-          >
-            <a download="meu-treino-modelo.json" href={modelJsonUrl}>
-              <Download className="h-5 w-5" aria-hidden="true" />
-              Baixar modelo
-            </a>
-          </Button>
-        </div>
       </section>
-
-      <ImportPanel
-        importStatus={importStatus}
-        onActivatePlan={onActivatePlan}
-        onChooseAnotherFile={onChooseImportFile}
-        onReset={onResetImport}
-      />
 
       {activePlan && nextRecommendation ? (
         <section className="mt-5 rounded-lg border border-info bg-card p-4">
@@ -179,3 +211,19 @@ export function HomeScreen({
   );
 }
 
+function BenefitItem({
+  description,
+  title,
+}: {
+  description: string;
+  title: string;
+}) {
+  return (
+    <div className="rounded-md bg-muted p-3">
+      <p className="text-sm font-semibold">{title}</p>
+      <p className="mt-1 text-sm leading-6 text-muted-foreground">
+        {description}
+      </p>
+    </div>
+  );
+}

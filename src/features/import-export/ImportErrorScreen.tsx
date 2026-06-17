@@ -1,0 +1,66 @@
+import { AlertCircle, Download, RotateCcw } from "lucide-react";
+import modelJsonUrl from "@/assets/meu-treino-modelo.json?url";
+import { Button } from "@/components/ui/button";
+import type { ImportStatus } from "./importStatus";
+
+type ImportErrorStatus = Extract<ImportStatus, { state: "error" }>;
+
+type ImportErrorScreenProps = {
+  importStatus: ImportErrorStatus;
+  onChooseAnotherFile: () => void;
+};
+
+export function ImportErrorScreen({
+  importStatus,
+  onChooseAnotherFile,
+}: ImportErrorScreenProps) {
+  return (
+    <section className="mt-6 rounded-lg border border-destructive bg-card p-5">
+      <div className="flex items-start gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-destructive">
+          <AlertCircle className="h-5 w-5" aria-hidden="true" />
+        </div>
+        <div className="min-w-0">
+          <p className="text-sm text-muted-foreground">
+            {importStatus.fileName ?? "Arquivo selecionado"}
+          </p>
+          <h2 className="mt-1 text-2xl font-semibold">JSON nao importado</h2>
+        </div>
+      </div>
+
+      <p className="mt-4 text-sm leading-6 text-muted-foreground">
+        O arquivo nao segue o modelo esperado pelo app. Confira o detalhe
+        tecnico abaixo ou tente importar outro JSON.
+      </p>
+
+      <ul className="mt-4 space-y-2 rounded-md bg-muted p-3">
+        {importStatus.errors.slice(0, 5).map((error) => (
+          <li
+            className="text-sm leading-6"
+            key={`${error.path}-${error.message}`}
+          >
+            <span className="font-medium">{error.path}:</span>{" "}
+            <span className="text-muted-foreground">{error.message}</span>
+          </li>
+        ))}
+      </ul>
+
+      <div className="mt-5 grid gap-2">
+        <Button
+          className="h-12 w-full gap-2"
+          onClick={onChooseAnotherFile}
+          type="button"
+        >
+          <RotateCcw className="h-5 w-5" aria-hidden="true" />
+          Escolher outro arquivo
+        </Button>
+        <Button asChild className="h-12 w-full gap-2" variant="secondary">
+          <a download="meu-treino-modelo.json" href={modelJsonUrl}>
+            <Download className="h-5 w-5" aria-hidden="true" />
+            Baixar modelo
+          </a>
+        </Button>
+      </div>
+    </section>
+  );
+}

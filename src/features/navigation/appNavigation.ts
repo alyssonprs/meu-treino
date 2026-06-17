@@ -5,6 +5,8 @@ export type AppScreen =
   | "workout"
   | "history"
   | "settings"
+  | "import-preview"
+  | "import-error"
   | "active-workout"
   | "workout-finished";
 

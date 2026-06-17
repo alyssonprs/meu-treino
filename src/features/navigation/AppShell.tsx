@@ -10,7 +10,10 @@ const mainNavItems: NavItemDefinition[] = [
   { screen: "settings", label: "Ajustes", icon: Settings },
 ];
 
-const screensWithoutBottomNav: AppScreen[] = ["active-workout", "workout-finished"];
+const screensWithoutBottomNav: AppScreen[] = [
+  "active-workout",
+  "workout-finished",
+];
 
 type AppShellProps = {
   activeScreen: AppScreen;
