@@ -35,6 +35,7 @@ Ferramentas auxiliares:
 Arquivo editavel principal:
 
 - `docs/prototipos/meu-treino-wireframes.excalidraw`
+- Revisao de fluxo atual: `docs/prototipos/meu-treino-wireframes-v2.excalidraw`
 
 Versao atual:
 
@@ -84,7 +85,6 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 | UX-06 | Finalizacao do treino | Confirmar treino concluido, salvar ultima rotina e mostrar proxima recomendacao | Aprovada |
 | UX-07 | Historico | Listar treinos concluidos e evolucao basica de carga | Aprovada |
 | UX-08 | Detalhe de exercicio no historico | Mostrar ultima carga, maior carga e progresso por exercicio | Aprovada |
-| UX-09 | Importar JSON | Selecionar arquivo local e validar estrutura | Aprovada |
 | UX-10 | Preview do JSON importado | Mostrar resumo do plano e confirmar substituicao do treino atual | Aprovada |
 | UX-11 | Erro de importacao | Explicar problema no JSON e orientar nova tentativa | Aprovada |
 | UX-12 | Baixar modelo JSON | Permitir baixar ou compartilhar o arquivo modelo | Aprovada |
@@ -117,7 +117,7 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 
 ### Troca de treino
 
-1. Usuario acessa importar JSON.
+1. Usuario toca em `Importar JSON` na Home sem treino ou na area de JSON em Configuracoes.
 2. App valida novo plano.
 3. App mostra preview.
 4. Usuario confirma substituicao.
@@ -143,7 +143,7 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 - Controles de incremento/decremento para carga e reps.
 - Card de descanso dentro da execucao.
 - Estado vazio para nenhum treino importado.
-- Preview de importacao do JSON.
+- Preview de importacao do JSON apos seletor de arquivo acionado pela Home ou por Configuracoes.
 - Mensagem de erro de JSON invalido.
 - Historico resumido de cargas.
 - Configuracoes com tema claro/escuro.
@@ -193,7 +193,7 @@ Atualize esta tabela quando cada tela for aprovada.
 | ID | Decisao | Observacoes | Data |
 | --- | --- | --- | --- |
 | UX-00 | Modelo Guiada escolhido como base | Combinar tela inicial do modelo 1 com execucao focada inspirada no modelo 3 | 2026-06-15 |
-| UX-01..UX-14 | Todos os prototipos aprovados | Usar `docs/prototipos/meu-treino-wireframes.excalidraw` como guia de desenvolvimento das telas | 2026-06-15 |
+| UX-01..UX-14 | Prototipos aprovados, com UX-09 removida na V2 | Usar `docs/prototipos/meu-treino-wireframes.excalidraw` como guia base e `docs/prototipos/meu-treino-wireframes-v2.excalidraw` para as correcoes de fluxo | 2026-06-17 |
 
 ## Prototipos aprovados
 

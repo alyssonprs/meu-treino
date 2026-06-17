@@ -14,6 +14,7 @@ Este documento foi escrito para orientar proximas execucoes do Codex em tarefas 
 - `docs/arquitetura-prompt.md`
 - `docs/ux-prototipo-aprovado.md`
 - `docs/prototipos/meu-treino-wireframes.excalidraw`
+- `docs/prototipos/meu-treino-wireframes-v2.excalidraw`
 - `docs/prototipos/ux-01-inicio-sem-treino.png`
 - `docs/prototipos/ux-02-inicio-com-treino-ativo.png`
 - `docs/prototipos/ux-04-execucao-do-treino.png`
@@ -33,7 +34,7 @@ Observacao tecnica: o Browser interno do Codex falhou no Windows por permissao d
 
 ## Sequencia de telas aprovada
 
-O Excalidraw aprovado contem as telas `UX-01` a `UX-14`:
+O Excalidraw V2 contem as telas `UX-01` a `UX-14`, com `UX-09` removida como tela independente:
 
 1. `UX-01 Inicio sem treino`: estado vazio com acao principal `Importar JSON`, acao secundaria `Baixar modelo`, reforcos de dados locais/offline e bottom nav.
 2. `UX-02 Inicio com treino`: plano ativo, progresso do ciclo, proximo treino recomendado, resumo de ultimo treino/proxima troca/carga preservada e atalhos.
@@ -43,7 +44,7 @@ O Excalidraw aprovado contem as telas `UX-01` a `UX-14`:
 6. `UX-06 Finalizacao`: confirmacao de treino concluido, resumo salvo e proxima recomendacao.
 7. `UX-07 Historico`: resumo do ciclo, evolucao de carga e ultimos treinos.
 8. `UX-08 Progresso do exercicio`: detalhe de um exercicio no historico, com ultima carga, maior carga e registros recentes.
-9. `UX-09 Importar JSON`: tela dedicada para escolher arquivo e explicar validacao local.
+9. `UX-09`: removida. A escolha do arquivo JSON deve acontecer diretamente no card da `UX-01` quando nao houver treino ativo, ou no card de treino/JSON da `UX-13` quando houver treino ativo.
 10. `UX-10 Preview do JSON`: resumo do plano valido e confirmacao de substituicao.
 11. `UX-11 Erro de importacao`: erro claro de JSON invalido, detalhe tecnico e recuperacao.
 12. `UX-12 Baixar modelo JSON`: tela dedicada para baixar/compartilhar o modelo e orientar o uso.
@@ -54,13 +55,13 @@ O Excalidraw aprovado contem as telas `UX-01` a `UX-14`:
 
 ### Primeiro uso
 
-`UX-01 Inicio sem treino` -> `UX-09 Importar JSON` -> `UX-10 Preview do JSON` -> confirma importacao -> `UX-02 Inicio com treino`.
+`UX-01 Inicio sem treino` -> tocar em `Importar JSON` abre o seletor de arquivo -> `UX-10 Preview do JSON` -> confirma importacao -> `UX-02 Inicio com treino`.
 
-Caminho alternativo: `UX-09 Importar JSON` -> erro de validacao -> `UX-11 Erro de importacao` -> escolher outro arquivo ou baixar modelo.
+Caminho alternativo: `UX-01` -> tocar em `Importar JSON` abre o seletor de arquivo -> erro de validacao -> `UX-11 Erro de importacao` -> escolher outro arquivo ou baixar modelo.
 
 ### Baixar modelo
 
-Sem treino ativo: `UX-01 Inicio sem treino` ou `UX-09 Importar JSON` -> `UX-12 Baixar modelo JSON` -> baixar ou compartilhar modelo -> voltar.
+Sem treino ativo: `UX-01 Inicio sem treino` -> `UX-12 Baixar modelo JSON` -> baixar ou compartilhar modelo -> voltar.
 
 Com treino ativo: bottom nav `Ajustes` -> `UX-13 Configuracoes` -> area de treino/JSON -> baixar modelo, importar novo JSON ou substituir treino atual.
 
@@ -76,6 +77,8 @@ Bottom nav `Historico` -> `UX-07 Historico` -> selecionar exercicio -> `UX-08 Pr
 
 Bottom nav `Ajustes` -> `UX-13 Configuracoes` -> alternar tema, baixar modelo JSON, importar/substituir treino, exportar/importar backup, apagar dados ou ver versao.
 
+Com treino ativo: bottom nav `Ajustes` -> `UX-13 Configuracoes` -> tocar em `Importar` abre o seletor de arquivo -> `UX-10 Preview do JSON` ou `UX-11 Erro de importacao`.
+
 ### Tema
 
 Troca de tema em `UX-13 Configuracoes` deve aplicar sem reiniciar e persistir localmente. O tema claro deve seguir `UX-14 Tema claro`.
@@ -86,7 +89,7 @@ Troca de tema em `UX-13 Configuracoes` deve aplicar sem reiniciar e persistir lo
 
 - `src/app/App.tsx` concentra quase toda a UI em um unico arquivo e alterna apenas entre home e treino ativo.
 - A bottom nav existe visualmente, mas os itens `Treino`, `Historico` e `Ajustes` nao mudam de tela.
-- Nao ha rotas ou estado de tela para `UX-03`, `UX-06`, `UX-07`, `UX-08`, `UX-09`, `UX-11`, `UX-12` e `UX-13`.
+- Nao ha rotas ou estado de tela para `UX-03`, `UX-06`, `UX-07`, `UX-08`, `UX-11`, `UX-12` e `UX-13`.
 - A bottom nav continua visivel durante a execucao do treino, contrariando `UX-04`.
 
 ### Inicio sem treino
@@ -139,8 +142,9 @@ Troca de tema em `UX-13 Configuracoes` deve aplicar sem reiniciar e persistir lo
 
 ### Importacao e modelo
 
-- `UX-09`, `UX-10`, `UX-11` e `UX-12` estao implementadas como paineis embutidos na home, nao como fluxo dedicado.
+- `UX-10`, `UX-11` e `UX-12` estao implementadas como paineis embutidos na home, nao como fluxo dedicado.
 - A home sem treino ativo deve ter importacao/modelo em destaque; a home com treino ativo nao deve exibir esse card. Com treino ativo, importacao, download do modelo e substituicao de treino pertencem a `Ajustes`.
+- Nao criar tela dedicada `UX-09`; `Importar JSON` deve abrir o seletor de arquivo diretamente a partir da `UX-01` ou da area de JSON em `UX-13`.
 - O erro de importacao nao foi validado visualmente nesta auditoria, mas o codigo mostra que ele tambem fica embutido na home.
 - A tela dedicada de baixar/compartilhar modelo nao existe.
 
@@ -168,8 +172,10 @@ Nao adicionar novas dependencias de producao sem aprovacao. A principio, as corr
 Decisao de fluxo para JSON:
 
 - Sem treino ativo, a tela inicial deve manter o card de `Importar JSON` e `Baixar modelo`.
+- Sem treino ativo, `Importar JSON` abre o seletor de arquivo diretamente na `UX-01`, sem passar por uma tela `UX-09`.
 - Com treino ativo, a tela inicial deve priorizar o proximo treino recomendado e nao deve exibir card de importacao/modelo.
-- Com treino ativo, todas as funcoes de JSON, download de modelo, importacao de novo plano e troca/substituicao de treino devem ficar em `Ajustes`.
+- Com treino ativo, todas as funcoes de JSON, download de modelo, importacao de novo plano e troca/substituicao de treino devem ficar em `Ajustes`; `Importar` em `UX-13` abre o seletor de arquivo diretamente.
+- Nao implementar rota/tela `UX-09`.
 
 Decisao de execucao para `UX-04`:
 
@@ -218,7 +224,7 @@ Pronto quando:
 
 ## Execucao 2 - Corrigir primeiro uso, importacao e modelo
 
-Objetivo: implementar `UX-01`, `UX-09`, `UX-10`, `UX-11` e `UX-12` como fluxo dedicado para quando ainda nao ha treino ativo.
+Objetivo: implementar `UX-01`, `UX-10`, `UX-11` e `UX-12` para primeiro uso, sem criar uma tela dedicada `UX-09`.
 
 Arquivos provaveis:
 
@@ -232,7 +238,7 @@ Escopo:
 - Refazer inicio sem treino conforme `UX-01`.
 - Manter o card de `Importar JSON` e `Baixar modelo` na home somente no estado sem treino ativo.
 - Remover cards duplicados que competem com a acao principal.
-- Criar tela `Importar JSON` com escolha de arquivo e validacao local.
+- Fazer o botao `Importar JSON` da `UX-01` abrir o seletor de arquivo diretamente.
 - Criar tela de preview com confirmacao de substituicao.
 - Criar tela de erro com detalhe tecnico e recuperacao.
 - Criar tela de baixar modelo com download e, se viavel sem nova dependencia, Web Share API com fallback para download.
@@ -242,8 +248,8 @@ Pronto quando:
 
 - Primeiro uso segue `UX-01`.
 - Home sem treino ativo mostra importacao/modelo; home com treino ativo nao mostra esse card.
-- Importacao valida segue `UX-09` -> `UX-10` -> `UX-02`.
-- Importacao invalida segue `UX-09` -> `UX-11`.
+- Importacao valida segue `UX-01` -> seletor de arquivo -> `UX-10` -> `UX-02`.
+- Importacao invalida segue `UX-01` -> seletor de arquivo -> `UX-11`.
 - Baixar modelo abre `UX-12` ou executa download a partir dela.
 - Checks passam e ha teste visual mobile do primeiro uso/importacao.
 
@@ -387,6 +393,7 @@ Escopo:
 
 - Mover seletor de tema para tela `Ajustes`.
 - Criar area de treino/JSON em `Ajustes` com `Baixar modelo`, `Importar novo JSON` e confirmacao de substituicao quando ja houver treino ativo.
+- Fazer `Importar novo JSON` em `Ajustes` abrir o seletor de arquivo diretamente, sem rota/tela `UX-09`.
 - Exibir versao do app.
 - Implementar apagar dados locais com confirmacao.
 - Planejar ou implementar exportar/importar backup local, conforme escopo aprovado antes da execucao.
@@ -397,6 +404,7 @@ Pronto quando:
 
 - Bottom nav `Ajustes` abre configuracoes reais.
 - Com treino ativo, funcoes de JSON e troca de treino ficam em `Ajustes`, nao na home.
+- Em `Ajustes`, importacao valida segue seletor de arquivo -> `UX-10`, e importacao invalida segue seletor de arquivo -> `UX-11`.
 - Tema claro/escuro funciona e persiste.
 - Apagar dados locais limpa plano, progresso e historico apos confirmacao.
 - Acoes nao implementadas nao devem aparecer como funcionais falsas.

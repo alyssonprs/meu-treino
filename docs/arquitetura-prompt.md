@@ -212,7 +212,7 @@ Regra simples para aviso de novo treino:
 - Treino do dia: lista de aquecimento, exercicios, series, carga sugerida, repeticoes, RIR e descanso.
 - Execucao de exercicio: registro rapido de cada serie, com carga, repeticoes e observacoes.
 - Historico: treinos concluidos e evolucao de carga por exercicio.
-- Importar treino: selecionar JSON, validar, preview e substituir plano atual.
+- Importar treino: acao contextual na Home sem treino ou em Configuracoes com treino ativo; selecionar JSON, validar, mostrar preview e substituir plano atual.
 - Baixar modelo: baixar ou compartilhar `meu-treino-modelo.json`.
 - Configuracoes: exportar backup local, apagar dados locais e informacoes da versao.
 

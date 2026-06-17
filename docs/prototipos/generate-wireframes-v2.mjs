@@ -811,57 +811,6 @@ function screen08(index) {
   add(nav(x, y, c, "Historico"));
 }
 
-function screen09(index) {
-  const [x, y] = pos(index);
-  const c = dark;
-  add(phoneFrame(x, y, "UX-09 Importar JSON v2", c), header(x, y, c, "Importar", "Offline pronto"));
-  add(rect("import-card", x + 32, y + 160, 326, 242, c));
-  add(ellipse("import-icon", x + 154, y + 190, 82, 82, c, {
-    fill: c.elevated,
-    stroke: c.info,
-  }));
-  add(text("import-title", x + 66, y + 294, "Selecione o arquivo JSON", c, {
-    width: 258,
-    size: 21,
-    align: "center",
-  }));
-  add(
-    text(
-      "import-copy",
-      x + 70,
-      y + 330,
-      "Sem treino ativo: acesso pela Home. Com treino ativo: acesso por Ajustes.",
-      c,
-      { width: 250, size: 14, align: "center", color: c.muted, lineHeight: 1.35 },
-    ),
-  );
-  add(button("select-file", x + 48, y + 436, 294, "Escolher arquivo", c));
-  add(rect("validation-rules", x + 32, y + 524, 326, 150, c));
-  add(text("validation-title", x + 56, y + 548, "Validacao local", c, {
-    width: 200,
-    size: 17,
-    color: c.info,
-  }));
-  add(
-    text(
-      "validation-copy",
-      x + 56,
-      y + 584,
-      "Raiz workout_plan\nRotinas e exercicios obrigatorios\nNenhum dado enviado para servidor",
-      c,
-      { width: 260, size: 15, color: c.muted, lineHeight: 1.45 },
-    ),
-  );
-  add(rect("import-flow-rule", x + 32, y + 690, 326, 58, c, { stroke: c.warning }));
-  add(text("import-flow-rule-copy", x + 52, y + 706, "Troca de treino ativo sempre passa por Ajustes.", c, {
-    width: 286,
-    size: 14,
-    align: "center",
-    color: c.warning,
-  }));
-  add(nav(x, y, c, "Treino"));
-}
-
 function screen10(index) {
   const [x, y] = pos(index);
   const c = dark;
@@ -1038,7 +987,7 @@ function screen13(index) {
       "json-copy",
       x + 56,
       y + 356,
-      "Com plano ativo, importar novo treino e baixar modelo ficam aqui, nao na Home.",
+      "Com plano ativo, baixar modelo e importar novo treino ficam aqui. Importar abre o seletor direto.",
       c,
       { width: 260, size: 14, color: c.muted, lineHeight: 1.35 },
     ),
@@ -1131,10 +1080,11 @@ function screen15(index) {
     size: 19,
     color: c.info,
   }));
-  add(text("flow-home-empty-copy", x + 56, y + 204, "Home mostra Importar JSON e Baixar modelo.", c, {
+  add(text("flow-home-empty-copy", x + 56, y + 204, "Home mostra Importar e Modelo.\nImportar abre seletor de arquivo direto.", c, {
     width: 260,
     size: 14,
     color: c.muted,
+    lineHeight: 1.35,
   }));
   add(rect("flow-home-active", x + 32, y + 274, 326, 126, c, { stroke: c.primary }));
   add(text("flow-home-active-title", x + 56, y + 296, "Com treino ativo", c, {
@@ -1195,7 +1145,6 @@ function screen15(index) {
   screen06,
   screen07,
   screen08,
-  screen09,
   screen10,
   screen11,
   screen12,
