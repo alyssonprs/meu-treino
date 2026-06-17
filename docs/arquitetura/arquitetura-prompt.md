@@ -42,7 +42,7 @@ npx cap sync android
 npx cap open android
 ```
 
-Para PWA, publicar o build estatico em Cloudflare Pages com HTTPS, manifest, service worker e icones do aplicativo. A configuracao operacional fica em `docs/deploy-cloudflare.md`.
+Para PWA, publicar o build estatico em Cloudflare Pages com HTTPS, manifest, service worker e icones do aplicativo. A configuracao operacional fica em `docs/arquitetura/deploy-cloudflare.md`.
 
 ### Assets de identidade
 
@@ -65,7 +65,7 @@ Regras:
 - Reutilizar esses arquivos antes de gerar ou desenhar novos assets de marca.
 - Usar esses arquivos no `manifest.webmanifest`, na configuracao PWA e na configuracao Android/Capacitor quando aplicavel.
 - Nao usar os assets de marca como substitutos para icones internos de interface; a UI deve continuar usando `lucide-react` para navegacao, botoes e acoes.
-- Se a identidade visual mudar, atualizar `assets/identity`, este documento e `docs/identidade-visual-opcoes.md`.
+- Se a identidade visual mudar, atualizar `assets/identity`, este documento e `docs/arquitetura/identidade-visual-opcoes.md`.
 
 ### Separacao em camadas
 
@@ -224,7 +224,7 @@ A primeira versao deve seguir o modelo de usabilidade **Guiada**:
 - O botao principal deve ser iniciar o treino recomendado.
 - O plano completo deve existir, mas nao deve competir com a acao principal.
 - A tela de execucao deve ser focada no uso durante a academia, com registro rapido de series, timer de descanso e poucos elementos concorrendo por atencao.
-- O detalhamento e aprovacao das telas deve seguir `docs/ux-prototipo-aprovado.md` antes da implementacao visual final.
+- O detalhamento e aprovacao das telas deve seguir `docs/arquitetura/ux-prototipo-aprovado.md` antes da implementacao visual final.
 
 ## Experiencia mobile
 
@@ -242,8 +242,8 @@ A primeira versao deve seguir o modelo de usabilidade **Guiada**:
 
 O app deve suportar dois temas selecionaveis:
 
-- Tema claro, baseado no `Tema 2 - Energia Clara` de `docs/identidade-visual-opcoes.md`.
-- Tema escuro, baseado no `Tema 5 - Hibrido recomendado` de `docs/identidade-visual-opcoes.md`.
+- Tema claro, baseado no `Tema 2 - Energia Clara` de `docs/arquitetura/identidade-visual-opcoes.md`.
+- Tema escuro, baseado no `Tema 5 - Hibrido recomendado` de `docs/arquitetura/identidade-visual-opcoes.md`.
 
 Regras:
 

@@ -34,22 +34,22 @@ Ferramentas auxiliares:
 
 Arquivo editavel principal:
 
-- `docs/prototipos/meu-treino-wireframes.excalidraw`
-- Revisao de fluxo atual: `docs/prototipos/meu-treino-wireframes-v2.excalidraw`
+- `docs/arquitetura/prototipos/meu-treino-wireframes.excalidraw`
+- Revisao de fluxo atual: `docs/arquitetura/prototipos/meu-treino-wireframes-v2.excalidraw`
 
 Versao atual:
 
 - Contem os wireframes das telas `UX-01` a `UX-14`.
 - Todas as telas foram organizadas em quadros mobile de 390 x 844 px.
-- Arquivo auxiliar para regeneracao: `docs/prototipos/generate-wireframes.mjs`.
+- Arquivo auxiliar para regeneracao: `docs/arquitetura/prototipos/generate-wireframes.mjs`.
 
 Como usar:
 
 1. Acesse `https://excalidraw.com`.
-2. Use `Open` ou arraste o arquivo `docs/prototipos/meu-treino-wireframes.excalidraw` para a tela.
+2. Use `Open` ou arraste o arquivo `docs/arquitetura/prototipos/meu-treino-wireframes.excalidraw` para a tela.
 3. Edite os quadros das telas.
 4. Exporte cada tela aprovada como PNG.
-5. Salve os PNGs em `docs/prototipos`.
+5. Salve os PNGs em `docs/arquitetura/prototipos`.
 6. Atualize o status da tela neste documento.
 
 Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual final sera ajustada no desenvolvimento usando os tokens de tema.
@@ -167,7 +167,7 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 Use este prompt quando quiser pedir ao Codex para gerar uma tela visual antes de desenhar ou refinar no Excalidraw:
 
 ```text
-Use AGENTS.md, docs/arquitetura-prompt.md, docs/identidade-visual-opcoes.md e docs/ux-prototipo-aprovado.md como referencia.
+Use AGENTS.md, docs/arquitetura/arquitetura-prompt.md, docs/arquitetura/identidade-visual-opcoes.md e docs/arquitetura/ux-prototipo-aprovado.md como referencia.
 Objetivo: gerar uma proposta visual para a tela [ID e nome da tela].
 Direcao: seguir o modelo Guiada aprovado, mobile-first, tema escuro como padrao, com possibilidade de tema claro.
 Restricoes: nao criar funcionalidades fora do escopo; nao fazer landing page; manter textos curtos; priorizar uso real durante treino.
@@ -179,7 +179,7 @@ Pronto quando: houver uma imagem da tela em 390 x 844 px e uma lista curta do qu
 Use este prompt somente depois que a tela estiver aprovada:
 
 ```text
-Use AGENTS.md, docs/arquitetura-prompt.md, docs/identidade-visual-opcoes.md e docs/ux-prototipo-aprovado.md como referencia.
+Use AGENTS.md, docs/arquitetura/arquitetura-prompt.md, docs/arquitetura/identidade-visual-opcoes.md e docs/arquitetura/ux-prototipo-aprovado.md como referencia.
 Objetivo: implementar a tela [ID e nome da tela] conforme o prototipo aprovado.
 Restricoes: manter React + Vite + TypeScript + Tailwind + shadcn/ui; usar tokens de tema; PWA primeiro; dados 100% locais.
 Pronto quando: a tela estiver funcional, responsiva em mobile, coerente com o prototipo aprovado e verificada em viewport mobile.
@@ -192,11 +192,11 @@ Atualize esta tabela quando cada tela for aprovada.
 | ID | Decisao | Observacoes | Data |
 | --- | --- | --- | --- |
 | UX-00 | Modelo Guiada escolhido como base | Combinar tela inicial do modelo 1 com execucao focada inspirada no modelo 3 | 2026-06-15 |
-| UX-01..UX-14 | Prototipos aprovados, com UX-09 e UX-12 removidas na V2 | Usar `docs/prototipos/meu-treino-wireframes.excalidraw` como guia base e `docs/prototipos/meu-treino-wireframes-v2.excalidraw` para as correcoes de fluxo | 2026-06-17 |
+| UX-01..UX-14 | Prototipos aprovados, com UX-09 e UX-12 removidas na V2 | Usar `docs/arquitetura/prototipos/meu-treino-wireframes.excalidraw` como guia base e `docs/arquitetura/prototipos/meu-treino-wireframes-v2.excalidraw` para as correcoes de fluxo | 2026-06-17 |
 
 ## Prototipos aprovados
 
-Os wireframes das telas `UX-01` a `UX-14` foram aprovados pelo usuario em 2026-06-15. A implementacao visual deve seguir o arquivo editavel `docs/prototipos/meu-treino-wireframes.excalidraw`, respeitando os tokens definidos em `docs/identidade-visual-opcoes.md`. No fluxo V2, `UX-09` e `UX-12` nao existem como telas: selecionar JSON e baixar modelo sao acoes diretas a partir de `UX-01` ou `UX-13`.
+Os wireframes das telas `UX-01` a `UX-14` foram aprovados pelo usuario em 2026-06-15. A implementacao visual deve seguir o arquivo editavel `docs/arquitetura/prototipos/meu-treino-wireframes.excalidraw`, respeitando os tokens definidos em `docs/arquitetura/identidade-visual-opcoes.md`. No fluxo V2, `UX-09` e `UX-12` nao existem como telas: selecionar JSON e baixar modelo sao acoes diretas a partir de `UX-01` ou `UX-13`.
 
 ### UX-01 - Inicio sem treino importado
 

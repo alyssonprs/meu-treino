@@ -286,5 +286,5 @@ Nao ha mais decisao pendente sobre direcao visual principal. A primeira versao d
 Depois da escolha, atualizar:
 
 - `AGENTS.md`, para o Codex seguir o tema em todas as telas.
-- `docs/arquitetura-prompt.md`, se a identidade visual virar uma decisao oficial do produto.
+- `docs/arquitetura/arquitetura-prompt.md`, se a identidade visual virar uma decisao oficial do produto.
 - O roteiro de execucoes, para incluir uma etapa de design tokens antes do scaffold visual.

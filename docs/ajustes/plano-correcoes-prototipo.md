@@ -4,20 +4,20 @@ Data: 2026-06-17
 
 ## Objetivo
 
-Realinhar a implementacao atual do app `meu-treino` com o fluxo aprovado em `docs/ux-prototipo-aprovado.md` e `docs/prototipos/meu-treino-wireframes.excalidraw`.
+Realinhar a implementacao atual do app `meu-treino` com o fluxo aprovado em `docs/arquitetura/ux-prototipo-aprovado.md` e `docs/arquitetura/prototipos/meu-treino-wireframes.excalidraw`.
 
 Este documento foi escrito para orientar proximas execucoes do Codex em tarefas pequenas, revisaveis e eficientes. Nao implementar todas as correcoes em uma unica execucao.
 
 ## Fontes de verdade
 
 - `AGENTS.md`
-- `docs/arquitetura-prompt.md`
-- `docs/ux-prototipo-aprovado.md`
-- `docs/prototipos/meu-treino-wireframes.excalidraw`
-- `docs/prototipos/meu-treino-wireframes-v2.excalidraw`
-- `docs/prototipos/ux-01-inicio-sem-treino.png`
-- `docs/prototipos/ux-02-inicio-com-treino-ativo.png`
-- `docs/prototipos/ux-04-execucao-do-treino.png`
+- `docs/arquitetura/arquitetura-prompt.md`
+- `docs/arquitetura/ux-prototipo-aprovado.md`
+- `docs/arquitetura/prototipos/meu-treino-wireframes.excalidraw`
+- `docs/arquitetura/prototipos/meu-treino-wireframes-v2.excalidraw`
+- `docs/arquitetura/prototipos/ux-01-inicio-sem-treino.png`
+- `docs/arquitetura/prototipos/ux-02-inicio-com-treino-ativo.png`
+- `docs/arquitetura/prototipos/ux-04-execucao-do-treino.png`
 
 ## Evidencias capturadas da implementacao atual
 
@@ -25,10 +25,10 @@ O projeto foi iniciado localmente em `http://127.0.0.1:5173/` e verificado em vi
 
 Capturas da implementacao atual:
 
-- `docs/auditoria-entrega/01-app-inicio-vazio.png`
-- `docs/auditoria-entrega/02-app-preview-json.png`
-- `docs/auditoria-entrega/03-app-inicio-com-plano.png`
-- `docs/auditoria-entrega/04-app-execucao.png`
+- `docs/ajustes/auditoria-entrega/01-app-inicio-vazio.png`
+- `docs/ajustes/auditoria-entrega/02-app-preview-json.png`
+- `docs/ajustes/auditoria-entrega/03-app-inicio-com-plano.png`
+- `docs/ajustes/auditoria-entrega/04-app-execucao.png`
 
 Observacao tecnica: o Browser interno do Codex falhou no Windows por permissao do runtime. As capturas foram feitas com Playwright local, usando o app rodando no Vite.
 
@@ -420,7 +420,7 @@ Objetivo: validar aderencia visual e funcional das telas principais apos as corr
 Arquivos provaveis:
 
 - `tests/visual`
-- `docs/prototipos`
+- `docs/arquitetura/prototipos`
 - `src/features/*`
 
 Escopo:
@@ -463,7 +463,7 @@ Pronto quando:
 Use este formato para cada lote:
 
 ```text
-Use AGENTS.md, docs/arquitetura-prompt.md, docs/ux-prototipo-aprovado.md e docs/plano-correcoes-prototipo.md como referencia.
+Use AGENTS.md, docs/arquitetura/arquitetura-prompt.md, docs/arquitetura/ux-prototipo-aprovado.md e docs/ajustes/plano-correcoes-prototipo.md como referencia.
 Objetivo: executar a [Execucao N - nome] do plano de correcoes.
 Restricoes: PWA primeiro, dados 100% locais, sem backend remoto, sem novas dependencias de producao sem aprovacao, manter servicos/repositorios existentes quando possivel.
 Pronto quando: cumprir os criterios da execucao, rodar os checks relevantes e atualizar as capturas/testes mobile quando a execucao envolver UI.

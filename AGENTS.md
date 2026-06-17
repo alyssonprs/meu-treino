@@ -4,7 +4,7 @@
 
 This repository is for `meu-treino`, a mobile-first gym workout app.
 
-Use [docs/arquitetura-prompt.md](docs/arquitetura-prompt.md) as the canonical product and architecture reference. If a user request conflicts with that document, follow the newest user request and update the document when the decision should persist.
+Use [docs/arquitetura/arquitetura-prompt.md](docs/arquitetura/arquitetura-prompt.md) as the canonical product and architecture reference. If a user request conflicts with that document, follow the newest user request and update the document when the decision should persist.
 
 ## Delivery Strategy
 
@@ -62,7 +62,7 @@ Use [docs/arquitetura-prompt.md](docs/arquitetura-prompt.md) as the canonical pr
 - Keep the first screen useful, not a marketing landing page.
 - Use the approved identity assets in `assets/identity` when configuring app branding, PWA icons, Android adaptive icons, splash screens, and any explicit brand/logo display.
 - Do not generate or introduce new brand icons when the existing `assets/identity` files cover the need.
-- Use [docs/ux-prototipo-aprovado.md](docs/ux-prototipo-aprovado.md) as the UX approval contract before implementing final screens.
+- Use [docs/arquitetura/ux-prototipo-aprovado.md](docs/arquitetura/ux-prototipo-aprovado.md) as the UX approval contract before implementing final screens.
 - Use Excalidraw as the default tool for UX wireframes before coding final screens.
 - Base the first version on the approved guided usability model: the home screen should focus on the next recommended workout.
 - Use an active-workout experience focused on fast set logging, rest timer, and few distractions.
@@ -70,16 +70,16 @@ Use [docs/arquitetura-prompt.md](docs/arquitetura-prompt.md) as the canonical pr
 - Keep visible text concise during workout execution.
 - Support selectable light and dark themes.
 - Use the dark theme as the default first-run theme.
-- Base the light theme on `Tema 2 - Energia Clara` from `docs/identidade-visual-opcoes.md`.
-- Base the dark theme on `Tema 5 - Hibrido recomendado` from `docs/identidade-visual-opcoes.md`.
+- Base the light theme on `Tema 2 - Energia Clara` from `docs/arquitetura/identidade-visual-opcoes.md`.
+- Base the dark theme on `Tema 5 - Hibrido recomendado` from `docs/arquitetura/identidade-visual-opcoes.md`.
 - Store the user's theme preference locally and apply it without restarting the app.
 - Use design tokens/CSS variables for colors instead of hard-coded colors in components.
 - In mobile cards with detailed content, do not keep the main content inside a side column next to an icon; use a compact header for the icon/title and let previews, summaries, errors, and action buttons use the full card width.
 
 ## Codex Workflow
 
-- Before coding, read this file and the relevant parts of `docs/arquitetura-prompt.md`.
-- Work in small, reviewable tasks aligned with [docs/roteiro-execucoes-codex.md](docs/roteiro-execucoes-codex.md) when possible.
+- Before coding, read this file and the relevant parts of `docs/arquitetura/arquitetura-prompt.md`.
+- Work in small, reviewable tasks aligned with the current temporary adjustment plan in [docs/ajustes/plano-correcoes-prototipo.md](docs/ajustes/plano-correcoes-prototipo.md). Use [docs/ajustes/roteiro-execucoes-codex.md](docs/ajustes/roteiro-execucoes-codex.md) only as historical context.
 - For each implementation task, confirm the goal, constraints, and "done when" criteria from the prompt.
 - Do not rewrite unrelated files or make broad refactors unless they are necessary for the current task.
 - Ask before adding new production dependencies after the initial project scaffold.
