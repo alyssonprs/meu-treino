@@ -451,7 +451,7 @@ function screen03(index) {
     size: 18,
   }));
   add(rect("summary-card", x + 32, y + 124, 326, 122, c));
-  add(text("summary-title", x + 56, y + 148, "Escolha por onde comecar", c, {
+  add(text("summary-title", x + 56, y + 148, "Lista de exercicios", c, {
     width: 210,
     size: 21,
   }));
@@ -460,15 +460,15 @@ function screen03(index) {
       "summary-meta",
       x + 56,
       y + 184,
-      "Se um aparelho estiver ocupado, selecione outro exercicio da lista.",
+      "Toque no exercicio que vai fazer agora. Se um aparelho estiver ocupado, toque em outro.",
       c,
       { width: 270, size: 14, color: c.muted, lineHeight: 1.35 },
     ),
   );
-  add(text("selected-start", x + 56, y + 216, "Selecionado: Remada baixa", c, {
+  add(text("tap-hint", x + 56, y + 216, "Cada item abre UX-04 diretamente.", c, {
     width: 250,
     size: 14,
-    color: c.primary,
+    color: c.info,
   }));
   add(text("section-warmup", x + 32, y + 270, "Aquecimento", c, {
     width: 180,
@@ -487,32 +487,38 @@ function screen03(index) {
     color: c.info,
   }));
   add(exerciseRow("ex1", x + 32, y + 406, c, "Supino reto", "3x 8-10 | RIR alvo 2", "50 kg"));
-  add(button("ex1-start", x + 244, y + 419, 94, "Comecar", c, "secondary"));
-  add(rect("ex2-selected-outline", x + 32, y + 492, 326, 76, c, {
-    fill: c.elevated,
-    stroke: c.primary,
-    strokeWidth: 2,
-  }));
-  add(text("ex2-title", x + 48, y + 505, "Remada baixa", c, { width: 170, size: 16 }));
-  add(text("ex2-meta", x + 48, y + 530, "3x 10-12 | RIR alvo 2", c, {
-    width: 190,
-    size: 13,
-    color: c.muted,
-  }));
-  add(text("ex2-last", x + 232, y + 508, "45 kg", c, {
+  add(text("ex1-action", x + 244, y + 440, "Abrir >", c, {
     width: 76,
-    size: 14,
+    size: 13,
     align: "right",
-    color: c.info,
+    color: c.primary,
   }));
-  add(pill("selected-pill", x + 244, y + 532, 86, "Inicio", c, "primary"));
+  add(exerciseRow("ex2", x + 32, y + 492, c, "Remada baixa", "3x 10-12 | RIR alvo 2", "45 kg"));
+  add(text("ex2-action", x + 244, y + 526, "Abrir >", c, {
+    width: 76,
+    size: 13,
+    align: "right",
+    color: c.primary,
+  }));
   add(exerciseRow("ex3", x + 32, y + 578, c, "Desenvolvimento", "3x 8-10 | RIR alvo 2", "22 kg"));
+  add(text("ex3-action", x + 244, y + 612, "Abrir >", c, {
+    width: 76,
+    size: 13,
+    align: "right",
+    color: c.primary,
+  }));
   add(text("more-exercises", x + 52, y + 666, "+ 3 exercicios e cooldown", c, {
     width: 240,
     size: 15,
     color: c.weak,
   }));
-  add(button("detail-primary", x + 48, y + 704, 294, "Iniciar pela selecao", c));
+  add(rect("detail-rule", x + 48, y + 704, 294, 48, c, { stroke: c.info }));
+  add(text("detail-rule-copy", x + 66, y + 718, "Sem botao global: toque em um exercicio.", c, {
+    width: 258,
+    size: 14,
+    align: "center",
+    color: c.info,
+  }));
   add(nav(x, y, c, "Treino"));
 }
 
@@ -525,7 +531,7 @@ function screen04(index) {
       "active-head",
       x + 24,
       y + 74,
-      "< Lista de exercicios        Pausar   Parar\nExercicio escolhido: 2 de 6",
+      "< Lista de exercicios        Pausar   Parar\nRemada baixa | exercicio 2 de 6",
       c,
       { width: 342, size: 16, lineHeight: 1.35 },
     ),
@@ -608,7 +614,7 @@ function screen04(index) {
     color: c.weak,
   }));
   add(button("save-set", x + 32, y + 684, 326, "Salvar serie", c));
-  add(button("next-exercise", x + 32, y + 752, 326, "Trocar exercicio", c, "secondary"));
+  add(button("next-exercise", x + 32, y + 752, 326, "Voltar a lista", c, "secondary"));
 }
 
 function screen05(index) {
@@ -1199,7 +1205,7 @@ function screen15(index) {
       "flow-workout-start-copy",
       x + 56,
       y + 486,
-      "UX-02 -> UX-03 primeiro.\nUsuario escolhe o exercicio inicial antes de abrir UX-04.",
+      "UX-02 -> UX-03 primeiro.\nUsuario toca no exercicio que vai fazer; UX-04 abre esse item.",
       c,
       { width: 260, size: 14, color: c.muted, lineHeight: 1.35 },
     ),
