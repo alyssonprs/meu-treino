@@ -30,6 +30,11 @@ export function ActiveWorkoutScreen({
   onFinish,
   onUpdateSet,
 }: ActiveWorkoutScreenProps) {
+  const exerciseOrder = getExerciseDisplayOrder(
+    draft.routine.exercises.length,
+    draft.initialExerciseIndex,
+  );
+
   return (
     <section className="mt-2 space-y-4">
       <div className="rounded-lg border border-info bg-card p-4">
@@ -66,7 +71,8 @@ export function ActiveWorkoutScreen({
         ) : null}
       </div>
 
-      {draft.routine.exercises.map((exercise, exerciseIndex) => {
+      {exerciseOrder.map((exerciseIndex, displayIndex) => {
+        const exercise = draft.routine.exercises[exerciseIndex];
         const exerciseDraft = draft.exercises[exerciseIndex];
         const loadHistory = loadHistoryByExerciseId.get(exercise.exerciseId);
 
@@ -78,7 +84,9 @@ export function ActiveWorkoutScreen({
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-xs font-medium uppercase tracking-normal text-muted-foreground">
-                  {exercise.muscleGroup}
+                  {displayIndex === 0
+                    ? "Exercicio escolhido"
+                    : exercise.muscleGroup}
                 </p>
                 <h3 className="mt-1 text-lg font-semibold">{exercise.name}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">
@@ -204,6 +212,23 @@ export function ActiveWorkoutScreen({
       </Button>
     </section>
   );
+}
+
+function getExerciseDisplayOrder(totalExercises: number, initialIndex: number) {
+  if (
+    totalExercises <= 0 ||
+    initialIndex < 0 ||
+    initialIndex >= totalExercises
+  ) {
+    return Array.from({ length: totalExercises }, (_, index) => index);
+  }
+
+  return [
+    initialIndex,
+    ...Array.from({ length: totalExercises }, (_, index) => index).filter(
+      (index) => index !== initialIndex,
+    ),
+  ];
 }
 
 function RestTimer({ durationSeconds }: { durationSeconds: number }) {

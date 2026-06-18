@@ -203,7 +203,16 @@ export function App() {
     }
   }
 
-  async function handleStartRecommendedWorkout() {
+  function handleOpenRecommendedWorkoutDetail() {
+    if (!activePlan || !nextRecommendation) {
+      return;
+    }
+
+    setWorkoutMessage(null);
+    setActiveScreen("workout");
+  }
+
+  async function handleStartRecommendedWorkout(exerciseIndex = 0) {
     if (!activePlan || !nextRecommendation) {
       return;
     }
@@ -229,6 +238,7 @@ export function App() {
         routine,
         startedAt: new Date().toISOString(),
         loadHistoryByExerciseId,
+        initialExerciseIndex: exerciseIndex,
       }),
     );
     setActiveScreen("active-workout");
@@ -335,9 +345,10 @@ export function App() {
       return (
         <WorkoutScreen
           activePlan={activePlan}
+          loadSummaries={loadSummaries}
           nextRecommendation={nextRecommendation}
-          onStartRecommendedWorkout={() => {
-            void handleStartRecommendedWorkout();
+          onStartExercise={(exerciseIndex) => {
+            void handleStartRecommendedWorkout(exerciseIndex);
           }}
         />
       );
@@ -384,9 +395,8 @@ export function App() {
         nextRecommendation={nextRecommendation}
         workoutMessage={workoutMessage}
         onChooseImportFile={() => fileInputRef.current?.click()}
-        onStartRecommendedWorkout={() => {
-          void handleStartRecommendedWorkout();
-        }}
+        onGoToHistory={() => navigateToMainTab("history")}
+        onOpenWorkoutDetail={handleOpenRecommendedWorkoutDetail}
       />
     );
   }

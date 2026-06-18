@@ -22,6 +22,7 @@ export type WorkoutSessionDraft = {
   planId: string;
   routine: RoutineWithDetails;
   startedAt: string;
+  initialExerciseIndex: number;
   exercises: WorkoutExerciseDraft[];
 };
 
@@ -41,16 +42,22 @@ export function createWorkoutSessionDraft({
   routine,
   startedAt,
   loadHistoryByExerciseId,
+  initialExerciseIndex = 0,
 }: {
   planId: string;
   routine: RoutineWithDetails;
   startedAt: string;
   loadHistoryByExerciseId?: Map<string, ExerciseLoadHistoryRecord>;
+  initialExerciseIndex?: number;
 }): WorkoutSessionDraft {
   return {
     planId,
     routine,
     startedAt,
+    initialExerciseIndex:
+      initialExerciseIndex >= 0 && initialExerciseIndex < routine.exercises.length
+        ? initialExerciseIndex
+        : 0,
     exercises: routine.exercises.map((exercise) => {
       const loadHistory = loadHistoryByExerciseId?.get(exercise.exerciseId);
 

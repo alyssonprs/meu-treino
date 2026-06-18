@@ -36,7 +36,7 @@ test("home shows the next recommended routine after importing the model plan", a
 
   await page.getByRole("button", { name: "Confirmar importacao" }).click();
 
-  await expect(page.getByText("Proximo treino")).toBeVisible();
+  await expect(page.getByText("Próximo treino")).toBeVisible();
   await expect(page.getByText("Treino A - Peito e triceps")).toBeVisible();
   await expect(page.getByText("Comece pela primeira rotina")).toBeVisible();
   await expect(page.getByRole("button", { name: "Importar JSON" })).toHaveCount(
@@ -53,6 +53,22 @@ test("home shows the next recommended routine after importing the model plan", a
     path: "docs/ajustes/auditoria-entrega/07-home-ativa-sem-json.png",
     fullPage: true,
   });
+
+  await page.getByRole("button", { name: "Iniciar treino" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Toque no exercício disponível" }),
+  ).toBeVisible();
+  await expect(page.getByText("Aquecimento")).toBeVisible();
+  await expect(page.getByText("Exercícios do treino")).toBeVisible();
+  await expect(page.getByRole("button", { name: /Abrir/ }).first()).toBeVisible();
+
+  await page.screenshot({
+    path: "docs/ajustes/auditoria-entrega/09-ux-03-detalhe-treino.png",
+    fullPage: true,
+  });
+
+  await page.getByRole("button", { name: /Abrir/ }).first().click();
+  await expect(page.getByText("Exercicio escolhido")).toBeVisible();
 });
 
 test("invalid import shows the dedicated recovery screen", async ({ page }) => {

@@ -37,6 +37,19 @@ describe("workoutSessionService", () => {
     expect(draft.exercises[0].sets[0].reps).toBe("");
   });
 
+  it("stores the exercise chosen from the routine detail", () => {
+    const snapshot = createSnapshot();
+
+    const draft = createWorkoutSessionDraft({
+      planId: snapshot.plan.id,
+      routine: snapshot.routines[0],
+      startedAt: "2026-06-15T12:00:00.000Z",
+      initialExerciseIndex: 1,
+    });
+
+    expect(draft.initialExerciseIndex).toBe(1);
+  });
+
   it("finishes a workout session with completed sets", async () => {
     const snapshot = createSnapshot();
     const draft = createWorkoutSessionDraft({
@@ -159,6 +172,21 @@ function createSnapshot(): ActiveWorkoutPlanSnapshot {
             target_reps: "8-10",
             target_rir: 2,
             order: 1,
+          },
+          {
+            id: "planned-2",
+            planId: "plan-1",
+            routineId: "routine-a",
+            exerciseId: "remada-baixa",
+            sourceExerciseId: "remada-baixa",
+            name: "Remada baixa",
+            muscleGroup: "Costas",
+            equipment: "Cabo",
+            isUnilateral: false,
+            sets: 2,
+            target_reps: "10-12",
+            target_rir: 2,
+            order: 2,
           },
         ],
       },

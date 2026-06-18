@@ -263,6 +263,8 @@ Pronto quando:
 
 ## Execucao 3 - Corrigir home com plano ativo e detalhe do treino
 
+Status: Concluida
+
 Objetivo: implementar `UX-02` e `UX-03` usando a recomendacao e progresso existentes.
 
 Arquivos provaveis:
@@ -457,7 +459,7 @@ Pronto quando:
 
 1. Execucao 1: navegacao e separacao de telas. Status: Concluida.
 2. Execucao 2: primeiro uso/importacao/modelo. Status: Concluida.
-3. Execucao 3: home ativa/detalhe do treino.
+3. Execucao 3: home ativa/detalhe do treino. Status: Concluida.
 4. Execucao 4: execucao guiada com descanso integrado.
 5. Execucao 5: finalizacao.
 6. Execucao 6: historico.
