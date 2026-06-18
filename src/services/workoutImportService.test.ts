@@ -94,7 +94,9 @@ describe("workoutImportService", () => {
       getActivePlan: vi.fn(),
       markRoutineAsCompleted: vi.fn(),
       saveCompletedWorkoutSession: vi.fn(),
+      getRecentCompletedWorkoutSessions: vi.fn(),
       getExerciseLoadHistory: vi.fn(),
+      getExerciseSetHistory: vi.fn(),
       clearAllWorkoutData: vi.fn(),
     };
 

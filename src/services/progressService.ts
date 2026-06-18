@@ -1,6 +1,8 @@
 import type {
   ActiveWorkoutPlanSnapshot,
+  CompletedWorkoutSessionSummaryRecord,
   ExerciseLoadHistoryRecord,
+  ExerciseSetHistoryRecord,
   WorkoutPlanRepository,
 } from "@/storage/workoutPlanRepository";
 
@@ -21,6 +23,38 @@ export type CycleProgressSummary = {
   percentage: number;
   remainingSessions: number;
   isComplete: boolean;
+};
+
+export type CompletedWorkoutSessionSummary = {
+  id: string;
+  routineName: string;
+  completedAt: string;
+  exercisesCount: number;
+  setsCount: number;
+};
+
+export type ExerciseSetHistoryEntry = {
+  id: string;
+  sessionId: string;
+  routineName: string;
+  completedAt: string;
+  setNumber: number;
+  loadKg: number;
+  reps: number;
+  rir: number | null;
+  notes: string | null;
+};
+
+export type ExerciseHistoryDetails = {
+  exerciseId: string;
+  exerciseName: string;
+  lastLoadKg: number;
+  maxLoadKg: number;
+  lastReps: number;
+  lastRir: number | null;
+  completedSetsCount: number;
+  updatedAt: string;
+  records: ExerciseSetHistoryEntry[];
 };
 
 export function getCycleProgressSummary(
@@ -65,6 +99,54 @@ export async function getExerciseLoadSummaries({
     .sort((left, right) => right.updatedAt.localeCompare(left.updatedAt));
 }
 
+export async function getRecentCompletedWorkoutSessions({
+  repository,
+  limit = 5,
+}: {
+  repository: Pick<WorkoutPlanRepository, "getRecentCompletedWorkoutSessions">;
+  limit?: number;
+}): Promise<CompletedWorkoutSessionSummary[]> {
+  const sessions = await repository.getRecentCompletedWorkoutSessions(limit);
+
+  return sessions.map(toSessionSummary);
+}
+
+export async function getExerciseHistoryDetails({
+  activePlan,
+  exerciseId,
+  repository,
+}: {
+  activePlan: ActiveWorkoutPlanSnapshot;
+  exerciseId: string;
+  repository: Pick<
+    WorkoutPlanRepository,
+    "getExerciseLoadHistory" | "getExerciseSetHistory"
+  >;
+}): Promise<ExerciseHistoryDetails | null> {
+  const [loadHistory] = await repository.getExerciseLoadHistory([exerciseId]);
+
+  if (!loadHistory) {
+    return null;
+  }
+
+  const records = await repository.getExerciseSetHistory(exerciseId, 30);
+  const activeExerciseName = activePlan.routines
+    .flatMap((routine) => routine.exercises)
+    .find((exercise) => exercise.exerciseId === exerciseId)?.name;
+
+  return {
+    exerciseId,
+    exerciseName: activeExerciseName ?? loadHistory.exerciseName,
+    lastLoadKg: loadHistory.lastLoadKg,
+    maxLoadKg: loadHistory.maxLoadKg,
+    lastReps: loadHistory.lastReps,
+    lastRir: loadHistory.lastRir,
+    completedSetsCount: loadHistory.completedSetsCount,
+    updatedAt: loadHistory.updatedAt,
+    records: records.map(toExerciseSetHistoryEntry),
+  };
+}
+
 export function createLoadHistoryMap(
   history: ExerciseLoadHistoryRecord[],
 ): Map<string, ExerciseLoadHistoryRecord> {
@@ -84,5 +166,33 @@ function toSummary(
     lastRir: item.lastRir,
     completedSetsCount: item.completedSetsCount,
     updatedAt: item.updatedAt,
+  };
+}
+
+function toSessionSummary(
+  session: CompletedWorkoutSessionSummaryRecord,
+): CompletedWorkoutSessionSummary {
+  return {
+    id: session.id,
+    routineName: session.routineName,
+    completedAt: session.completedAt,
+    exercisesCount: session.exercisesCount,
+    setsCount: session.setsCount,
+  };
+}
+
+function toExerciseSetHistoryEntry(
+  record: ExerciseSetHistoryRecord,
+): ExerciseSetHistoryEntry {
+  return {
+    id: record.id,
+    sessionId: record.sessionId,
+    routineName: record.routineName,
+    completedAt: record.completedAt,
+    setNumber: record.setNumber,
+    loadKg: record.loadKg,
+    reps: record.reps,
+    rir: record.rir,
+    notes: record.notes,
   };
 }

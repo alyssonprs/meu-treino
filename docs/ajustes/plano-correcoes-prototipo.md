@@ -374,6 +374,8 @@ Checks e evidencias:
 
 ## Execucao 6 - Implementar historico e detalhe de exercicio
 
+Status: Concluida
+
 Objetivo: implementar `UX-07` e `UX-08`.
 
 Arquivos provaveis:
@@ -398,6 +400,15 @@ Pronto quando:
 - Usuario consegue abrir um exercicio e ver seus registros.
 - Cargas registradas em treinos aparecem no historico.
 - Testes de storage/progresso cobrem as novas consultas.
+
+Checks e evidencias:
+
+- `tsc` via TypeScript API: 0 diagnosticos.
+- `vitest run` via Vitest API: finalizou sem erro.
+- `eslint` via ESLint API: 0 erros e 0 avisos.
+- `vite build` via Vite API: concluiu.
+- Verificacao mobile em Chrome `390 x 844`: importacao do modelo, registro de serie, finalizacao, abertura de Historico, detalhe do exercicio e ausencia de overflow horizontal.
+- Captura: `docs/ajustes/auditoria-entrega/11-ux-07-08-historico.png`.
 
 ## Execucao 7 - Implementar ajustes e dados locais
 

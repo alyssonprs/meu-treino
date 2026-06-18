@@ -21,8 +21,12 @@ import {
 import { WorkoutScreen } from "@/features/workouts/WorkoutScreen";
 import {
   createLoadHistoryMap,
+  getExerciseHistoryDetails,
   getCycleProgressSummary,
   getExerciseLoadSummaries,
+  getRecentCompletedWorkoutSessions,
+  type CompletedWorkoutSessionSummary,
+  type ExerciseHistoryDetails,
   type ExerciseLoadSummary,
 } from "@/services/progressService";
 import {
@@ -57,6 +61,9 @@ export function App() {
     Map<string, ExerciseLoadHistoryRecord>
   >(new Map());
   const [loadSummaries, setLoadSummaries] = useState<ExerciseLoadSummary[]>([]);
+  const [recentSessions, setRecentSessions] = useState<
+    CompletedWorkoutSessionSummary[]
+  >([]);
   const [workoutMessage, setWorkoutMessage] = useState<string | null>(null);
   const [workoutCompletion, setWorkoutCompletion] =
     useState<WorkoutCompletionSummary | null>(null);
@@ -96,18 +103,27 @@ export function App() {
 
     if (!activePlan) {
       setLoadSummaries([]);
+      setRecentSessions([]);
       return () => {
         isMounted = false;
       };
     }
 
-    getExerciseLoadSummaries({
-      activePlan,
-      repository: pwaWorkoutPlanRepository,
-    }).then((summaries) => {
-      if (isMounted) {
-        setLoadSummaries(summaries);
+    Promise.all([
+      getExerciseLoadSummaries({
+        activePlan,
+        repository: pwaWorkoutPlanRepository,
+      }),
+      getRecentCompletedWorkoutSessions({
+        repository: pwaWorkoutPlanRepository,
+      }),
+    ]).then(([summaries, sessions]) => {
+      if (!isMounted) {
+        return;
       }
+
+      setLoadSummaries(summaries);
+      setRecentSessions(sessions);
     });
 
     return () => {
@@ -435,7 +451,17 @@ export function App() {
     }
 
     if (activeScreen === "history") {
-      return <ProgressScreen loadSummaries={loadSummaries} />;
+      return (
+        <ProgressScreen
+          activePlan={activePlan}
+          cycleProgress={cycleProgress}
+          loadSummaries={loadSummaries}
+          recentSessions={recentSessions}
+          onLoadExerciseHistory={(exerciseId) =>
+            loadExerciseHistoryDetails(exerciseId)
+          }
+        />
+      );
     }
 
     if (activeScreen === "settings") {
@@ -479,5 +505,19 @@ export function App() {
         onOpenWorkoutDetail={handleOpenRecommendedWorkoutDetail}
       />
     );
+  }
+
+  async function loadExerciseHistoryDetails(
+    exerciseId: string,
+  ): Promise<ExerciseHistoryDetails | null> {
+    if (!activePlan) {
+      return null;
+    }
+
+    return getExerciseHistoryDetails({
+      activePlan,
+      exerciseId,
+      repository: pwaWorkoutPlanRepository,
+    });
   }
 }

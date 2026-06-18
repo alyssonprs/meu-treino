@@ -111,6 +111,25 @@ export type ExerciseLoadHistoryRecord = {
   updatedAt: string;
 };
 
+export type CompletedWorkoutSessionSummaryRecord = WorkoutSessionRecord & {
+  exercisesCount: number;
+  setsCount: number;
+};
+
+export type ExerciseSetHistoryRecord = {
+  id: string;
+  sessionId: string;
+  routineName: string;
+  completedAt: string;
+  exerciseId: string;
+  exerciseName: string;
+  setNumber: number;
+  loadKg: number;
+  reps: number;
+  rir: number | null;
+  notes: string | null;
+};
+
 export type RoutineWithDetails = RoutineRecord & {
   warmup: RoutineStepRecord[];
   exercises: PlannedExerciseRecord[];
@@ -177,8 +196,15 @@ export interface WorkoutPlanRepository {
   saveCompletedWorkoutSession(
     input: SaveCompletedWorkoutSessionInput,
   ): Promise<SaveCompletedWorkoutSessionResult>;
+  getRecentCompletedWorkoutSessions(
+    limit?: number,
+  ): Promise<CompletedWorkoutSessionSummaryRecord[]>;
   getExerciseLoadHistory(
     exerciseIds?: string[],
   ): Promise<ExerciseLoadHistoryRecord[]>;
+  getExerciseSetHistory(
+    exerciseId: string,
+    limit?: number,
+  ): Promise<ExerciseSetHistoryRecord[]>;
   clearAllWorkoutData(): Promise<void>;
 }

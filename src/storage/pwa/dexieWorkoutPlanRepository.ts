@@ -3,8 +3,10 @@ import { createExerciseCanonicalKey } from "@/domain/exerciseKey";
 import { MeuTreinoDatabase, workoutDatabase } from "./workoutDatabase";
 import type {
   ActiveWorkoutPlanSnapshot,
+  CompletedWorkoutSessionSummaryRecord,
   ExerciseLoadHistoryRecord,
   ExerciseLogRecord,
+  ExerciseSetHistoryRecord,
   ExerciseRecord,
   PlannedExerciseRecord,
   RoutineRecord,
@@ -234,6 +236,33 @@ export class DexieWorkoutPlanRepository implements WorkoutPlanRepository {
     return { sessionId };
   }
 
+  async getRecentCompletedWorkoutSessions(
+    limit = 5,
+  ): Promise<CompletedWorkoutSessionSummaryRecord[]> {
+    const sessions = (await this.database.workoutSessions.toArray())
+      .filter((session) => session.status === "completed")
+      .sort((left, right) => right.completedAt.localeCompare(left.completedAt))
+      .slice(0, limit);
+
+    return Promise.all(
+      sessions.map(async (session) => {
+        const [exerciseLogs, setLogs] = await Promise.all([
+          this.database.exerciseLogs
+            .where("sessionId")
+            .equals(session.id)
+            .toArray(),
+          this.database.setLogs.where("sessionId").equals(session.id).toArray(),
+        ]);
+
+        return {
+          ...session,
+          exercisesCount: exerciseLogs.length,
+          setsCount: setLogs.length,
+        };
+      }),
+    );
+  }
+
   async getExerciseLoadHistory(
     exerciseIds?: string[],
   ): Promise<ExerciseLoadHistoryRecord[]> {
@@ -249,6 +278,46 @@ export class DexieWorkoutPlanRepository implements WorkoutPlanRepository {
     );
 
     return history.filter((item) => item !== undefined);
+  }
+
+  async getExerciseSetHistory(
+    exerciseId: string,
+    limit = 20,
+  ): Promise<ExerciseSetHistoryRecord[]> {
+    const setLogs = (
+      await this.database.setLogs.where("exerciseId").equals(exerciseId).toArray()
+    )
+      .sort((left, right) => {
+        const dateComparison = right.completedAt.localeCompare(left.completedAt);
+
+        return dateComparison !== 0
+          ? dateComparison
+          : right.setNumber - left.setNumber;
+      })
+      .slice(0, limit);
+
+    return Promise.all(
+      setLogs.map(async (setLog) => {
+        const [session, exerciseLog] = await Promise.all([
+          this.database.workoutSessions.get(setLog.sessionId),
+          this.database.exerciseLogs.get(setLog.exerciseLogId),
+        ]);
+
+        return {
+          id: setLog.id,
+          sessionId: setLog.sessionId,
+          routineName: session?.routineName ?? "Treino",
+          completedAt: session?.completedAt ?? setLog.completedAt,
+          exerciseId: setLog.exerciseId,
+          exerciseName: exerciseLog?.exerciseName ?? "Exercicio",
+          setNumber: setLog.setNumber,
+          loadKg: setLog.loadKg,
+          reps: setLog.reps,
+          rir: setLog.rir,
+          notes: setLog.notes,
+        };
+      }),
+    );
   }
 
   async clearAllWorkoutData(): Promise<void> {

@@ -13,6 +13,13 @@ export function formatTimer(totalSeconds: number) {
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
 
+export function formatShortDate(date: string) {
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+  }).format(new Date(date));
+}
+
 export function getRecommendationReasonLabel(
   reason: NextRoutineRecommendation["reason"],
 ) {
@@ -30,4 +37,3 @@ export function getRecommendationReasonLabel(
 
   return "Sequencia calculada a partir da ultima rotina finalizada.";
 }
-
