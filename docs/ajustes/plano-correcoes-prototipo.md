@@ -8,6 +8,8 @@ Realinhar a implementacao atual do app `meu-treino` com o fluxo aprovado em `doc
 
 Este documento foi escrito para orientar proximas execucoes do Codex em tarefas pequenas, revisaveis e eficientes. Nao implementar todas as correcoes em uma unica execucao.
 
+Ao finalizar uma execucao deste plano, atualizar o respectivo status para `Concluida` antes de encerrar a tarefa, junto com os checks e evidencias aplicaveis.
+
 ## Fontes de verdade
 
 - `AGENTS.md`
@@ -195,6 +197,8 @@ Decisao de entrada na execucao:
 
 ## Execucao 1 - Criar shell de navegacao e separar telas
 
+Status: Concluida
+
 Objetivo: substituir o `App.tsx` monolitico por um shell com estado de tela simples e bottom nav funcional.
 
 Arquivos provaveis:
@@ -224,6 +228,8 @@ Pronto quando:
 - `pnpm test`, `pnpm lint` e `pnpm build` passam.
 
 ## Execucao 2 - Corrigir primeiro uso, importacao e modelo
+
+Status: Concluida
 
 Objetivo: implementar `UX-01`, `UX-10` e `UX-11` para primeiro uso, sem criar telas dedicadas `UX-09` ou `UX-12`.
 
@@ -449,8 +455,8 @@ Pronto quando:
 
 ## Ordem recomendada
 
-1. Execucao 1: navegacao e separacao de telas.
-2. Execucao 2: primeiro uso/importacao/modelo.
+1. Execucao 1: navegacao e separacao de telas. Status: Concluida.
+2. Execucao 2: primeiro uso/importacao/modelo. Status: Concluida.
 3. Execucao 3: home ativa/detalhe do treino.
 4. Execucao 4: execucao guiada com descanso integrado.
 5. Execucao 5: finalizacao.
