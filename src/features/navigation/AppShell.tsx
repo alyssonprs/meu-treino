@@ -4,15 +4,17 @@ import type { ReactNode } from "react";
 import type { AppScreen, MainTabScreen, NavItemDefinition } from "./appNavigation";
 
 const mainNavItems: NavItemDefinition[] = [
-  { screen: "home", label: "Inicio", icon: Home },
+  { screen: "home", label: "Início", icon: Home },
   { screen: "workout", label: "Treino", icon: CalendarCheck2 },
-  { screen: "history", label: "Historico", icon: History },
+  { screen: "history", label: "Histórico", icon: History },
   { screen: "settings", label: "Ajustes", icon: Settings },
 ];
 
 const screensWithoutBottomNav: AppScreen[] = [
   "active-workout",
   "workout-finished",
+  "import-preview",
+  "import-error",
 ];
 
 type AppShellProps = {
@@ -38,7 +40,7 @@ export function AppShell({ activeScreen, children, onNavigate }: AppShellProps) 
 
       {showBottomNav ? (
         <nav
-          aria-label="Navegacao principal"
+          aria-label="Navegação principal"
           className="fixed inset-x-0 bottom-0 border-t border-border bg-card/95 backdrop-blur"
         >
           <div className="mx-auto grid h-16 max-w-md grid-cols-4 px-2">

@@ -253,10 +253,10 @@ export function ActiveWorkoutScreen({
       <div className="rounded-lg border border-border bg-card p-4">
         <div className="flex items-center justify-between gap-3">
           <p className="text-sm font-medium text-info">
-            {totalCompletedSets}/{totalPlannedSets} series
+            {totalCompletedSets}/{totalPlannedSets} séries
           </p>
           <p className="text-sm text-muted-foreground">
-            {completedExercises}/{draft.exercises.length} exercicios
+            {completedExercises}/{draft.exercises.length} exercícios
           </p>
         </div>
         <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
@@ -275,7 +275,7 @@ export function ActiveWorkoutScreen({
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="text-sm font-medium text-info">
-              Exercicio {currentExerciseIndex + 1} de {draft.exercises.length}
+              Exercício {currentExerciseIndex + 1} de {draft.exercises.length}
             </p>
             <h3 className="mt-1 text-2xl font-semibold">
               {currentExercise.name}
@@ -296,7 +296,7 @@ export function ActiveWorkoutScreen({
         {loadHistory ? (
           <div className="mt-4 grid grid-cols-2 gap-2">
             <MetricCard
-              label="Ultima carga"
+              label="Última carga"
               value={`${formatLoad(loadHistory.lastLoadKg)} kg x ${loadHistory.lastReps}`}
             />
             <MetricCard
@@ -336,7 +336,7 @@ export function ActiveWorkoutScreen({
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="text-sm font-medium text-info">
-                Serie {(currentSetIndex ?? 0) + 1}
+                Série {(currentSetIndex ?? 0) + 1}
               </p>
               <h3 className="mt-1 text-xl font-semibold">Registrar agora</h3>
             </div>
@@ -385,7 +385,7 @@ export function ActiveWorkoutScreen({
             type="button"
           >
             <Save className="h-5 w-5" aria-hidden="true" />
-            Salvar serie
+            Salvar série
           </Button>
         </div>
       )}
@@ -535,7 +535,7 @@ function RestCard({
         <div>
           <p className="flex items-center gap-2 text-sm font-medium text-info">
             <TimerReset className="h-4 w-4" aria-hidden="true" />
-            Descanso apos serie {restState.setNumber}
+            Descanso após série {restState.setNumber}
           </p>
           <p className="mt-1 text-sm text-muted-foreground">{exerciseName}</p>
         </div>
@@ -561,7 +561,7 @@ function RestCard({
           Pular
         </Button>
         <Button className="h-12 gap-1 px-2" onClick={onStartNext} type="button">
-          {isExerciseDone ? "Proximo" : "Proxima"}
+          {isExerciseDone ? "Próximo" : "Próxima"}
           <ChevronRight className="h-4 w-4" aria-hidden="true" />
         </Button>
       </div>
@@ -580,16 +580,16 @@ function ExerciseDoneCard({
 }) {
   return (
     <div className="rounded-lg border border-primary bg-card p-4">
-      <p className="text-sm font-medium text-primary">Exercicio concluido</p>
+      <p className="text-sm font-medium text-primary">Exercício concluído</p>
       <h3 className="mt-1 text-xl font-semibold">
-        Todas as series foram registradas.
+        Todas as séries foram registradas.
       </h3>
       <Button
         className="mt-4 h-14 w-full gap-2 text-base"
         onClick={hasNextExercise ? onNextExercise : onFinish}
         type="button"
       >
-        {hasNextExercise ? "Proximo exercicio" : "Finalizar rotina"}
+        {hasNextExercise ? "Próximo exercício" : "Finalizar rotina"}
         <ChevronRight className="h-5 w-5" aria-hidden="true" />
       </Button>
     </div>

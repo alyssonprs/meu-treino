@@ -28,12 +28,12 @@ export function getRecommendationReasonLabel(
   }
 
   if (reason === "cycle-restarted") {
-    return "Ultima rotina concluida. O ciclo volta para o inicio.";
+    return "Última rotina concluída. O ciclo volta para o início.";
   }
 
   if (reason === "missing-last-routine") {
-    return "Rotina anterior ausente. Recomendacao reiniciada pela primeira.";
+    return "Rotina anterior ausente. Recomendação reiniciada pela primeira.";
   }
 
-  return "Sequencia calculada a partir da ultima rotina finalizada.";
+  return "Sequência calculada a partir da última rotina finalizada.";
 }

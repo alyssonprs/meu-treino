@@ -96,7 +96,7 @@ export function ProgressScreen({
             <History className="h-5 w-5" aria-hidden="true" />
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-medium text-info">Historico</p>
+            <p className="text-sm font-medium text-info">Histórico</p>
             <h2 className="text-2xl font-semibold">Seu progresso</h2>
           </div>
         </div>
@@ -118,7 +118,7 @@ export function ProgressScreen({
             </div>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
               {cycleProgress.isComplete
-                ? "Ciclo concluido. Gere um novo plano quando quiser trocar."
+                ? "Ciclo concluído. Gere um novo plano quando quiser trocar."
                 : `${cycleProgress.remainingSessions} treinos restantes neste ciclo.`}
             </p>
           </div>
@@ -133,7 +133,7 @@ export function ProgressScreen({
         />
         <HistoryMetric
           icon={TrendingUp}
-          label="Exercicios"
+          label="Exercícios"
           value={String(loadSummaries.length)}
         />
       </div>
@@ -144,8 +144,8 @@ export function ProgressScreen({
             <LineChart className="h-5 w-5" aria-hidden="true" />
           </div>
           <div>
-            <p className="text-sm font-medium text-info">Evolucao de carga</p>
-            <h3 className="font-semibold">Exercicios registrados</h3>
+            <p className="text-sm font-medium text-info">Evolução de carga</p>
+            <h3 className="font-semibold">Exercícios registrados</h3>
           </div>
         </div>
 
@@ -178,7 +178,7 @@ export function ProgressScreen({
                 </div>
                 <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
                   <p>
-                    <span className="text-muted-foreground">Ultima: </span>
+                    <span className="text-muted-foreground">Última: </span>
                     <span className="font-semibold">
                       {formatLoad(summary.lastLoadKg)} kg x {summary.lastReps}
                     </span>
@@ -203,7 +203,7 @@ export function ProgressScreen({
           </div>
           <div>
             <p className="text-sm font-medium text-info">Ultimos treinos</p>
-            <h3 className="font-semibold">Sessoes concluidas</h3>
+            <h3 className="font-semibold">Sessões concluídas</h3>
           </div>
         </div>
 
@@ -225,7 +225,7 @@ export function ProgressScreen({
                     </p>
                   </div>
                   <span className="shrink-0 rounded-md bg-card px-2 py-1 text-xs font-semibold">
-                    {session.setsCount} series
+                    {session.setsCount} séries
                   </span>
                 </div>
                 <p className="mt-3 text-sm text-muted-foreground">
@@ -257,25 +257,25 @@ function ExerciseHistoryScreen({
       </Button>
 
       <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
-        <p className="text-sm font-medium text-info">Detalhe do exercicio</p>
+        <p className="text-sm font-medium text-info">Detalhe do exercício</p>
         <h2 className="mt-2 text-2xl font-semibold">
           {details?.exerciseName ?? "Carregando"}
         </h2>
         <p className="mt-3 text-sm leading-6 text-muted-foreground">
-          Ultima carga, maior carga e series recentes salvas neste dispositivo.
+          Última carga, maior carga e séries recentes salvas neste dispositivo.
         </p>
       </div>
 
       {isLoading || !details ? (
         <p className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">
-          Carregando historico do exercicio.
+          Carregando histórico do exercício.
         </p>
       ) : (
         <>
           <div className="grid grid-cols-2 gap-3">
             <HistoryMetric
               icon={TrendingUp}
-              label="Ultima carga"
+              label="Última carga"
               value={`${formatLoad(details.lastLoadKg)} kg`}
             />
             <HistoryMetric
@@ -288,12 +288,12 @@ function ExerciseHistoryScreen({
           <div className="grid grid-cols-2 gap-3">
             <HistoryMetric
               icon={Dumbbell}
-              label="Ultimas reps"
+              label="Últimas reps"
               value={String(details.lastReps)}
             />
             <HistoryMetric
               icon={CalendarCheck2}
-              label="Series"
+              label="Séries"
               value={String(details.completedSetsCount)}
             />
           </div>
@@ -302,7 +302,7 @@ function ExerciseHistoryScreen({
             <h3 className="font-semibold">Registros recentes</h3>
             {details.records.length === 0 ? (
               <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                Nenhuma serie encontrada para este exercicio.
+                Nenhuma série encontrada para este exercício.
               </p>
             ) : (
               <div className="mt-4 space-y-3">
@@ -314,7 +314,7 @@ function ExerciseHistoryScreen({
                           {record.routineName}
                         </h4>
                         <p className="mt-1 text-xs text-muted-foreground">
-                          {formatShortDate(record.completedAt)} - serie{" "}
+                          {formatShortDate(record.completedAt)} - série{" "}
                           {record.setNumber}
                         </p>
                       </div>
@@ -348,7 +348,7 @@ function EmptyHistoryScreen() {
           <History className="h-5 w-5" aria-hidden="true" />
         </div>
         <div>
-          <p className="text-sm font-medium text-info">Historico</p>
+          <p className="text-sm font-medium text-info">Histórico</p>
           <h2 className="text-2xl font-semibold">Sem treino ativo</h2>
         </div>
       </div>

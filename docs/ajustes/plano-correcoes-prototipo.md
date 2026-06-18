@@ -457,6 +457,8 @@ Checks e evidencias:
 
 ## Execucao 8 - Revisao visual mobile e testes de regressao
 
+Status: Concluida
+
 Objetivo: validar aderencia visual e funcional das telas principais apos as correcoes.
 
 Arquivos provaveis:
@@ -488,6 +490,15 @@ Pronto quando:
 - `pnpm test`, `pnpm lint`, `pnpm build` e `pnpm visual:check` passam.
 - As capturas mobile comprovam as telas principais.
 - Nao ha texto cortado, conteudo coberto pela bottom nav ou controles pequenos demais na execucao.
+
+Checks e evidencias:
+
+- `pnpm test`: 6 arquivos e 30 testes passaram.
+- `pnpm lint`: passou.
+- `pnpm build`: passou.
+- `pnpm visual:check`: 4 testes Playwright passaram.
+- Verificacao mobile em viewport Pixel 5: primeiro uso, preview de importacao, home ativa, funcoes de JSON em Ajustes, detalhe do treino, execucao com descanso integrado, finalizacao, historico, detalhe de exercicio, erro de importacao, tema claro, limpeza local e ciclo concluido.
+- Capturas atualizadas em `docs/ajustes/auditoria-entrega/05-ux-01-primeiro-uso.png`, `06-ux-10-preview-json.png`, `07-home-ativa-sem-json.png`, `08-ux-11-erro-importacao.png`, `09-ux-03-detalhe-treino.png`, `10-ux-06-finalizacao.png`, `11-ux-07-08-historico.png`, `12-ux-13-ajustes-tema-claro.png`, `13-ux-04-descanso-integrado.png`, `14-ux-08-detalhe-exercicio.png` e `15-ux-ciclo-concluido.png`.
 
 ## Ordem recomendada
 

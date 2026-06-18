@@ -61,12 +61,12 @@ export function HomeScreen({
             <h2 className="text-3xl font-semibold leading-tight">
               {isLoadingActivePlan
                 ? "Carregando seu treino"
-                : "Importe seu treino para comecar"}
+                : "Importe seu treino para começar"}
             </h2>
             <p className="text-base leading-7 text-muted-foreground">
               {isLoadingActivePlan
                 ? "Buscando os dados salvos neste dispositivo."
-                : "Escolha um JSON de treino. Antes de salvar, o app valida o arquivo e mostra um resumo para confirmacao."}
+                : "Escolha um JSON de treino. Antes de salvar, o app valida o arquivo e mostra um resumo para confirmação."}
             </p>
           </div>
 
@@ -104,7 +104,7 @@ export function HomeScreen({
               title="Funciona offline"
             />
             <BenefitItem
-              description="Baixe o JSON base para gerar um plano compativel."
+              description="Baixe o JSON base para gerar um plano compatível."
               title="Modelo pronto"
             />
           </div>

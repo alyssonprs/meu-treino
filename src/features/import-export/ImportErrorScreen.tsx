@@ -24,13 +24,13 @@ export function ImportErrorScreen({
           <p className="text-sm text-muted-foreground">
             {importStatus.fileName ?? "Arquivo selecionado"}
           </p>
-          <h2 className="mt-1 text-2xl font-semibold">JSON nao importado</h2>
+          <h2 className="mt-1 text-2xl font-semibold">JSON não importado</h2>
         </div>
       </div>
 
       <p className="mt-4 text-sm leading-6 text-muted-foreground">
-        O arquivo nao segue o modelo esperado pelo app. Confira o detalhe
-        tecnico abaixo ou tente importar outro JSON.
+        O arquivo não segue o modelo esperado pelo app. Confira o detalhe
+        técnico abaixo ou tente importar outro JSON.
       </p>
 
       <ul className="mt-4 space-y-2 rounded-md bg-muted p-3">

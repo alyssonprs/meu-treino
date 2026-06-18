@@ -15,12 +15,12 @@ export function LoadHistoryPanel({
             <TrendingUp className="h-5 w-5" aria-hidden="true" />
           </div>
           <div>
-            <p className="text-sm font-medium text-info">Historico de cargas</p>
+            <p className="text-sm font-medium text-info">Histórico de cargas</p>
             <h2 className="font-semibold">Sem registros ainda</h2>
           </div>
         </div>
         <p className="mt-3 text-sm leading-6 text-muted-foreground">
-          Finalize um treino para ver ultima carga, maior carga e evolucao.
+          Finalize um treino para ver última carga, maior carga e evolução.
         </p>
       </section>
     );
@@ -33,7 +33,7 @@ export function LoadHistoryPanel({
           <TrendingUp className="h-5 w-5" aria-hidden="true" />
         </div>
         <div>
-          <p className="text-sm font-medium text-info">Historico de cargas</p>
+          <p className="text-sm font-medium text-info">Histórico de cargas</p>
           <h2 className="font-semibold">Ultimos exercicios</h2>
         </div>
       </div>
@@ -46,12 +46,12 @@ export function LoadHistoryPanel({
                 {summary.exerciseName}
               </h3>
               <span className="shrink-0 text-xs font-medium text-muted-foreground">
-                {summary.completedSetsCount} series
+                {summary.completedSetsCount} séries
               </span>
             </div>
             <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
               <p>
-                <span className="text-muted-foreground">Ultima: </span>
+                <span className="text-muted-foreground">Última: </span>
                 <span className="font-semibold">
                   {formatLoad(summary.lastLoadKg)} kg x {summary.lastReps}
                 </span>
@@ -69,4 +69,3 @@ export function LoadHistoryPanel({
     </section>
   );
 }
-

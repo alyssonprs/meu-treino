@@ -23,10 +23,10 @@ export function ImportPreviewScreen({
   const summaryItems = [
     ["Objetivo", preview.objective],
     ["Nivel", preview.level],
-    ["Duracao", `${preview.estimatedDurationWeeks} semanas`],
+    ["Duração", `${preview.estimatedDurationWeeks} semanas`],
     ["Frequencia", `${preview.daysPerWeek} dias/semana`],
     ["Rotinas", String(preview.routineCount)],
-    ["Exercicios", String(preview.exerciseCount)],
+    ["Exercícios", String(preview.exerciseCount)],
   ];
 
   return (
@@ -54,8 +54,8 @@ export function ImportPreviewScreen({
           ))}
         </dl>
         <p className="mt-4 text-sm leading-6 text-muted-foreground">
-          Ao confirmar, o progresso da sequencia atual e reiniciado. Historicos
-          de carga ja salvos permanecem no dispositivo.
+          Ao confirmar, o progresso da sequência atual é reiniciado. Históricos
+          de carga já salvos permanecem no dispositivo.
         </p>
       </div>
 
@@ -67,7 +67,7 @@ export function ImportPreviewScreen({
           type="button"
         >
           <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
-          {isSaving ? "Importando..." : "Confirmar importacao"}
+          {isSaving ? "Importando..." : "Confirmar importação"}
         </Button>
         <Button
           className="h-12 w-full gap-2"
