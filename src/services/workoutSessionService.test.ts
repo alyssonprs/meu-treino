@@ -5,6 +5,7 @@ import type { ActiveWorkoutPlanSnapshot } from "@/storage/workoutPlanRepository"
 import {
   createWorkoutSessionDraft,
   finishWorkoutSession,
+  saveWorkoutSetInDraft,
 } from "./workoutSessionService";
 
 describe("workoutSessionService", () => {
@@ -48,22 +49,27 @@ describe("workoutSessionService", () => {
     });
 
     expect(draft.initialExerciseIndex).toBe(1);
+    expect(draft.currentExerciseIndex).toBe(1);
   });
 
-  it("finishes a workout session with completed sets", async () => {
+  it("converts the saved draft sets into a completed workout session", async () => {
     const snapshot = createSnapshot();
-    const draft = createWorkoutSessionDraft({
-      planId: snapshot.plan.id,
-      routine: snapshot.routines[0],
-      startedAt: "2026-06-15T12:00:00.000Z",
+    const draft = saveWorkoutSetInDraft({
+      draft: createWorkoutSessionDraft({
+        planId: snapshot.plan.id,
+        routine: snapshot.routines[0],
+        startedAt: "2026-06-15T12:00:00.000Z",
+      }),
+      exerciseIndex: 0,
+      setIndex: 0,
+      savedAt: "2026-06-15T12:20:00.000Z",
+      values: {
+        loadKg: "60",
+        reps: "8",
+        rir: "2",
+        notes: "Boa execucao",
+      },
     });
-
-    draft.exercises[0].sets[0] = {
-      loadKg: "60",
-      reps: "8",
-      rir: "2",
-      notes: "Boa execucao",
-    };
 
     const repository = {
       saveCompletedWorkoutSession: vi
@@ -108,6 +114,39 @@ describe("workoutSessionService", () => {
         },
       ],
     });
+  });
+
+  it("ignores typed but unsaved set values when finishing", async () => {
+    const snapshot = createSnapshot();
+    const draft = createWorkoutSessionDraft({
+      planId: snapshot.plan.id,
+      routine: snapshot.routines[0],
+      startedAt: "2026-06-15T12:00:00.000Z",
+    });
+
+    draft.exercises[0].sets[0] = {
+      loadKg: "60",
+      reps: "8",
+      rir: "2",
+      notes: "Boa execucao",
+      completedAt: null,
+    };
+
+    const repository = {
+      saveCompletedWorkoutSession: vi.fn(),
+    };
+
+    const result = await finishWorkoutSession({
+      draft,
+      completedAt: "2026-06-15T13:00:00.000Z",
+      repository,
+    });
+
+    expect(result).toEqual({
+      success: false,
+      message: "Registre carga e repeticoes em pelo menos uma serie.",
+    });
+    expect(repository.saveCompletedWorkoutSession).not.toHaveBeenCalled();
   });
 
   it("does not finish when no set has load and reps", async () => {

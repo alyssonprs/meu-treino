@@ -11,6 +11,7 @@ export type WorkoutSetDraft = {
   reps: string;
   rir: string;
   notes: string;
+  completedAt: string | null;
 };
 
 export type WorkoutExerciseDraft = {
@@ -23,6 +24,7 @@ export type WorkoutSessionDraft = {
   routine: RoutineWithDetails;
   startedAt: string;
   initialExerciseIndex: number;
+  currentExerciseIndex: number;
   exercises: WorkoutExerciseDraft[];
 };
 
@@ -58,6 +60,10 @@ export function createWorkoutSessionDraft({
       initialExerciseIndex >= 0 && initialExerciseIndex < routine.exercises.length
         ? initialExerciseIndex
         : 0,
+    currentExerciseIndex:
+      initialExerciseIndex >= 0 && initialExerciseIndex < routine.exercises.length
+        ? initialExerciseIndex
+        : 0,
     exercises: routine.exercises.map((exercise) => {
       const loadHistory = loadHistoryByExerciseId?.get(exercise.exerciseId);
 
@@ -74,7 +80,79 @@ export function createWorkoutSessionDraft({
               ? String(exercise.target_rir)
               : "",
           notes: "",
+          completedAt: null,
         })),
+      };
+    }),
+  };
+}
+
+export function setCurrentExerciseInDraft({
+  draft,
+  exerciseIndex,
+}: {
+  draft: WorkoutSessionDraft;
+  exerciseIndex: number;
+}): WorkoutSessionDraft {
+  if (exerciseIndex < 0 || exerciseIndex >= draft.exercises.length) {
+    return draft;
+  }
+
+  return {
+    ...draft,
+    currentExerciseIndex: exerciseIndex,
+  };
+}
+
+export function getNextPendingSetIndex(
+  draft: WorkoutSessionDraft,
+  exerciseIndex: number,
+): number | null {
+  const exerciseDraft = draft.exercises[exerciseIndex];
+
+  if (!exerciseDraft) {
+    return null;
+  }
+
+  const pendingIndex = exerciseDraft.sets.findIndex(
+    (set) => set.completedAt === null,
+  );
+
+  return pendingIndex >= 0 ? pendingIndex : null;
+}
+
+export function saveWorkoutSetInDraft({
+  draft,
+  exerciseIndex,
+  setIndex,
+  values,
+  savedAt,
+}: {
+  draft: WorkoutSessionDraft;
+  exerciseIndex: number;
+  setIndex: number;
+  values: Pick<WorkoutSetDraft, "loadKg" | "reps" | "rir" | "notes">;
+  savedAt: string;
+}): WorkoutSessionDraft {
+  return {
+    ...draft,
+    currentExerciseIndex: exerciseIndex,
+    exercises: draft.exercises.map((exercise, currentExerciseIndex) => {
+      if (currentExerciseIndex !== exerciseIndex) {
+        return exercise;
+      }
+
+      return {
+        ...exercise,
+        sets: exercise.sets.map((set, currentSetIndex) =>
+          currentSetIndex === setIndex
+            ? {
+                ...set,
+                ...values,
+                completedAt: savedAt,
+              }
+            : set,
+        ),
       };
     }),
   };
@@ -124,6 +202,7 @@ function toCompletedWorkoutSessionInput(
       }
 
       const sets = exerciseDraft.sets
+        .filter((setDraft) => setDraft.completedAt !== null)
         .map((setDraft, index) => toCompletedSet(setDraft, index + 1))
         .filter((set) => set !== null);
 

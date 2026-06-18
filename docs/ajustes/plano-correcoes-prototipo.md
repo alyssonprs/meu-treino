@@ -300,6 +300,8 @@ Pronto quando:
 
 ## Execucao 4 - Refatorar execucao para fluxo guiado por serie
 
+Status: Concluida
+
 Objetivo: implementar `UX-04` como fluxo real de treino, com descanso integrado na propria tela.
 
 Arquivos provaveis:

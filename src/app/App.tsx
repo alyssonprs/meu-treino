@@ -29,6 +29,8 @@ import { getNextRecommendedRoutineFromSnapshot } from "@/services/workoutRecomme
 import {
   createWorkoutSessionDraft,
   finishWorkoutSession,
+  saveWorkoutSetInDraft,
+  setCurrentExerciseInDraft,
   type WorkoutSessionDraft,
   type WorkoutSetDraft,
 } from "@/services/workoutSessionService";
@@ -225,6 +227,15 @@ export function App() {
       return;
     }
 
+    if (activeWorkout?.routine.id === routine.id) {
+      setActiveWorkout(
+        setCurrentExerciseInDraft({ draft: activeWorkout, exerciseIndex }),
+      );
+      setWorkoutMessage(null);
+      setActiveScreen("active-workout");
+      return;
+    }
+
     const history = await pwaWorkoutPlanRepository.getExerciseLoadHistory(
       routine.exercises.map((exercise) => exercise.exerciseId),
     );
@@ -276,7 +287,7 @@ export function App() {
   }: {
     exerciseIndex: number;
     setIndex: number;
-    field: keyof WorkoutSetDraft;
+    field: keyof Pick<WorkoutSetDraft, "loadKg" | "reps" | "rir" | "notes">;
     value: string;
   }) {
     setActiveWorkout((current) => {
@@ -299,6 +310,30 @@ export function App() {
           };
         }),
       };
+    });
+  }
+
+  function saveWorkoutSet({
+    exerciseIndex,
+    setIndex,
+    values,
+  }: {
+    exerciseIndex: number;
+    setIndex: number;
+    values: Pick<WorkoutSetDraft, "loadKg" | "reps" | "rir" | "notes">;
+  }) {
+    setActiveWorkout((current) => {
+      if (!current) {
+        return current;
+      }
+
+      return saveWorkoutSetInDraft({
+        draft: current,
+        exerciseIndex,
+        setIndex,
+        values,
+        savedAt: new Date().toISOString(),
+      });
     });
   }
 
@@ -328,6 +363,10 @@ export function App() {
           draft={activeWorkout}
           loadHistoryByExerciseId={workoutLoadHistory}
           message={workoutMessage}
+          onBackToDetail={() => {
+            setWorkoutMessage(null);
+            setActiveScreen("workout");
+          }}
           onCancel={() => {
             setActiveWorkout(null);
             setWorkoutMessage(null);
@@ -335,6 +374,14 @@ export function App() {
           }}
           onFinish={() => {
             void handleFinishWorkout();
+          }}
+          onSaveSet={saveWorkoutSet}
+          onSelectExercise={(exerciseIndex) => {
+            setActiveWorkout((current) =>
+              current
+                ? setCurrentExerciseInDraft({ draft: current, exerciseIndex })
+                : current,
+            );
           }}
           onUpdateSet={updateWorkoutSet}
         />
