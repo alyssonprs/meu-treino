@@ -338,6 +338,8 @@ Pronto quando:
 
 ## Execucao 5 - Implementar finalizacao de treino
 
+Status: Concluida
+
 Objetivo: implementar `UX-06` e fechar corretamente o fluxo de treino.
 
 Arquivos provaveis:
@@ -361,6 +363,14 @@ Pronto quando:
 - Home passa a recomendar a proxima rotina pela ordem.
 - Historico de carga e progresso continuam preservados.
 - Testes de servico e storage passam.
+
+Checks e evidencias:
+
+- `vitest run`: 6 arquivos e 24 testes passaram.
+- `eslint src vite.config.ts tailwind.config.ts postcss.config.js eslint.config.js`: passou.
+- `tsc -b` e `vite build`: passaram.
+- Verificacao mobile Playwright em `390 x 844`: importacao do modelo, registro de serie, finalizacao, ausencia de bottom nav, recomendacao seguinte e ausencia de overflow horizontal.
+- Captura: `docs/ajustes/auditoria-entrega/10-ux-06-finalizacao.png`.
 
 ## Execucao 6 - Implementar historico e detalhe de exercicio
 
@@ -462,8 +472,8 @@ Pronto quando:
 1. Execucao 1: navegacao e separacao de telas. Status: Concluida.
 2. Execucao 2: primeiro uso/importacao/modelo. Status: Concluida.
 3. Execucao 3: home ativa/detalhe do treino. Status: Concluida.
-4. Execucao 4: execucao guiada com descanso integrado.
-5. Execucao 5: finalizacao.
+4. Execucao 4: execucao guiada com descanso integrado. Status: Concluida.
+5. Execucao 5: finalizacao. Status: Concluida.
 6. Execucao 6: historico.
 7. Execucao 7: ajustes.
 8. Execucao 8: revisao visual e regressao.

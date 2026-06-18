@@ -87,6 +87,9 @@ describe("workoutSessionService", () => {
       success: true,
       sessionId: "session-1",
       completedAt: "2026-06-15T13:00:00.000Z",
+      routineName: "Treino A",
+      completedExercisesCount: 1,
+      completedSetsCount: 1,
     });
     expect(repository.saveCompletedWorkoutSession).toHaveBeenCalledWith({
       planId: "plan-1",

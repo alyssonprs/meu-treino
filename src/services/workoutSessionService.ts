@@ -33,6 +33,9 @@ export type FinishWorkoutSessionResult =
       success: true;
       sessionId: string;
       completedAt: string;
+      routineName: string;
+      completedExercisesCount: number;
+      completedSetsCount: number;
     }
   | {
       success: false;
@@ -182,6 +185,12 @@ export async function finishWorkoutSession({
     success: true,
     sessionId: result.sessionId,
     completedAt,
+    routineName: input.routineName,
+    completedExercisesCount: input.exercises.length,
+    completedSetsCount: input.exercises.reduce(
+      (total, exercise) => total + exercise.sets.length,
+      0,
+    ),
   };
 }
 

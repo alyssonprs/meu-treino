@@ -14,6 +14,10 @@ import type {
 import { ProgressScreen } from "@/features/progress/ProgressScreen";
 import { SettingsScreen } from "@/features/settings/SettingsScreen";
 import { ActiveWorkoutScreen } from "@/features/workouts/ActiveWorkoutScreen";
+import {
+  WorkoutFinishedScreen,
+  type WorkoutCompletionSummary,
+} from "@/features/workouts/WorkoutFinishedScreen";
 import { WorkoutScreen } from "@/features/workouts/WorkoutScreen";
 import {
   createLoadHistoryMap,
@@ -54,6 +58,8 @@ export function App() {
   >(new Map());
   const [loadSummaries, setLoadSummaries] = useState<ExerciseLoadSummary[]>([]);
   const [workoutMessage, setWorkoutMessage] = useState<string | null>(null);
+  const [workoutCompletion, setWorkoutCompletion] =
+    useState<WorkoutCompletionSummary | null>(null);
   const [importStatus, setImportStatus] =
     useState<ImportStatus>(idleImportStatus);
 
@@ -119,6 +125,7 @@ export function App() {
   function navigateToMainTab(screen: MainTabScreen) {
     setActiveScreen(screen);
     setWorkoutMessage(null);
+    setWorkoutCompletion(null);
   }
 
   async function handleImportFile(file: File) {
@@ -275,8 +282,15 @@ export function App() {
     setActivePlan(updatedPlan);
     setActiveWorkout(null);
     setWorkoutLoadHistory(new Map());
-    setWorkoutMessage("Treino finalizado e salvo neste dispositivo.");
-    setActiveScreen("home");
+    setWorkoutMessage(null);
+    setWorkoutCompletion({
+      sessionId: result.sessionId,
+      completedAt: result.completedAt,
+      routineName: result.routineName,
+      completedExercisesCount: result.completedExercisesCount,
+      completedSetsCount: result.completedSetsCount,
+    });
+    setActiveScreen("workout-finished");
   }
 
   function updateWorkoutSet({
@@ -384,6 +398,25 @@ export function App() {
             );
           }}
           onUpdateSet={updateWorkoutSet}
+        />
+      );
+    }
+
+    if (activeScreen === "workout-finished" && workoutCompletion) {
+      const finishedCycleProgress = activePlan
+        ? getCycleProgressSummary(activePlan)
+        : null;
+      const finishedNextRecommendation = activePlan
+        ? getNextRecommendedRoutineFromSnapshot(activePlan)
+        : null;
+
+      return (
+        <WorkoutFinishedScreen
+          completion={workoutCompletion}
+          cycleProgress={finishedCycleProgress}
+          nextRecommendation={finishedNextRecommendation}
+          onGoHome={() => navigateToMainTab("home")}
+          onGoToHistory={() => navigateToMainTab("history")}
         />
       );
     }
