@@ -412,6 +412,8 @@ Checks e evidencias:
 
 ## Execucao 7 - Implementar ajustes e dados locais
 
+Status: Concluida
+
 Objetivo: implementar `UX-13` e completar as acoes locais previstas.
 
 Arquivos provaveis:
@@ -443,6 +445,15 @@ Pronto quando:
 - Tema claro/escuro funciona e persiste.
 - Apagar dados locais limpa plano, progresso e historico apos confirmacao.
 - Acoes nao implementadas nao devem aparecer como funcionais falsas.
+
+Checks e evidencias:
+
+- `vitest run`: 6 arquivos e 30 testes passaram.
+- `eslint src vite.config.ts tailwind.config.ts postcss.config.js eslint.config.js`: passou.
+- `tsc -b` e `vite build`: passaram.
+- `playwright test --config playwright.visual.config.ts`: 3 testes passaram.
+- Verificacao mobile em `390 x 844`: Ajustes com tema, substituicao de treino via seletor, download direto do modelo, versao do app, tema claro aplicado sem reiniciar e limpeza local com confirmacao.
+- Captura: `docs/ajustes/auditoria-entrega/12-ux-13-ajustes-tema-claro.png`.
 
 ## Execucao 8 - Revisao visual mobile e testes de regressao
 

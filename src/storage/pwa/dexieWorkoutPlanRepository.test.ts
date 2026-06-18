@@ -455,4 +455,51 @@ describe("DexieWorkoutPlanRepository", () => {
       },
     ]);
   });
+
+  it("clears plans, progress, sessions and load history", async () => {
+    const repository = createRepository();
+
+    await repository.saveActivePlan({ plan: basePlan });
+    const activePlan = await repository.getActivePlan();
+    const routine = activePlan?.routines[0];
+    const exercise = routine?.exercises[0];
+
+    if (!activePlan || !routine || !exercise) {
+      throw new Error("Fixture should create a routine with exercises");
+    }
+
+    await repository.saveCompletedWorkoutSession({
+      planId: activePlan.plan.id,
+      routineId: routine.id,
+      routineName: routine.name,
+      routineOrder: routine.order,
+      startedAt: "2026-06-15T12:00:00.000Z",
+      completedAt: "2026-06-15T13:00:00.000Z",
+      exercises: [
+        {
+          plannedExerciseId: exercise.id,
+          exerciseId: exercise.exerciseId,
+          sourceExerciseId: exercise.sourceExerciseId,
+          exerciseName: exercise.name,
+          order: exercise.order,
+          sets: [
+            { setNumber: 1, loadKg: 60, reps: 8, rir: 2, notes: null },
+          ],
+        },
+      ],
+    });
+
+    await repository.clearAllWorkoutData();
+
+    await expect(repository.getActivePlan()).resolves.toBeNull();
+    await expect(repository.getRecentCompletedWorkoutSessions()).resolves.toEqual(
+      [],
+    );
+    await expect(
+      repository.getExerciseLoadHistory([exercise.exerciseId]),
+    ).resolves.toEqual([]);
+    await expect(repository.getExerciseSetHistory(exercise.exerciseId)).resolves.toEqual(
+      [],
+    );
+  });
 });

@@ -48,6 +48,8 @@ import type {
   ExerciseLoadHistoryRecord,
 } from "@/storage/workoutPlanRepository";
 
+const appVersion = "0.1.0";
+
 export function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeScreen, setActiveScreen] = useState<AppScreen>("home");
@@ -69,6 +71,7 @@ export function App() {
     useState<WorkoutCompletionSummary | null>(null);
   const [importStatus, setImportStatus] =
     useState<ImportStatus>(idleImportStatus);
+  const [isClearingLocalData, setIsClearingLocalData] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -309,6 +312,27 @@ export function App() {
     setActiveScreen("workout-finished");
   }
 
+  async function handleClearLocalData() {
+    setIsClearingLocalData(true);
+
+    try {
+      await pwaWorkoutPlanRepository.clearAllWorkoutData();
+      setActivePlan(null);
+      setActiveWorkout(null);
+      setWorkoutLoadHistory(new Map());
+      setLoadSummaries([]);
+      setRecentSessions([]);
+      setWorkoutCompletion(null);
+      setImportStatus(idleImportStatus);
+      setWorkoutMessage("Dados de treino apagados deste dispositivo.");
+      setActiveScreen("home");
+    } catch {
+      setWorkoutMessage("Nao foi possivel apagar os dados locais agora.");
+    } finally {
+      setIsClearingLocalData(false);
+    }
+  }
+
   function updateWorkoutSet({
     exerciseIndex,
     setIndex,
@@ -465,7 +489,15 @@ export function App() {
     }
 
     if (activeScreen === "settings") {
-      return <SettingsScreen />;
+      return (
+        <SettingsScreen
+          activePlan={activePlan}
+          appVersion={appVersion}
+          isClearingLocalData={isClearingLocalData}
+          onChooseImportFile={() => fileInputRef.current?.click()}
+          onClearLocalData={handleClearLocalData}
+        />
+      );
     }
 
     if (

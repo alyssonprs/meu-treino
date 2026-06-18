@@ -54,6 +54,37 @@ test("home shows the next recommended routine after importing the model plan", a
     fullPage: true,
   });
 
+  await page.getByRole("button", { name: "Ajustes" }).click();
+  await expect(page.getByRole("heading", { name: /Prefer/ })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Substituir treino atual" }),
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Baixar modelo" })).toBeVisible();
+  await expect(page.getByText("0.1.0")).toBeVisible();
+
+  await page.getByRole("radio", { name: "Claro" }).click();
+  await expect
+    .poll(() =>
+      page.evaluate(() => document.documentElement.classList.contains("light")),
+    )
+    .toBe(true);
+
+  await page.screenshot({
+    path: "docs/ajustes/auditoria-entrega/12-ux-13-ajustes-tema-claro.png",
+    fullPage: true,
+  });
+
+  const settingsFileChooserPromise = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: "Substituir treino atual" }).click();
+  const settingsFileChooser = await settingsFileChooserPromise;
+
+  await settingsFileChooser.setFiles("src/assets/meu-treino-modelo.json");
+  await expect(
+    page.getByRole("heading", { name: "Preview do JSON" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Confirmar importacao" }).click();
+  await expect(page.getByRole("button", { name: "Iniciar treino" })).toBeVisible();
+
   await page.getByRole("button", { name: "Iniciar treino" }).click();
   await expect(
     page.getByRole("heading", { name: "Toque no exercício disponível" }),
@@ -68,7 +99,10 @@ test("home shows the next recommended routine after importing the model plan", a
   });
 
   await page.getByRole("button", { name: /Abrir/ }).first().click();
-  await expect(page.getByText("Exercicio escolhido")).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Treino em andamento" }),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Registrar agora" })).toBeVisible();
 });
 
 test("invalid import shows the dedicated recovery screen", async ({ page }) => {
@@ -101,4 +135,30 @@ test("invalid import shows the dedicated recovery screen", async ({ page }) => {
     path: "docs/ajustes/auditoria-entrega/08-ux-11-erro-importacao.png",
     fullPage: true,
   });
+});
+
+test("settings clears local workout data after confirmation", async ({ page }) => {
+  await page.goto("/");
+
+  const fileChooserPromise = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: "Importar JSON" }).click();
+  const fileChooser = await fileChooserPromise;
+
+  await fileChooser.setFiles("src/assets/meu-treino-modelo.json");
+  await page.getByRole("button", { name: "Confirmar importacao" }).click();
+  await expect(page.getByRole("button", { name: "Iniciar treino" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Ajustes" }).click();
+  await page.getByRole("button", { name: "Apagar dados locais" }).click();
+  await expect(
+    page.getByText("Apagar todos os dados de treino?"),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Confirmar limpeza" }).click();
+
+  await expect(
+    page.getByRole("heading", { name: "Importe seu treino para comecar" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Dados de treino apagados deste dispositivo."),
+  ).toBeVisible();
 });
