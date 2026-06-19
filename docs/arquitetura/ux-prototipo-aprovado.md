@@ -34,23 +34,21 @@ Ferramentas auxiliares:
 
 Arquivo editavel principal:
 
-- `docs/arquitetura/prototipos/meu-treino-wireframes.excalidraw`
-- Revisao de fluxo atual: `docs/arquitetura/prototipos/meu-treino-wireframes-v2.excalidraw`
+- `docs/arquitetura/prototipos/meu-treino-wireframes-v2.excalidraw`
 
 Versao atual:
 
-- Contem os wireframes das telas `UX-01` a `UX-14`.
+- V2 final aprovada.
+- Contem os wireframes finais das telas da primeira versao, com `UX-09` e `UX-12` removidas como telas independentes.
 - Todas as telas foram organizadas em quadros mobile de 390 x 844 px.
-- Arquivo auxiliar para regeneracao: `docs/arquitetura/prototipos/generate-wireframes.mjs`.
+- Arquivo auxiliar para regeneracao: `docs/arquitetura/prototipos/generate-wireframes-v2.mjs`.
 
 Como usar:
 
 1. Acesse `https://excalidraw.com`.
-2. Use `Open` ou arraste o arquivo `docs/arquitetura/prototipos/meu-treino-wireframes.excalidraw` para a tela.
+2. Use `Open` ou arraste o arquivo `docs/arquitetura/prototipos/meu-treino-wireframes-v2.excalidraw` para a tela.
 3. Edite os quadros das telas.
-4. Exporte cada tela aprovada como PNG.
-5. Salve os PNGs em `docs/arquitetura/prototipos`.
-6. Atualize o status da tela neste documento.
+4. Atualize o status da tela neste documento quando houver nova decisao aprovada.
 
 Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual final sera ajustada no desenvolvimento usando os tokens de tema.
 
@@ -207,17 +205,15 @@ Atualize esta tabela quando cada tela for aprovada.
 | ID | Decisao | Observacoes | Data |
 | --- | --- | --- | --- |
 | UX-00 | Modelo Guiada escolhido como base | Combinar tela inicial do modelo 1 com execucao focada inspirada no modelo 3 | 2026-06-15 |
-| UX-01..UX-14 | Prototipos aprovados, com UX-09 e UX-12 removidas na V2 | Usar `docs/arquitetura/prototipos/meu-treino-wireframes.excalidraw` como guia base e `docs/arquitetura/prototipos/meu-treino-wireframes-v2.excalidraw` para as correcoes de fluxo | 2026-06-17 |
+| UX-01..UX-14 | Prototipo V2 final aprovado, com UX-09 e UX-12 removidas como telas independentes | Usar `docs/arquitetura/prototipos/meu-treino-wireframes-v2.excalidraw` como unico guia editavel vigente | 2026-06-17 |
 | Treino e UX-03 | Fluxo de escolha manual de rotina aprovado | O menu `Treino` lista todas as rotinas do plano, destaca a recomendada e abre a `UX-03` da rotina escolhida; a Home continua abrindo a `UX-03` da recomendada | 2026-06-19 |
 | UX-04 | Registro por exercicio aprovado | A primeira versao registra carga e repeticoes uma vez por exercicio, sem RIR obrigatorio na UI; RIR pode continuar opcional/nulo no dominio e storage para evolucao futura | 2026-06-19 |
 
 ## Prototipos aprovados
 
-Os wireframes das telas `UX-01` a `UX-14` foram aprovados pelo usuario em 2026-06-15. A implementacao visual deve seguir o arquivo editavel `docs/arquitetura/prototipos/meu-treino-wireframes.excalidraw`, respeitando os tokens definidos em `docs/arquitetura/identidade-visual-opcoes.md`. No fluxo V2, `UX-09` e `UX-12` nao existem como telas: selecionar JSON e baixar modelo sao acoes diretas a partir de `UX-01` ou `UX-13`.
+Os wireframes finais da primeira versao estao consolidados no arquivo editavel `docs/arquitetura/prototipos/meu-treino-wireframes-v2.excalidraw`. A implementacao visual deve seguir esse arquivo, respeitando os tokens definidos em `docs/arquitetura/identidade-visual-opcoes.md`. No fluxo V2, `UX-09` e `UX-12` nao existem como telas: selecionar JSON e baixar modelo sao acoes diretas a partir de `UX-01` ou `UX-13`.
 
 ### UX-01 - Inicio sem treino importado
-
-![UX-01 - Inicio sem treino importado](prototipos/ux-01-inicio-sem-treino.png)
 
 Pontos aprovados:
 
@@ -228,8 +224,6 @@ Pontos aprovados:
 
 ### UX-02 - Inicio com treino ativo
 
-![UX-02 - Inicio com treino ativo](prototipos/ux-02-inicio-com-treino-ativo.png)
-
 Pontos aprovados:
 
 - O proximo treino recomendado esta claro.
@@ -238,8 +232,6 @@ Pontos aprovados:
 - Seguir com a composicao aprovada no wireframe do Excalidraw; elementos ilustrativos podem ser refinados no desenvolvimento sem mudar o fluxo.
 
 ### UX-04 - Execucao do treino
-
-![UX-04 - Execucao do treino](prototipos/ux-04-execucao-do-treino.png)
 
 Pontos aprovados:
 

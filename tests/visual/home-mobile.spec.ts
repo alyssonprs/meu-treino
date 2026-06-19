@@ -1,6 +1,7 @@
 import { expect, type Page, test } from "@playwright/test";
+import { mkdir } from "node:fs/promises";
 
-const auditDir = "docs/ajustes/auditoria-entrega";
+const auditDir = "test-results/auditoria-entrega";
 
 const cycleCompletePlan = {
   workout_plan: {
@@ -302,6 +303,7 @@ async function replacePlanFromSettings(page: Page) {
 }
 
 async function screenshot(page: Page, fileName: string) {
+  await mkdir(auditDir, { recursive: true });
   await page.screenshot({
     path: `${auditDir}/${fileName}`,
     fullPage: true,

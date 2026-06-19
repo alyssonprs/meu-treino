@@ -82,7 +82,7 @@ Use [docs/arquitetura/arquitetura-prompt.md](docs/arquitetura/arquitetura-prompt
 ## Codex Workflow
 
 - Before coding, read this file and the relevant parts of `docs/arquitetura/arquitetura-prompt.md`.
-- Work in small, reviewable tasks aligned with the current temporary adjustment plan in [docs/ajustes/plano-correcoes-prototipo.md](docs/ajustes/plano-correcoes-prototipo.md).
+- Work in small, reviewable tasks aligned with [docs/arquitetura/arquitetura-prompt.md](docs/arquitetura/arquitetura-prompt.md) and [docs/arquitetura/ux-prototipo-aprovado.md](docs/arquitetura/ux-prototipo-aprovado.md).
 - For each implementation task, confirm the goal, constraints, and "done when" criteria from the prompt.
 - Do not rewrite unrelated files or make broad refactors unless they are necessary for the current task.
 - Ask before adding new production dependencies after the initial project scaffold.

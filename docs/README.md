@@ -1,6 +1,6 @@
 # Documentacao
 
-Esta pasta separa referencias persistentes do projeto de ajustes pontuais.
+Esta pasta concentra as referencias persistentes do projeto.
 
 ## `arquitetura/`
 
@@ -13,14 +13,6 @@ Principais referencias:
 - `arquitetura/identidade-visual-opcoes.md`: temas e identidade visual.
 - `arquitetura/deploy-cloudflare.md`: operacao de deploy PWA.
 - `arquitetura/android.md`: preparacao Android com Capacitor.
-- `arquitetura/prototipos/`: wireframes e imagens aprovadas.
+- `arquitetura/prototipos/`: versao final V2 dos wireframes aprovados.
 
-## `ajustes/`
-
-Use para planos temporarios, auditorias, evidencias e registros de execucao.
-
-O plano ativo para a rodada atual e:
-
-- `ajustes/plano-correcoes-prototipo.md`
-
-Quando um ajuste temporario virar decisao permanente, consolide a decisao em `arquitetura/` e remova ou arquive o documento temporario correspondente.
+Planos temporarios, auditorias e registros de execucao ja concluidos nao devem permanecer em `docs`; quando uma decisao precisar persistir, consolide-a em `arquitetura/`.
