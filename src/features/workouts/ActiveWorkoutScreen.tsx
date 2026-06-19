@@ -4,6 +4,7 @@ import {
   Check,
   ChevronRight,
   Circle,
+  CircleDot,
   Minus,
   Plus,
   Save,
@@ -11,6 +12,7 @@ import {
   TimerReset,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/components/ui/utils";
 import {
   getNextPendingSetIndex,
   type WorkoutSessionDraft,
@@ -561,40 +563,46 @@ function ExerciseStatusList({
         {draft.routine.exercises.map((exercise, index) => {
           const exerciseDraft = draft.exercises[index];
           const status = getExerciseStatus(draft, index);
+          const statusMeta = getExerciseStatusMeta(status);
+          const completedSetsCount = exerciseDraft.completedSets.filter(
+            (set) => set.completedAt !== null,
+          ).length;
 
           return (
             <button
-              className="flex w-full items-center gap-3 rounded-md bg-muted p-3 text-left"
+              aria-current={
+                status === "Em progresso" && draft.currentExerciseIndex === index
+                  ? "step"
+                  : undefined
+              }
+              aria-label={`${exercise.name}: ${status}, ${completedSetsCount} de ${exerciseDraft.completedSets.length} series concluidas`}
+              className={cn(
+                "flex w-full items-start gap-3 rounded-md border p-3 text-left transition-colors",
+                statusMeta.itemClassName,
+              )}
               key={exercise.id}
               onClick={() => onSelectExercise(index)}
               type="button"
             >
-              {status === "Concluído" ? (
-                <Check
-                  className="h-4 w-4 shrink-0 text-primary"
-                  aria-hidden="true"
-                />
-              ) : (
-                <Circle
-                  className="h-4 w-4 shrink-0 text-muted-foreground"
-                  aria-hidden="true"
-                />
-              )}
+              <statusMeta.Icon
+                className={cn("mt-0.5 h-4 w-4 shrink-0", statusMeta.iconClassName)}
+                aria-hidden="true"
+              />
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-sm font-medium">
+                <span className="block truncate text-sm font-semibold">
                   {exercise.name}
                 </span>
-                <span className="block text-xs text-muted-foreground">
-                  {
-                    exerciseDraft.completedSets.filter(
-                      (set) => set.completedAt !== null,
-                    ).length
-                  }
-                  /
+                <span className="mt-1 block text-xs leading-5 text-muted-foreground">
+                  {statusMeta.description} · {completedSetsCount}/
                   {exerciseDraft.completedSets.length} séries
                 </span>
               </span>
-              <span className="shrink-0 rounded-md bg-background px-2 py-1 text-xs font-medium">
+              <span
+                className={cn(
+                  "shrink-0 rounded-md px-2 py-1 text-xs font-semibold",
+                  statusMeta.badgeClassName,
+                )}
+              >
                 {status}
               </span>
             </button>
@@ -632,6 +640,36 @@ function getExerciseStatus(
   }
 
   return "Pendente";
+}
+
+function getExerciseStatusMeta(status: ReturnType<typeof getExerciseStatus>) {
+  if (status === "Concluído") {
+    return {
+      Icon: Check,
+      description: "Carga e reps registradas",
+      itemClassName: "border-primary/50 bg-primary/10",
+      iconClassName: "text-primary",
+      badgeClassName: "bg-primary text-primary-foreground",
+    };
+  }
+
+  if (status === "Em progresso") {
+    return {
+      Icon: CircleDot,
+      description: "Exercício aberto ou com série marcada",
+      itemClassName: "border-info/60 bg-info/10",
+      iconClassName: "text-info",
+      badgeClassName: "bg-info text-info-foreground",
+    };
+  }
+
+  return {
+    Icon: Circle,
+    description: "Ainda não iniciado",
+    itemClassName: "border-border bg-muted",
+    iconClassName: "text-muted-foreground",
+    badgeClassName: "bg-background text-muted-foreground",
+  };
 }
 
 function getNextExerciseIndex(
