@@ -79,8 +79,8 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 | --- | --- | --- | --- |
 | UX-01 | Inicio sem treino importado | Explicar estado vazio e levar para importar JSON ou baixar modelo | Aprovada |
 | UX-02 | Inicio com treino ativo | Mostrar plano ativo, proximo treino recomendado, progresso do ciclo e botao iniciar | Aprovada |
-| Treino | Lista de rotinas do plano | Listar todas as rotinas pelo menu Treino e destacar a rotina recomendada | Em revisao |
-| UX-03 | Detalhe da rotina selecionada | Mostrar aquecimento, exercicios, cargas sugeridas e abrir execucao ao tocar em um exercicio | Em revisao |
+| Treino | Lista de rotinas do plano | Listar todas as rotinas pelo menu Treino e destacar a rotina recomendada | Aprovada |
+| UX-03 | Detalhe da rotina selecionada | Mostrar aquecimento, exercicios, cargas sugeridas e abrir execucao ao tocar em um exercicio | Aprovada |
 | UX-04 | Execucao do treino | Registrar series, reps, carga, RIR e descanso integrado por card na propria tela | Aprovada |
 | UX-05 | Descanso integrado na UX-04 | Nao criar tela separada; controlar descanso entre series dentro da UX-04 | Substituida pela UX-04 |
 | UX-06 | Finalizacao do treino | Confirmar treino concluido, salvar ultima rotina e mostrar proxima recomendacao | Aprovada |
@@ -208,6 +208,7 @@ Atualize esta tabela quando cada tela for aprovada.
 | --- | --- | --- | --- |
 | UX-00 | Modelo Guiada escolhido como base | Combinar tela inicial do modelo 1 com execucao focada inspirada no modelo 3 | 2026-06-15 |
 | UX-01..UX-14 | Prototipos aprovados, com UX-09 e UX-12 removidas na V2 | Usar `docs/arquitetura/prototipos/meu-treino-wireframes.excalidraw` como guia base e `docs/arquitetura/prototipos/meu-treino-wireframes-v2.excalidraw` para as correcoes de fluxo | 2026-06-17 |
+| Treino e UX-03 | Fluxo de escolha manual de rotina aprovado | O menu `Treino` lista todas as rotinas do plano, destaca a recomendada e abre a `UX-03` da rotina escolhida; a Home continua abrindo a `UX-03` da recomendada | 2026-06-19 |
 
 ## Prototipos aprovados
 
