@@ -211,7 +211,7 @@ Regra simples para aviso de novo treino:
 - Inicio: plano ativo, proximo treino sugerido, progresso do ciclo e botao para iniciar o treino recomendado.
 - Treino: lista todas as rotinas do plano ativo para o usuario escolher qual rotina quer executar no dia, com a rotina recomendada destacada.
 - Detalhe da rotina selecionada: lista de aquecimento, exercicios, series planejadas, carga sugerida, repeticoes, RIR alvo quando existir no plano e descanso, abrindo a execucao ao tocar em um exercicio.
-- Execucao de exercicio: registro rapido de carga e repeticoes uma vez por exercicio; RIR nao aparece como campo obrigatorio na primeira versao e fica reservado para melhoria futura.
+- Execucao de exercicio: marcar series concluidas durante o exercicio para disparar descanso entre series; registrar carga e repeticoes apenas no fim do exercicio; RIR nao aparece como campo obrigatorio na primeira versao e fica reservado para melhoria futura.
 - Historico: treinos concluidos e evolucao de carga por exercicio.
 - Importar treino: acao contextual na Home sem treino ou em Configuracoes com treino ativo; selecionar JSON, validar, mostrar preview e substituir plano atual.
 - Baixar modelo: acao contextual na Home sem treino ou em Configuracoes com treino ativo; executa download direto de `meu-treino-modelo.json` e deve aparecer junto da acao para baixar `prompt-treino-modelo.md`.
@@ -269,7 +269,7 @@ Regras:
 - Recomendar automaticamente a proxima rotina com base na ultima rotina finalizada.
 - Escolher entre tema claro e tema escuro.
 - Iniciar e finalizar treino.
-- Registrar carga e repeticoes por exercicio durante a execucao.
+- Marcar series concluidas durante a execucao, ver descanso entre series e registrar carga e repeticoes por exercicio apenas ao finalizar o exercicio.
 - Manter RIR como dado opcional/nulo no dominio e storage, sem exigir preenchimento visivel na primeira versao.
 - Recuperar ultima carga usada em exercicios ja conhecidos.
 - Contar treinos concluidos no ciclo atual.
@@ -311,7 +311,7 @@ Regras:
 - Ao finalizar uma rotina, o app salva essa rotina como a ultima finalizada e passa a recomendar a proxima pela ordem do plano.
 - Ao finalizar a ultima rotina da lista, o app recomenda novamente a primeira rotina.
 - O usuario consegue alternar entre tema claro e escuro, e a preferencia fica salva localmente.
-- O usuario consegue executar um treino e registrar carga e repeticoes por exercicio.
+- O usuario consegue executar um treino, marcar series concluidas, ver descanso entre series e registrar carga e repeticoes ao final de cada exercicio.
 - O app salva carga, repeticoes e status do treino localmente.
 - Ao importar um novo plano, o app nao precisa manter o progresso do plano antigo, mas preserva e reaproveita cargas de exercicios ja realizados.
 - O app calcula treinos concluidos e avisa quando o ciclo planejado acabou.

@@ -79,7 +79,7 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 | UX-02 | Inicio com treino ativo | Mostrar plano ativo, proximo treino recomendado, progresso do ciclo e botao iniciar | Aprovada |
 | Treino | Lista de rotinas do plano | Listar todas as rotinas pelo menu Treino e destacar a rotina recomendada | Aprovada |
 | UX-03 | Detalhe da rotina selecionada | Mostrar aquecimento, exercicios, cargas sugeridas e abrir execucao ao tocar em um exercicio | Aprovada |
-| UX-04 | Execucao do treino | Registrar carga e reps por exercicio, sem RIR obrigatorio, com descanso integrado por card na propria tela | Aprovada |
+| UX-04 | Execucao do treino | Marcar series concluidas, ver descanso entre series e registrar carga/reps apenas ao final do exercicio | Aprovada com ajustes |
 | UX-05 | Descanso integrado na UX-04 | Nao criar tela separada; controlar descanso entre series dentro da UX-04 | Substituida pela UX-04 |
 | UX-06 | Finalizacao do treino | Confirmar treino concluido, salvar ultima rotina e mostrar proxima recomendacao | Aprovada |
 | UX-07 | Historico | Listar treinos concluidos e evolucao basica de carga | Aprovada |
@@ -109,11 +109,13 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 4. App abre a `UX-03` da rotina recomendada.
 5. Usuario toca no exercicio que vai fazer.
 6. App abre a `UX-04` diretamente naquele exercicio.
-7. Usuario registra carga e repeticoes do exercicio.
-8. App salva carga e reps; RIR permanece opcional para melhoria futura.
-9. Usuario finaliza treino.
-10. App salva a ultima rotina finalizada.
-11. App recomenda a proxima rotina pela ordem.
+7. Usuario inicia o exercicio sem preencher carga e reps.
+8. Entre as series, usuario marca a serie como concluida e ve o descanso integrado.
+9. Ao terminar as series do exercicio, usuario registra carga e reps uma vez.
+10. App salva carga e reps; RIR permanece opcional para melhoria futura.
+11. Usuario finaliza treino.
+12. App salva a ultima rotina finalizada.
+13. App recomenda a proxima rotina pela ordem.
 
 ### Escolha manual de rotina
 
@@ -151,7 +153,8 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 - Lista de rotinas do plano acessivel pelo item `Treino` da navegacao inferior.
 - Selo visual para a rotina recomendada dentro da lista de rotinas.
 - Lista compacta de exercicios.
-- Registro de exercicio com carga e reps, uma vez por exercicio na primeira versao.
+- Controle de series concluidas durante o exercicio.
+- Registro de exercicio com carga e reps no fim do exercicio, uma vez por exercicio na primeira versao.
 - Controles de incremento/decremento para carga e reps.
 - Card de descanso dentro da execucao.
 - Estado vazio para nenhum treino importado.
@@ -208,6 +211,7 @@ Atualize esta tabela quando cada tela for aprovada.
 | UX-01..UX-14 | Prototipo V2 final aprovado, com UX-09 e UX-12 removidas como telas independentes | Usar `docs/arquitetura/prototipos/meu-treino-wireframes-v2.excalidraw` como unico guia editavel vigente | 2026-06-17 |
 | Treino e UX-03 | Fluxo de escolha manual de rotina aprovado | O menu `Treino` lista todas as rotinas do plano, destaca a recomendada e abre a `UX-03` da rotina escolhida; a Home continua abrindo a `UX-03` da recomendada | 2026-06-19 |
 | UX-04 | Registro por exercicio aprovado | A primeira versao registra carga e repeticoes uma vez por exercicio, sem RIR obrigatorio na UI; RIR pode continuar opcional/nulo no dominio e storage para evolucao futura | 2026-06-19 |
+| UX-04 | Ajuste apos primeiro uso real | Usuario deve conseguir marcar cada serie como concluida para acompanhar descanso entre series; carga e repeticoes continuam sendo informadas apenas no fim do exercicio; remover pausa e cancelar do topo da tela de exercicio | 2026-06-19 |
 
 ## Prototipos aprovados
 
@@ -235,8 +239,10 @@ Pontos aprovados:
 
 Pontos aprovados:
 
-- O card de descanso esta visivel sem atrapalhar o registro.
+- O card de descanso deve aparecer entre series depois de marcar uma serie como concluida.
 - O exercicio atual tem destaque suficiente.
 - Os controles de carga e reps parecem confortaveis para uso com uma mao.
 - A navegacao inferior some durante o treino para reduzir distracao.
-- A experiencia final da primeira versao deve manter carga e reps como unicos campos obrigatorios de execucao; RIR nao deve ser reintroduzido como campo visivel obrigatorio.
+- A experiencia final da primeira versao deve manter carga e reps como unicos campos obrigatorios de conclusao do exercicio; RIR nao deve ser reintroduzido como campo visivel obrigatorio.
+- O topo da tela de exercicio nao deve exibir botoes de pausa nem de cancelar com `X`.
+- A lista de exercicios da rotina em progresso deve indicar `Pendente`, `Em progresso` e `Concluido`.

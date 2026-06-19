@@ -54,7 +54,7 @@ Use [docs/arquitetura/arquitetura-prompt.md](docs/arquitetura/arquitetura-prompt
 - Track the last completed routine for the active plan.
 - Recommend the next routine by routine `order`; after the last routine, return to the first.
 - Show cycle completion when completed sessions reach `estimated_duration_weeks * days_per_week`.
-- In the first version, the active workout UI records load and reps once per exercise. Do not reintroduce per-set logging or mandatory RIR fields in the workout execution flow unless the user explicitly changes scope.
+- In the first version, the active workout UI records load and reps only at the end of each exercise. The user may mark individual sets as completed to drive the rest timer, but visible load/reps entry remains exercise-level, not per-set.
 - RIR may remain optional/null in domain and storage for compatibility and future analytics, but it is not a required visible field in `UX-04`.
 
 ## UX Rules
@@ -68,7 +68,7 @@ Use [docs/arquitetura/arquitetura-prompt.md](docs/arquitetura/arquitetura-prompt
 - Use Excalidraw as the default tool for UX wireframes before coding final screens.
 - Base the first version on the approved guided usability model: the home screen should focus on the next recommended workout.
 - Use an active-workout experience focused on fast exercise logging, rest timer, and few distractions.
-- In `UX-04`, keep the main entry block focused on the current exercise with load and reps only; the technical storage can still persist one internal set record for compatibility.
+- In `UX-04`, keep the final entry block focused on the current exercise with load and reps only. The UI may show per-set completion controls and rest between sets, but should not ask for load/reps per set.
 - Make the PWA installable with manifest, icons, service worker, and offline support.
 - Keep visible text concise during workout execution.
 - Support selectable light and dark themes.
