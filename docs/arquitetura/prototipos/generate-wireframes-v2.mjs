@@ -344,6 +344,37 @@ function exerciseRow(prefix, x, y, colors, title, meta, last) {
   ];
 }
 
+function routineCard(prefix, x, y, colors, title, meta, status, opts = {}) {
+  return [
+    rect(`${prefix}-card`, x, y, 326, 84, colors, {
+      fill: colors.surface,
+      stroke: opts.recommended ? colors.primary : colors.border,
+      strokeWidth: opts.recommended ? 2 : 1,
+    }),
+    text(`${prefix}-title`, x + 18, y + 14, title, colors, {
+      width: 188,
+      size: 17,
+    }),
+    text(`${prefix}-meta`, x + 18, y + 42, meta, colors, {
+      width: 210,
+      size: 13,
+      color: colors.muted,
+    }),
+    text(`${prefix}-status`, x + 226, y + 14, status, colors, {
+      width: 82,
+      size: 13,
+      align: "right",
+      color: opts.recommended ? colors.primary : colors.info,
+    }),
+    text(`${prefix}-action`, x + 218, y + 52, "Abrir UX-03 >", colors, {
+      width: 90,
+      size: 12,
+      align: "right",
+      color: colors.primary,
+    }),
+  ];
+}
+
 function screen01(index) {
   const [x, y] = pos(index);
   const c = dark;
@@ -445,7 +476,78 @@ function screen02(index) {
 function screen03(index) {
   const [x, y] = pos(index);
   const c = dark;
-  add(phoneFrame(x, y, "UX-03 Detalhe do treino v2", c));
+  add(phoneFrame(x, y, "Treino - Rotinas do plano", c), header(x, y, c, "Treino", "4 rotinas"));
+  add(rect("routine-list-hero", x + 32, y + 148, 326, 116, c, { stroke: c.info }));
+  add(text("routine-list-title", x + 56, y + 172, "Escolha a rotina de hoje", c, {
+    width: 240,
+    size: 22,
+  }));
+  add(
+    text(
+      "routine-list-copy",
+      x + 56,
+      y + 208,
+      "A recomendacao continua na Home. Aqui voce escolhe qualquer rotina do plano.",
+      c,
+      { width: 262, size: 14, color: c.muted, lineHeight: 1.35 },
+    ),
+  );
+  add(pill("routine-list-reco", x + 56, y + 246, 168, "Recomendado: Treino B", c, "primary"));
+  add(text("routine-section-title", x + 32, y + 294, "Todas as rotinas", c, {
+    width: 200,
+    size: 17,
+    color: c.info,
+  }));
+  add(routineCard(
+    "routine-a",
+    x + 32,
+    y + 326,
+    c,
+    "Treino A - Peito",
+    "42 min | 6 exercicios | 90s",
+    "Ontem",
+  ));
+  add(routineCard(
+    "routine-b",
+    x + 32,
+    y + 424,
+    c,
+    "Treino B - Superiores",
+    "42 min | 6 exercicios | 90-120s",
+    "Recomendado",
+    { recommended: true },
+  ));
+  add(routineCard(
+    "routine-c",
+    x + 32,
+    y + 522,
+    c,
+    "Treino C - Pernas",
+    "48 min | 7 exercicios | 120s",
+    "Disponivel",
+  ));
+  add(routineCard(
+    "routine-d",
+    x + 32,
+    y + 620,
+    c,
+    "Treino D - Full body",
+    "45 min | 6 exercicios | 60-90s",
+    "Disponivel",
+  ));
+  add(text("routine-list-note", x + 52, y + 720, "Tocar em uma rotina abre a UX-03 com o detalhe dela.", c, {
+    width: 286,
+    size: 14,
+    align: "center",
+    color: c.weak,
+  }));
+  add(nav(x, y, c, "Treino"));
+}
+
+function screen03Detail(index) {
+  const [x, y] = pos(index);
+  const c = dark;
+  add(phoneFrame(x, y, "UX-03 Detalhe da rotina selecionada", c));
   add(text("back-title", x + 24, y + 74, "< Treino B - Superiores", c, {
     width: 270,
     size: 18,
@@ -460,7 +562,7 @@ function screen03(index) {
       "summary-meta",
       x + 56,
       y + 184,
-      "Toque no exercicio que vai fazer agora. Se um aparelho estiver ocupado, toque em outro.",
+      "Aberta pela Home recomendada ou pela lista de rotinas. Toque no exercicio que vai fazer agora.",
       c,
       { width: 270, size: 14, color: c.muted, lineHeight: 1.35 },
     ),
@@ -1072,7 +1174,7 @@ function screen15(index) {
       "flow-workout-start-copy",
       x + 56,
       y + 486,
-      "UX-02 -> UX-03 primeiro.\nUsuario toca no exercicio que vai fazer; UX-04 abre esse item.",
+      "Home: UX-02 -> UX-03 da recomendada.\nMenu Treino: lista rotinas -> UX-03 escolhida.",
       c,
       { width: 260, size: 14, color: c.muted, lineHeight: 1.35 },
     ),
@@ -1100,6 +1202,7 @@ function screen15(index) {
   screen01,
   screen02,
   screen03,
+  screen03Detail,
   screen04,
   screen06,
   screen07,

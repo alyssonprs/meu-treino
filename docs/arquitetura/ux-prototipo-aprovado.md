@@ -79,7 +79,8 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 | --- | --- | --- | --- |
 | UX-01 | Inicio sem treino importado | Explicar estado vazio e levar para importar JSON ou baixar modelo | Aprovada |
 | UX-02 | Inicio com treino ativo | Mostrar plano ativo, proximo treino recomendado, progresso do ciclo e botao iniciar | Aprovada |
-| UX-03 | Detalhe do treino recomendado | Mostrar aquecimento, exercicios, cargas sugeridas e iniciar sessao | Aprovada |
+| Treino | Lista de rotinas do plano | Listar todas as rotinas pelo menu Treino e destacar a rotina recomendada | Em revisao |
+| UX-03 | Detalhe da rotina selecionada | Mostrar aquecimento, exercicios, cargas sugeridas e abrir execucao ao tocar em um exercicio | Em revisao |
 | UX-04 | Execucao do treino | Registrar series, reps, carga, RIR e descanso integrado por card na propria tela | Aprovada |
 | UX-05 | Descanso integrado na UX-04 | Nao criar tela separada; controlar descanso entre series dentro da UX-04 | Substituida pela UX-04 |
 | UX-06 | Finalizacao do treino | Confirmar treino concluido, salvar ultima rotina e mostrar proxima recomendacao | Aprovada |
@@ -107,12 +108,24 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 1. Usuario abre o app.
 2. App mostra proximo treino recomendado.
 3. Usuario toca em `Iniciar treino`.
-4. App abre detalhe/execucao da rotina.
-5. Usuario registra series.
-6. App salva cargas, reps e RIR.
-7. Usuario finaliza treino.
-8. App salva a ultima rotina finalizada.
-9. App recomenda a proxima rotina pela ordem.
+4. App abre a `UX-03` da rotina recomendada.
+5. Usuario toca no exercicio que vai fazer.
+6. App abre a `UX-04` diretamente naquele exercicio.
+7. Usuario registra series.
+8. App salva cargas, reps e RIR.
+9. Usuario finaliza treino.
+10. App salva a ultima rotina finalizada.
+11. App recomenda a proxima rotina pela ordem.
+
+### Escolha manual de rotina
+
+1. Usuario toca em `Treino` na navegacao inferior.
+2. App lista todas as rotinas do plano ativo.
+3. App destaca a rotina recomendada, sem bloquear as outras rotinas.
+4. Usuario toca na rotina que quer executar no dia.
+5. App abre a `UX-03` da rotina selecionada.
+6. Usuario toca no exercicio que vai fazer.
+7. App abre a `UX-04` diretamente naquele exercicio.
 
 ### Troca de treino
 
@@ -137,6 +150,8 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 - Card ou bloco principal de proximo treino recomendado.
 - Barra de progresso do ciclo.
 - Botao primario grande para iniciar treino.
+- Lista de rotinas do plano acessivel pelo item `Treino` da navegacao inferior.
+- Selo visual para a rotina recomendada dentro da lista de rotinas.
 - Lista compacta de exercicios.
 - Registro de serie com carga, reps e RIR.
 - Controles de incremento/decremento para carga e reps.

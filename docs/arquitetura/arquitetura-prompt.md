@@ -208,8 +208,9 @@ Regra simples para aviso de novo treino:
 
 ## Telas principais
 
-- Inicio: plano ativo, proximo treino sugerido, progresso do ciclo e botao para iniciar treino.
-- Treino do dia: lista de aquecimento, exercicios, series, carga sugerida, repeticoes, RIR e descanso.
+- Inicio: plano ativo, proximo treino sugerido, progresso do ciclo e botao para iniciar o treino recomendado.
+- Treino: lista todas as rotinas do plano ativo para o usuario escolher qual rotina quer executar no dia, com a rotina recomendada destacada.
+- Detalhe da rotina selecionada: lista de aquecimento, exercicios, series, carga sugerida, repeticoes, RIR e descanso, abrindo a execucao ao tocar em um exercicio.
 - Execucao de exercicio: registro rapido de cada serie, com carga, repeticoes e observacoes.
 - Historico: treinos concluidos e evolucao de carga por exercicio.
 - Importar treino: acao contextual na Home sem treino ou em Configuracoes com treino ativo; selecionar JSON, validar, mostrar preview e substituir plano atual.
@@ -222,7 +223,9 @@ A primeira versao deve seguir o modelo de usabilidade **Guiada**:
 
 - A tela inicial deve priorizar o proximo treino recomendado.
 - O botao principal deve ser iniciar o treino recomendado.
-- O plano completo deve existir, mas nao deve competir com a acao principal.
+- O plano completo deve existir, mas nao deve competir com a acao principal da tela inicial.
+- O item `Treino` da navegacao inferior deve listar todas as rotinas do plano ativo, permitindo escolher uma rotina diferente da recomendada quando fizer sentido para o usuario.
+- Ao tocar em uma rotina na lista do menu `Treino`, o app deve abrir o detalhe da rotina selecionada antes da execucao.
 - A tela de execucao deve ser focada no uso durante a academia, com registro rapido de series, timer de descanso e poucos elementos concorrendo por atencao.
 - O detalhamento e aprovacao das telas deve seguir `docs/arquitetura/ux-prototipo-aprovado.md` antes da implementacao visual final.
 
