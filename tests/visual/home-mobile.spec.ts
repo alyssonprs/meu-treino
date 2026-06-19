@@ -130,6 +130,30 @@ test("mobile visual regression covers first use, import, active home, settings a
   await assertMobileUsability(page);
 
   await screenshot(page, "09-ux-03-detalhe-treino.png");
+
+  await page.getByRole("button", { name: "Treino" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Escolha uma rotina" }),
+  ).toBeVisible();
+  await expect(page.getByText("Recomendado")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /Treino B - Costas e biceps/ }),
+  ).toBeVisible();
+  await assertMobileUsability(page);
+
+  await screenshot(page, "16-treino-lista-rotinas.png");
+
+  await page
+    .getByRole("button", { name: /Treino B - Costas e biceps/ })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Treino B - Costas e biceps" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: /Abrir/ }).first().click();
+  await expect(
+    page.getByRole("heading", { name: "Treino em andamento" }),
+  ).toBeVisible();
+  await assertNoHorizontalOverflow(page);
 });
 
 test("active workout keeps bottom nav hidden and shows integrated rest, finish and history states", async ({

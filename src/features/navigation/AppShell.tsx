@@ -46,7 +46,11 @@ export function AppShell({ activeScreen, children, onNavigate }: AppShellProps) 
           <div className="mx-auto grid h-16 max-w-md grid-cols-4 px-2">
             {mainNavItems.map((item) => (
               <NavItem
-                active={activeScreen === item.screen}
+                active={
+                  activeScreen === item.screen ||
+                  (activeScreen === "routine-detail" &&
+                    item.screen === "workout")
+                }
                 icon={item.icon}
                 key={item.screen}
                 label={item.label}

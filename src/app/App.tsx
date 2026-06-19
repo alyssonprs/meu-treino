@@ -18,6 +18,7 @@ import {
   WorkoutFinishedScreen,
   type WorkoutCompletionSummary,
 } from "@/features/workouts/WorkoutFinishedScreen";
+import { RoutineListScreen } from "@/features/workouts/RoutineListScreen";
 import { WorkoutScreen } from "@/features/workouts/WorkoutScreen";
 import {
   createLoadHistoryMap,
@@ -59,6 +60,9 @@ export function App() {
   const [isLoadingActivePlan, setIsLoadingActivePlan] = useState(true);
   const [activeWorkout, setActiveWorkout] =
     useState<WorkoutSessionDraft | null>(null);
+  const [selectedRoutineId, setSelectedRoutineId] = useState<string | null>(
+    null,
+  );
   const [workoutLoadHistory, setWorkoutLoadHistory] = useState<
     Map<string, ExerciseLoadHistoryRecord>
   >(new Map());
@@ -147,6 +151,24 @@ export function App() {
     setWorkoutCompletion(null);
   }
 
+  function getSelectedRoutine() {
+    if (!activePlan) {
+      return null;
+    }
+
+    const recommendedRoutine = nextRecommendation
+      ? activePlan.routines.find(
+          (routine) => routine.id === nextRecommendation.routineId,
+        )
+      : null;
+
+    return (
+      activePlan.routines.find((routine) => routine.id === selectedRoutineId) ??
+      recommendedRoutine ??
+      null
+    );
+  }
+
   async function handleImportFile(file: File) {
     const fileName = file.name;
 
@@ -214,6 +236,7 @@ export function App() {
       });
       const savedPlan = await pwaWorkoutPlanRepository.getActivePlan();
       setActivePlan(savedPlan);
+      setSelectedRoutineId(null);
       setImportStatus(idleImportStatus);
       setActiveScreen("home");
     } catch {
@@ -236,18 +259,23 @@ export function App() {
       return;
     }
 
+    setSelectedRoutineId(nextRecommendation.routineId);
     setWorkoutMessage(null);
-    setActiveScreen("workout");
+    setActiveScreen("routine-detail");
   }
 
-  async function handleStartRecommendedWorkout(exerciseIndex = 0) {
-    if (!activePlan || !nextRecommendation) {
+  function handleOpenRoutineDetail(routineId: string) {
+    setSelectedRoutineId(routineId);
+    setWorkoutMessage(null);
+    setActiveScreen("routine-detail");
+  }
+
+  async function handleStartRoutineExercise(exerciseIndex = 0) {
+    if (!activePlan) {
       return;
     }
 
-    const routine = activePlan.routines.find(
-      (item) => item.id === nextRecommendation.routineId,
-    );
+    const routine = getSelectedRoutine();
 
     if (!routine) {
       return;
@@ -319,6 +347,7 @@ export function App() {
       await pwaWorkoutPlanRepository.clearAllWorkoutData();
       setActivePlan(null);
       setActiveWorkout(null);
+      setSelectedRoutineId(null);
       setWorkoutLoadHistory(new Map());
       setLoadSummaries([]);
       setRecentSessions([]);
@@ -419,12 +448,12 @@ export function App() {
           message={workoutMessage}
           onBackToDetail={() => {
             setWorkoutMessage(null);
-            setActiveScreen("workout");
+            setActiveScreen("routine-detail");
           }}
           onCancel={() => {
             setActiveWorkout(null);
             setWorkoutMessage(null);
-            setActiveScreen("workout");
+            setActiveScreen("routine-detail");
           }}
           onFinish={() => {
             void handleFinishWorkout();
@@ -463,12 +492,29 @@ export function App() {
 
     if (activeScreen === "workout") {
       return (
+        <RoutineListScreen
+          activePlan={activePlan}
+          nextRecommendation={nextRecommendation}
+          onOpenRoutine={handleOpenRoutineDetail}
+        />
+      );
+    }
+
+    if (activeScreen === "routine-detail") {
+      const selectedRoutine = getSelectedRoutine();
+
+      return (
         <WorkoutScreen
           activePlan={activePlan}
           loadSummaries={loadSummaries}
           nextRecommendation={nextRecommendation}
+          routine={selectedRoutine}
+          onBack={() => {
+            setWorkoutMessage(null);
+            setActiveScreen("workout");
+          }}
           onStartExercise={(exerciseIndex) => {
-            void handleStartRecommendedWorkout(exerciseIndex);
+            void handleStartRoutineExercise(exerciseIndex);
           }}
         />
       );
