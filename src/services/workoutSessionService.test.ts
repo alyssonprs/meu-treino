@@ -6,7 +6,8 @@ import {
   createWorkoutSessionDraft,
   finishWorkoutSession,
   getNextPendingSetIndex,
-  saveWorkoutSetInDraft,
+  markWorkoutSetCompletedInDraft,
+  saveExerciseResultInDraft,
 } from "./workoutSessionService";
 
 describe("workoutSessionService", () => {
@@ -35,12 +36,12 @@ describe("workoutSessionService", () => {
       ]),
     });
 
-    expect(draft.exercises[0].sets[0].loadKg).toBe("62.5");
-    expect(draft.exercises[0].sets[0].reps).toBe("");
-    expect(draft.exercises[0].sets[0].rir).toBe("");
+    expect(draft.exercises[0].result.loadKg).toBe("62.5");
+    expect(draft.exercises[0].result.reps).toBe("");
+    expect(draft.exercises[0].result.rir).toBe("");
   });
 
-  it("creates one technical registration per exercise", () => {
+  it("creates set completion controls and one technical registration per exercise", () => {
     const snapshot = createSnapshot();
 
     const draft = createWorkoutSessionDraft({
@@ -49,7 +50,8 @@ describe("workoutSessionService", () => {
       startedAt: "2026-06-15T12:00:00.000Z",
     });
 
-    expect(draft.exercises[0].sets).toHaveLength(1);
+    expect(draft.exercises[0].completedSets).toHaveLength(2);
+    expect(draft.exercises[0].result.completedAt).toBeNull();
     expect(getNextPendingSetIndex(draft, 0)).toBe(0);
   });
 
@@ -67,9 +69,9 @@ describe("workoutSessionService", () => {
     expect(draft.currentExerciseIndex).toBe(1);
   });
 
-  it("converts the saved draft sets into a completed workout session", async () => {
+  it("tracks completed planned sets before the final exercise result", () => {
     const snapshot = createSnapshot();
-    const draft = saveWorkoutSetInDraft({
+    const draft = markWorkoutSetCompletedInDraft({
       draft: createWorkoutSessionDraft({
         planId: snapshot.plan.id,
         routine: snapshot.routines[0],
@@ -77,6 +79,25 @@ describe("workoutSessionService", () => {
       }),
       exerciseIndex: 0,
       setIndex: 0,
+      completedAt: "2026-06-15T12:10:00.000Z",
+    });
+
+    expect(draft.exercises[0].completedSets[0].completedAt).toBe(
+      "2026-06-15T12:10:00.000Z",
+    );
+    expect(getNextPendingSetIndex(draft, 0)).toBe(1);
+    expect(draft.exercises[0].result.completedAt).toBeNull();
+  });
+
+  it("converts the saved exercise result into one completed workout record", async () => {
+    const snapshot = createSnapshot();
+    const draft = saveExerciseResultInDraft({
+      draft: createWorkoutSessionDraft({
+        planId: snapshot.plan.id,
+        routine: snapshot.routines[0],
+        startedAt: "2026-06-15T12:00:00.000Z",
+      }),
+      exerciseIndex: 0,
       savedAt: "2026-06-15T12:20:00.000Z",
       values: {
         loadKg: "60",
@@ -134,7 +155,7 @@ describe("workoutSessionService", () => {
     });
   });
 
-  it("ignores typed but unsaved set values when finishing", async () => {
+  it("ignores typed but unsaved exercise result values when finishing", async () => {
     const snapshot = createSnapshot();
     const draft = createWorkoutSessionDraft({
       planId: snapshot.plan.id,
@@ -142,7 +163,7 @@ describe("workoutSessionService", () => {
       startedAt: "2026-06-15T12:00:00.000Z",
     });
 
-    draft.exercises[0].sets[0] = {
+    draft.exercises[0].result = {
       loadKg: "60",
       reps: "8",
       rir: "",

@@ -30,7 +30,7 @@ const cycleCompletePlan = {
             muscle_group: "Pernas",
             equipment: "Barra",
             is_unilateral: false,
-            sets: 1,
+            sets: 2,
             target_reps: "8",
             target_rir: 2,
             rest_seconds: 45,
@@ -172,29 +172,33 @@ test("active workout keeps bottom nav hidden and shows integrated rest, finish a
   await expect(
     page.getByRole("heading", { name: "Treino em andamento" }),
   ).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "Registrar exercício" }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: /S.rie 1 de 2/ })).toBeVisible();
   await expect(page.getByLabel("Aumentar RIR")).toHaveCount(0);
   await expect(page.getByRole("navigation")).toHaveCount(0);
   await assertNoHorizontalOverflow(page);
 
-  await page.getByLabel("Aumentar Carga").click();
-  await page.getByLabel("Aumentar Carga").click();
-  await page.getByLabel("Aumentar Reps").click();
-  await page.getByLabel("Aumentar Reps").click();
-  await page.getByRole("button", { name: "Registrar exercício" }).click();
+  await page.getByRole("button", { name: /S.rie conclu.da/ }).click();
 
-  await expect(page.getByText("Descanso após registro")).toBeVisible();
+  await expect(page.getByText(/Descanso ap.s s.rie/)).toBeVisible();
   await expect(page.getByRole("button", { name: "+30s" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Pular" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Concluir" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Pr.xima s.rie/ })).toBeVisible();
   await expect(page.getByRole("navigation")).toHaveCount(0);
   await assertNoHorizontalOverflow(page);
 
   await screenshot(page, "13-ux-04-descanso-integrado.png");
 
-  await page.getByRole("button", { name: "Pular" }).click();
+  await page.getByRole("button", { name: /Pr.xima s.rie/ }).click();
+  await page.getByRole("button", { name: /S.rie conclu.da/ }).click();
+  await expect(
+    page.getByRole("heading", { name: "Registrar resultado" }),
+  ).toBeVisible();
+
+  await page.getByLabel("Aumentar Carga").click();
+  await page.getByLabel("Aumentar Carga").click();
+  await page.getByLabel("Aumentar Reps").click();
+  await page.getByLabel("Aumentar Reps").click();
+  await page.getByRole("button", { name: /Concluir exerc.cio/ }).click();
+
   await expect(page.getByText("Exercício concluído")).toBeVisible();
   await page.getByRole("button", { name: "Finalizar rotina" }).click();
 

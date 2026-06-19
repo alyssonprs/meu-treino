@@ -38,7 +38,8 @@ import { getNextRecommendedRoutineFromSnapshot } from "@/services/workoutRecomme
 import {
   createWorkoutSessionDraft,
   finishWorkoutSession,
-  saveWorkoutSetInDraft,
+  markWorkoutSetCompletedInDraft,
+  saveExerciseResultInDraft,
   setCurrentExerciseInDraft,
   type WorkoutSessionDraft,
   type WorkoutSetDraft,
@@ -362,14 +363,12 @@ export function App() {
     }
   }
 
-  function updateWorkoutSet({
+  function updateWorkoutExerciseResult({
     exerciseIndex,
-    setIndex,
     field,
     value,
   }: {
     exerciseIndex: number;
-    setIndex: number;
     field: keyof Pick<WorkoutSetDraft, "loadKg" | "reps" | "rir" | "notes">;
     value: string;
   }) {
@@ -387,22 +386,39 @@ export function App() {
 
           return {
             ...exercise,
-            sets: exercise.sets.map((set, currentSetIndex) =>
-              currentSetIndex === setIndex ? { ...set, [field]: value } : set,
-            ),
+            result: { ...exercise.result, [field]: value },
           };
         }),
       };
     });
   }
 
-  function saveWorkoutSet({
+  function markWorkoutSetCompleted({
     exerciseIndex,
     setIndex,
-    values,
   }: {
     exerciseIndex: number;
     setIndex: number;
+  }) {
+    setActiveWorkout((current) => {
+      if (!current) {
+        return current;
+      }
+
+      return markWorkoutSetCompletedInDraft({
+        draft: current,
+        exerciseIndex,
+        setIndex,
+        completedAt: new Date().toISOString(),
+      });
+    });
+  }
+
+  function saveWorkoutExerciseResult({
+    exerciseIndex,
+    values,
+  }: {
+    exerciseIndex: number;
     values: Pick<WorkoutSetDraft, "loadKg" | "reps" | "rir" | "notes">;
   }) {
     setActiveWorkout((current) => {
@@ -410,10 +426,9 @@ export function App() {
         return current;
       }
 
-      return saveWorkoutSetInDraft({
+      return saveExerciseResultInDraft({
         draft: current,
         exerciseIndex,
-        setIndex,
         values,
         savedAt: new Date().toISOString(),
       });
@@ -450,15 +465,11 @@ export function App() {
             setWorkoutMessage(null);
             setActiveScreen("routine-detail");
           }}
-          onCancel={() => {
-            setActiveWorkout(null);
-            setWorkoutMessage(null);
-            setActiveScreen("routine-detail");
-          }}
           onFinish={() => {
             void handleFinishWorkout();
           }}
-          onSaveSet={saveWorkoutSet}
+          onMarkSetCompleted={markWorkoutSetCompleted}
+          onSaveExerciseResult={saveWorkoutExerciseResult}
           onSelectExercise={(exerciseIndex) => {
             setActiveWorkout((current) =>
               current
@@ -466,7 +477,7 @@ export function App() {
                 : current,
             );
           }}
-          onUpdateSet={updateWorkoutSet}
+          onUpdateExerciseResult={updateWorkoutExerciseResult}
         />
       );
     }

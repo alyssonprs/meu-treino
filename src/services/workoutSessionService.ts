@@ -14,9 +14,14 @@ export type WorkoutSetDraft = {
   completedAt: string | null;
 };
 
+export type WorkoutSetCompletionDraft = {
+  completedAt: string | null;
+};
+
 export type WorkoutExerciseDraft = {
   plannedExerciseId: string;
-  sets: WorkoutSetDraft[];
+  completedSets: WorkoutSetCompletionDraft[];
+  result: WorkoutSetDraft;
 };
 
 export type WorkoutSessionDraft = {
@@ -72,18 +77,19 @@ export function createWorkoutSessionDraft({
 
       return {
         plannedExerciseId: exercise.id,
-        sets: [
-          {
-            loadKg:
-              typeof loadHistory?.lastLoadKg === "number"
-                ? String(loadHistory.lastLoadKg)
-                : "",
-            reps: "",
-            rir: "",
-            notes: "",
-            completedAt: null,
-          },
-        ],
+        completedSets: Array.from({ length: exercise.sets }, () => ({
+          completedAt: null,
+        })),
+        result: {
+          loadKg:
+            typeof loadHistory?.lastLoadKg === "number"
+              ? String(loadHistory.lastLoadKg)
+              : "",
+          reps: "",
+          rir: "",
+          notes: "",
+          completedAt: null,
+        },
       };
     }),
   };
@@ -116,23 +122,55 @@ export function getNextPendingSetIndex(
     return null;
   }
 
-  const pendingIndex = exerciseDraft.sets.findIndex(
+  const pendingIndex = exerciseDraft.completedSets.findIndex(
     (set) => set.completedAt === null,
   );
 
   return pendingIndex >= 0 ? pendingIndex : null;
 }
 
-export function saveWorkoutSetInDraft({
+export function markWorkoutSetCompletedInDraft({
   draft,
   exerciseIndex,
   setIndex,
+  completedAt,
+}: {
+  draft: WorkoutSessionDraft;
+  exerciseIndex: number;
+  setIndex: number;
+  completedAt: string;
+}): WorkoutSessionDraft {
+  return {
+    ...draft,
+    currentExerciseIndex: exerciseIndex,
+    exercises: draft.exercises.map((exercise, currentExerciseIndex) => {
+      if (currentExerciseIndex !== exerciseIndex) {
+        return exercise;
+      }
+
+      return {
+        ...exercise,
+        completedSets: exercise.completedSets.map((set, currentSetIndex) =>
+          currentSetIndex === setIndex
+            ? {
+                ...set,
+                completedAt,
+              }
+            : set,
+        ),
+      };
+    }),
+  };
+}
+
+export function saveExerciseResultInDraft({
+  draft,
+  exerciseIndex,
   values,
   savedAt,
 }: {
   draft: WorkoutSessionDraft;
   exerciseIndex: number;
-  setIndex: number;
   values: Pick<WorkoutSetDraft, "loadKg" | "reps" | "rir" | "notes">;
   savedAt: string;
 }): WorkoutSessionDraft {
@@ -146,15 +184,11 @@ export function saveWorkoutSetInDraft({
 
       return {
         ...exercise,
-        sets: exercise.sets.map((set, currentSetIndex) =>
-          currentSetIndex === setIndex
-            ? {
-                ...set,
-                ...values,
-                completedAt: savedAt,
-              }
-            : set,
-        ),
+        result: {
+          ...exercise.result,
+          ...values,
+          completedAt: savedAt,
+        },
       };
     }),
   };
@@ -209,10 +243,12 @@ function toCompletedWorkoutSessionInput(
         return null;
       }
 
-      const sets = exerciseDraft.sets
-        .filter((setDraft) => setDraft.completedAt !== null)
-        .map((setDraft, index) => toCompletedSet(setDraft, index + 1))
-        .filter((set) => set !== null);
+      const sets =
+        exerciseDraft.result.completedAt === null
+          ? []
+          : [toCompletedSet(exerciseDraft.result, 1)].filter(
+              (set) => set !== null,
+            );
 
       if (sets.length === 0) {
         return null;
