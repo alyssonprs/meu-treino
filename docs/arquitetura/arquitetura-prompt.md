@@ -4,7 +4,7 @@ Voce e um engenheiro de software senior especializado em aplicativos mobile web 
 
 ## Objetivo do produto
 
-Criar um app para o aluno importar um plano de treino em JSON, executar os treinos, registrar progresso, acompanhar cargas usadas em cada exercicio e saber quando ja completou treinos suficientes para pedir um novo plano.
+Criar um app para o aluno importar um plano de treino em JSON, executar os treinos, registrar progresso por exercicio, acompanhar cargas usadas em cada exercicio e saber quando ja completou treinos suficientes para pedir um novo plano.
 
 O app tambem deve disponibilizar para download um JSON de modelo e um prompt recomendado, para que o aluno ou professor possa enviar esses arquivos a uma IA e pedir a geracao de um novo treino compativel com o aplicativo.
 
@@ -90,7 +90,7 @@ Organizar o projeto em camadas simples:
 Tratar o "backend" como uma camada local de servicos TypeScript dentro do aplicativo:
 
 - `WorkoutImportService`: valida o JSON, cria um novo plano ativo e desativa o plano anterior.
-- `WorkoutSessionService`: inicia, atualiza e finaliza uma sessao de treino.
+- `WorkoutSessionService`: inicia, atualiza e finaliza uma sessao de treino, registrando carga e repeticoes uma vez por exercicio na primeira versao.
 - `RoutineRecommendationService`: identifica a proxima rotina recomendada com base na ultima rotina finalizada no plano ativo.
 - `ProgressService`: calcula treinos completos, cargas anteriores e evolucao por exercicio.
 - `TemplateExportService`: fornece o JSON de modelo e o prompt recomendado para download ou compartilhamento.
@@ -106,11 +106,11 @@ Criar tabelas locais aproximadas:
 - `routines`: rotinas do plano, nome, ordem e referencia ao plano.
 - `routine_steps`: aquecimento e cooldown, com atividade, duracao, notas e tipo.
 - `exercises`: cadastro normalizado do exercicio, com nome, grupo muscular, equipamento, unilateral e chave canonica.
-- `planned_exercises`: exercicios de uma rotina especifica, com series, alvo de repeticoes, RIR, descanso, cadencia, tecnica avancada, notas e media_url.
+- `planned_exercises`: exercicios de uma rotina especifica, com series planejadas, alvo de repeticoes, RIR alvo opcional, descanso, cadencia, tecnica avancada, notas e media_url.
 - `workout_sessions`: execucoes de treino, rotina executada, inicio, fim, status e plano ativo no momento.
 - `workout_plan_progress`: estado do plano ativo, com total de treinos concluidos, ultima rotina finalizada, ordem da ultima rotina finalizada e data da ultima conclusao.
 - `exercise_logs`: execucao de cada exercicio dentro de uma sessao.
-- `set_logs`: registro tecnico local com carga, repeticoes, RIR opcional/nulo, observacoes e numero do registro.
+- `set_logs`: registro tecnico local com carga, repeticoes, RIR opcional/nulo, observacoes e numero do registro. Na primeira versao, a UI registra uma vez por exercicio e pode persistir um registro tecnico unico com `set_number = 1` para manter compatibilidade com o historico.
 - `exercise_load_history`: historico resumido por exercicio para recuperar ultima carga usada e acompanhar progressao.
 - `app_settings`: configuracoes locais, versao do schema, tema escolhido e preferencias simples.
 
@@ -210,8 +210,8 @@ Regra simples para aviso de novo treino:
 
 - Inicio: plano ativo, proximo treino sugerido, progresso do ciclo e botao para iniciar o treino recomendado.
 - Treino: lista todas as rotinas do plano ativo para o usuario escolher qual rotina quer executar no dia, com a rotina recomendada destacada.
-- Detalhe da rotina selecionada: lista de aquecimento, exercicios, series planejadas, carga sugerida, repeticoes, RIR alvo quando existir e descanso, abrindo a execucao ao tocar em um exercicio.
-- Execucao de exercicio: registro rapido de carga e repeticoes uma vez por exercicio; RIR nao e obrigatorio na primeira versao.
+- Detalhe da rotina selecionada: lista de aquecimento, exercicios, series planejadas, carga sugerida, repeticoes, RIR alvo quando existir no plano e descanso, abrindo a execucao ao tocar em um exercicio.
+- Execucao de exercicio: registro rapido de carga e repeticoes uma vez por exercicio; RIR nao aparece como campo obrigatorio na primeira versao e fica reservado para melhoria futura.
 - Historico: treinos concluidos e evolucao de carga por exercicio.
 - Importar treino: acao contextual na Home sem treino ou em Configuracoes com treino ativo; selecionar JSON, validar, mostrar preview e substituir plano atual.
 - Baixar modelo: acao contextual na Home sem treino ou em Configuracoes com treino ativo; executa download direto de `meu-treino-modelo.json` e deve aparecer junto da acao para baixar `prompt-treino-modelo.md`.
@@ -233,7 +233,7 @@ A primeira versao deve seguir o modelo de usabilidade **Guiada**:
 
 - Interface pensada primeiro para celular.
 - Botoes grandes o suficiente para uso durante o treino.
-- Registro de serie em poucos toques.
+- Registro do exercicio em poucos toques.
 - Campos numericos com teclado adequado.
 - Funcionar offline sempre.
 - Evitar textos longos durante a execucao do treino.
@@ -269,7 +269,8 @@ Regras:
 - Recomendar automaticamente a proxima rotina com base na ultima rotina finalizada.
 - Escolher entre tema claro e tema escuro.
 - Iniciar e finalizar treino.
-- Registrar carga e repeticoes por serie.
+- Registrar carga e repeticoes por exercicio durante a execucao.
+- Manter RIR como dado opcional/nulo no dominio e storage, sem exigir preenchimento visivel na primeira versao.
 - Recuperar ultima carga usada em exercicios ja conhecidos.
 - Contar treinos concluidos no ciclo atual.
 - Avisar quando o ciclo terminou.
@@ -310,7 +311,7 @@ Regras:
 - Ao finalizar uma rotina, o app salva essa rotina como a ultima finalizada e passa a recomendar a proxima pela ordem do plano.
 - Ao finalizar a ultima rotina da lista, o app recomenda novamente a primeira rotina.
 - O usuario consegue alternar entre tema claro e escuro, e a preferencia fica salva localmente.
-- O usuario consegue executar um treino e registrar series.
+- O usuario consegue executar um treino e registrar carga e repeticoes por exercicio.
 - O app salva carga, repeticoes e status do treino localmente.
 - Ao importar um novo plano, o app nao precisa manter o progresso do plano antigo, mas preserva e reaproveita cargas de exercicios ja realizados.
 - O app calcula treinos concluidos e avisa quando o ciclo planejado acabou.

@@ -170,7 +170,7 @@ Checks e evidencias:
 
 ## Execucao 3 - Atualizar documentacao canonica e plano de correcoes
 
-Status: Pendente
+Status: Concluida
 
 Objetivo: persistir a decisao de produto para que proximas execucoes nao reintroduzam registro por serie ou RIR obrigatorio.
 
@@ -198,6 +198,12 @@ Pronto quando:
 Checks recomendados:
 
 - Revisao manual do diff.
+
+Checks e evidencias:
+
+- Revisao manual do diff de documentacao.
+- Atualizados `AGENTS.md`, `docs/arquitetura/arquitetura-prompt.md`, `docs/arquitetura/ux-prototipo-aprovado.md` e `docs/ajustes/plano-correcoes-prototipo.md`.
+- Decisao persistida: `UX-04` registra carga e repeticoes por exercicio; RIR nao e campo visivel obrigatorio na primeira versao e permanece opcional/nulo apenas para dominio/storage e evolucao futura.
 
 ## Execucao 4 - Regressao mobile e ajustes finos
 
@@ -232,7 +238,7 @@ Pronto quando:
 
 1. `Execucao 1`: limpeza visual de baixo risco.
 2. `Execucao 2`: registro por exercicio e remocao de RIR.
-3. `Execucao 3`: documentacao canonica.
+3. `Execucao 3`: documentacao canonica. Status: Concluida.
 4. `Execucao 4`: regressao mobile e ajustes finos.
 
 Se a `Execucao 2` exigir mudancas de storage maiores que o esperado, separar em:

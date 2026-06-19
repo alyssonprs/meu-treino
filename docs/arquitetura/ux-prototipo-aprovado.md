@@ -10,7 +10,7 @@ A primeira versao deve seguir o modelo **Guiada**:
 
 - A tela inicial abre direto no proximo treino recomendado.
 - O usuario deve ter uma acao principal clara: iniciar o treino recomendado.
-- A execucao do treino deve usar uma experiencia focada, parecida com o modelo **Modo Treino**, com timer, registro rapido de series e poucos elementos concorrendo por atencao.
+- A execucao do treino deve usar uma experiencia focada, parecida com o modelo **Modo Treino**, com timer, registro rapido por exercicio e poucos elementos concorrendo por atencao.
 - O plano completo e o historico ficam acessiveis, mas nao competem com a acao principal.
 
 ## Ferramenta recomendada
@@ -153,7 +153,7 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 - Lista de rotinas do plano acessivel pelo item `Treino` da navegacao inferior.
 - Selo visual para a rotina recomendada dentro da lista de rotinas.
 - Lista compacta de exercicios.
-- Registro de exercicio com carga e reps.
+- Registro de exercicio com carga e reps, uma vez por exercicio na primeira versao.
 - Controles de incremento/decremento para carga e reps.
 - Card de descanso dentro da execucao.
 - Estado vazio para nenhum treino importado.
@@ -209,6 +209,7 @@ Atualize esta tabela quando cada tela for aprovada.
 | UX-00 | Modelo Guiada escolhido como base | Combinar tela inicial do modelo 1 com execucao focada inspirada no modelo 3 | 2026-06-15 |
 | UX-01..UX-14 | Prototipos aprovados, com UX-09 e UX-12 removidas na V2 | Usar `docs/arquitetura/prototipos/meu-treino-wireframes.excalidraw` como guia base e `docs/arquitetura/prototipos/meu-treino-wireframes-v2.excalidraw` para as correcoes de fluxo | 2026-06-17 |
 | Treino e UX-03 | Fluxo de escolha manual de rotina aprovado | O menu `Treino` lista todas as rotinas do plano, destaca a recomendada e abre a `UX-03` da rotina escolhida; a Home continua abrindo a `UX-03` da recomendada | 2026-06-19 |
+| UX-04 | Registro por exercicio aprovado | A primeira versao registra carga e repeticoes uma vez por exercicio, sem RIR obrigatorio na UI; RIR pode continuar opcional/nulo no dominio e storage para evolucao futura | 2026-06-19 |
 
 ## Prototipos aprovados
 
@@ -246,3 +247,4 @@ Pontos aprovados:
 - O exercicio atual tem destaque suficiente.
 - Os controles de carga e reps parecem confortaveis para uso com uma mao.
 - A navegacao inferior some durante o treino para reduzir distracao.
+- A experiencia final da primeira versao deve manter carga e reps como unicos campos obrigatorios de execucao; RIR nao deve ser reintroduzido como campo visivel obrigatorio.
