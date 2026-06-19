@@ -174,7 +174,7 @@ export async function finishWorkoutSession({
   if (!input) {
     return {
       success: false,
-      message: "Registre carga e repeticoes em pelo menos um exercicio.",
+      message: "Registre carga e repetições em pelo menos um exercício.",
     };
   }
 

@@ -187,7 +187,7 @@ test("active workout keeps bottom nav hidden and shows integrated rest, finish a
   await expect(page.getByText("Descanso após registro")).toBeVisible();
   await expect(page.getByRole("button", { name: "+30s" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Pular" })).toBeVisible();
-  await expect(page.getByRole("button", { name: /Próximo|Próxima/ })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Concluir" })).toBeVisible();
   await expect(page.getByRole("navigation")).toHaveCount(0);
   await assertNoHorizontalOverflow(page);
 

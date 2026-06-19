@@ -118,7 +118,7 @@ export function ActiveWorkoutScreen({
   if (!currentExercise || !currentExerciseDraft) {
     return (
       <section className="mt-6 rounded-lg border border-border bg-card p-5">
-        <h2 className="text-xl font-semibold">Treino indisponivel</h2>
+        <h2 className="text-xl font-semibold">Treino indisponível</h2>
         <Button className="mt-4 w-full" onClick={onBackToDetail} type="button">
           Voltar para lista
         </Button>
@@ -262,6 +262,7 @@ export function ActiveWorkoutScreen({
       {restState ? (
         <RestCard
           exerciseName={currentExercise.name}
+          hasNextExercise={nextExerciseIndex !== null}
           isExerciseDone={isCurrentExerciseRegistered}
           restState={restState}
           onAddThirtySeconds={() =>
@@ -420,6 +421,7 @@ function StepperInput({
 
 function RestCard({
   exerciseName,
+  hasNextExercise,
   isExerciseDone,
   restState,
   onAddThirtySeconds,
@@ -427,6 +429,7 @@ function RestCard({
   onStartNext,
 }: {
   exerciseName: string;
+  hasNextExercise: boolean;
   isExerciseDone: boolean;
   restState: RestState;
   onAddThirtySeconds: () => void;
@@ -465,7 +468,7 @@ function RestCard({
           Pular
         </Button>
         <Button className="h-12 gap-1 px-2" onClick={onStartNext} type="button">
-          {isExerciseDone ? "Próximo" : "Próxima"}
+          {isExerciseDone && hasNextExercise ? "Próximo" : "Concluir"}
           <ChevronRight className="h-4 w-4" aria-hidden="true" />
         </Button>
       </div>

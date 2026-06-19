@@ -207,7 +207,7 @@ Checks e evidencias:
 
 ## Execucao 4 - Regressao mobile e ajustes finos
 
-Status: Pendente
+Status: Concluida
 
 Objetivo: validar que a simplificacao nao quebrou telas principais, persistencia ou historico.
 
@@ -233,6 +233,16 @@ Pronto quando:
 - `pnpm test`, `pnpm lint`, `pnpm build` e `pnpm visual:check` passam.
 - Capturas mobile relevantes foram atualizadas quando necessario.
 - Nao ha texto cortado, card redundante ou controle pequeno demais na execucao.
+
+Checks e evidencias:
+
+- `pnpm test`: 6 arquivos e 31 testes passaram.
+- `pnpm lint`: passou.
+- `pnpm build`: passou.
+- `pnpm visual:check`: 4 testes Playwright passaram.
+- Verificacao mobile em `390 x 844`: `UX-03`, `UX-04`, finalizacao, historico apos registro, ausencia de overflow horizontal e bottom nav ausente durante execucao.
+- Ajuste fino aplicado na `UX-04`: o card de descanso agora mostra `Concluir` quando nao ha proximo exercicio, evitando o rótulo ambiguo `Proximo` no ultimo exercicio.
+- Capturas mobile atualizadas: `docs/ajustes/auditoria-entrega/13-ux-04-descanso-integrado.png` e `docs/ajustes/auditoria-entrega/12-ux-13-ajustes-tema-claro.png`.
 
 ## Ordem recomendada
 
