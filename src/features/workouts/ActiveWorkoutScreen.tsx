@@ -1,9 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowLeft,
-  Check,
   ChevronRight,
-  Circle,
   Minus,
   Pause,
   Play,
@@ -77,18 +75,6 @@ export function ActiveWorkoutScreen({
     ? currentExerciseDraft.sets.filter((set) => set.completedAt !== null).length
     : 0;
   const totalSets = currentExerciseDraft?.sets.length ?? 0;
-  const completedExercises = draft.exercises.filter((exercise) =>
-    exercise.sets.every((set) => set.completedAt !== null),
-  ).length;
-  const totalCompletedSets = draft.exercises.reduce(
-    (total, exercise) =>
-      total + exercise.sets.filter((set) => set.completedAt !== null).length,
-    0,
-  );
-  const totalPlannedSets = draft.exercises.reduce(
-    (total, exercise) => total + exercise.sets.length,
-    0,
-  );
   const loadHistory = currentExercise
     ? loadHistoryByExerciseId.get(currentExercise.exerciseId)
     : undefined;
@@ -131,14 +117,6 @@ export function ActiveWorkoutScreen({
 
     return () => window.clearTimeout(timeoutId);
   }, [restState]);
-
-  const progressPercent = useMemo(() => {
-    if (totalPlannedSets === 0) {
-      return 0;
-    }
-
-    return Math.round((totalCompletedSets / totalPlannedSets) * 100);
-  }, [totalCompletedSets, totalPlannedSets]);
 
   if (!currentExercise || !currentExerciseDraft) {
     return (
@@ -249,27 +227,6 @@ export function ActiveWorkoutScreen({
           </Button>
         </div>
       </header>
-
-      <div className="rounded-lg border border-border bg-card p-4">
-        <div className="flex items-center justify-between gap-3">
-          <p className="text-sm font-medium text-info">
-            {totalCompletedSets}/{totalPlannedSets} séries
-          </p>
-          <p className="text-sm text-muted-foreground">
-            {completedExercises}/{draft.exercises.length} exercícios
-          </p>
-        </div>
-        <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
-          <div
-            className="h-full rounded-full bg-primary"
-            style={{ width: `${progressPercent}%` }}
-          />
-        </div>
-        <ExerciseStatusRow
-          currentExerciseIndex={currentExerciseIndex}
-          draft={draft}
-        />
-      </div>
 
       <article className="rounded-lg border border-info bg-card p-4">
         <div className="flex items-start justify-between gap-3">
@@ -412,47 +369,6 @@ export function ActiveWorkoutScreen({
         </Button>
       </div>
     </section>
-  );
-}
-
-function ExerciseStatusRow({
-  currentExerciseIndex,
-  draft,
-}: {
-  currentExerciseIndex: number;
-  draft: WorkoutSessionDraft;
-}) {
-  return (
-    <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
-      {draft.exercises.map((exerciseDraft, exerciseIndex) => {
-        const isDone = exerciseDraft.sets.every(
-          (set) => set.completedAt !== null,
-        );
-        const isCurrent = exerciseIndex === currentExerciseIndex;
-
-        return (
-          <div
-            className={[
-              "flex min-w-12 items-center justify-center rounded-md border px-3 py-2 text-xs font-semibold",
-              isCurrent
-                ? "border-info text-info"
-                : isDone
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border bg-muted text-muted-foreground",
-            ].join(" ")}
-            key={exerciseDraft.plannedExerciseId}
-          >
-            {isDone ? (
-              <Check className="h-4 w-4" aria-hidden="true" />
-            ) : isCurrent ? (
-              <Circle className="h-4 w-4 fill-current" aria-hidden="true" />
-            ) : (
-              exerciseIndex + 1
-            )}
-          </div>
-        );
-      })}
-    </div>
   );
 }
 

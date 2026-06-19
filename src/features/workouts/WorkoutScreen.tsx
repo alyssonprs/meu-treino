@@ -78,22 +78,6 @@ export function WorkoutScreen({
         </div>
       </div>
 
-      <div className="rounded-lg border border-border bg-card p-5">
-        <p className="text-sm font-medium text-info">Lista de exercícios</p>
-        <h3 className="mt-2 text-2xl font-semibold">
-          Toque no exercício disponível
-        </h3>
-        <p className="mt-3 text-sm leading-6 text-muted-foreground">
-          Se um aparelho estiver ocupado, escolha outro exercício da rotina.
-          Cada item abre a execução diretamente naquele exercício.
-        </p>
-        {nextRecommendation && isRecommended ? (
-          <p className="mt-3 text-sm font-medium text-info">
-            {getRecommendationReasonLabel(nextRecommendation.reason)}
-          </p>
-        ) : null}
-      </div>
-
       <RoutineSteps
         emptyLabel="Sem aquecimento cadastrado."
         icon={Flame}
@@ -102,9 +86,14 @@ export function WorkoutScreen({
       />
 
       <div>
-        <p className="mb-3 text-sm font-semibold text-info">
-          Exercícios do treino
-        </p>
+        <div className="mb-3">
+          <p className="text-sm font-semibold text-info">Exercícios do treino</p>
+          {nextRecommendation && isRecommended ? (
+            <p className="mt-1 text-sm text-muted-foreground">
+              {getRecommendationReasonLabel(nextRecommendation.reason)}
+            </p>
+          ) : null}
+        </div>
         <div className="space-y-3">
           {routine.exercises.map((exercise, exerciseIndex) => (
             <ExerciseButton
@@ -123,10 +112,6 @@ export function WorkoutScreen({
         steps={routine.cooldown}
         title="Cooldown"
       />
-
-      <p className="rounded-lg border border-info bg-card p-4 text-center text-sm leading-6 text-info">
-        Sem botão global: toque no exercício que você vai fazer agora.
-      </p>
     </section>
   );
 }
@@ -191,12 +176,7 @@ function ExerciseButton({
         <Dumbbell className="h-5 w-5" aria-hidden="true" />
       </div>
       <div className="min-w-0 flex-1">
-        <div className="flex items-start justify-between gap-3">
-          <h3 className="min-w-0 text-base font-semibold">{exercise.name}</h3>
-          <span className="shrink-0 rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
-            Abrir
-          </span>
-        </div>
+        <h3 className="min-w-0 text-base font-semibold">{exercise.name}</h3>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
           {exercise.sets}x {exercise.target_reps}
           {typeof exercise.target_rir === "number"

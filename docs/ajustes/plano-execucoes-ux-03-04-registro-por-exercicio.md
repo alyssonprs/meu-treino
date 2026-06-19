@@ -40,7 +40,7 @@ Usar um terceiro contexto somente se a regressao visual ou os testes indicarem a
 
 ## Execucao 1 - Limpeza visual da UX-03 e topo da UX-04
 
-Status: Pendente
+Status: Concluida
 
 Objetivo: remover elementos redundantes sem alterar ainda o modelo de dados ou o fluxo de salvamento.
 
@@ -85,6 +85,14 @@ Evidencias esperadas:
 
 - Captura mobile atualizada de `UX-03`.
 - Captura mobile atualizada de `UX-04`, se o teste visual cobrir a tela.
+
+Checks e evidencias:
+
+- `eslint src vite.config.ts tailwind.config.ts postcss.config.js eslint.config.js`: passou.
+- `tsc -b`: passou.
+- `vite build`: passou fora do sandbox apos erro de permissao do sandbox ao carregar `vite.config.ts`.
+- `playwright test --config playwright.visual.config.ts`: 4 testes passaram fora do sandbox apos o mesmo erro de permissao no web server.
+- Capturas mobile atualizadas: `docs/ajustes/auditoria-entrega/09-ux-03-detalhe-treino.png` e `docs/ajustes/auditoria-entrega/13-ux-04-descanso-integrado.png`.
 
 ## Execucao 2 - Registro por exercicio e remocao de RIR na UX-04
 
