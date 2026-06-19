@@ -2,6 +2,7 @@ import {
   Database,
   Download,
   FileInput,
+  FileText,
   Info,
   Settings,
   Trash2,
@@ -9,6 +10,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { useState } from "react";
 import modelJsonUrl from "@/assets/meu-treino-modelo.json?url";
+import promptTemplateUrl from "@/assets/prompt-treino-modelo.md?url";
 import { Button } from "@/components/ui/button";
 import type { ActiveWorkoutPlanSnapshot } from "@/storage/workoutPlanRepository";
 import { ThemeSegmentedControl } from "./ThemeSegmentedControl";
@@ -86,6 +88,16 @@ export function SettingsScreen({
               <a download="meu-treino-modelo.json" href={modelJsonUrl}>
                 <Download className="h-5 w-5" aria-hidden="true" />
                 Baixar modelo
+              </a>
+            </Button>
+            <Button
+              asChild
+              className="h-12 justify-start gap-3"
+              variant="secondary"
+            >
+              <a download="prompt-treino-modelo.md" href={promptTemplateUrl}>
+                <FileText className="h-5 w-5" aria-hidden="true" />
+                Baixar prompt
               </a>
             </Button>
           </div>

@@ -52,6 +52,7 @@ test("mobile visual regression covers first use, import, active home, settings a
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "Importar JSON" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Baixar modelo" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Baixar prompt" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Início" })).toHaveAttribute(
     "aria-current",
     "page",
@@ -80,6 +81,7 @@ test("mobile visual regression covers first use, import, active home, settings a
     0,
   );
   await expect(page.getByRole("link", { name: "Baixar modelo" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Baixar prompt" })).toHaveCount(0);
   await assertMobileUsability(page);
 
   await screenshot(page, "07-home-ativa-sem-json.png");
@@ -92,12 +94,18 @@ test("mobile visual regression covers first use, import, active home, settings a
     page.getByRole("button", { name: "Substituir treino atual" }),
   ).toBeVisible();
   await expect(page.getByRole("link", { name: "Baixar modelo" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Baixar prompt" })).toBeVisible();
   await expect(page.getByText("0.1.0")).toBeVisible();
 
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("link", { name: "Baixar modelo" }).click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("meu-treino-modelo.json");
+
+  const promptDownloadPromise = page.waitForEvent("download");
+  await page.getByRole("link", { name: "Baixar prompt" }).click();
+  const promptDownload = await promptDownloadPromise;
+  expect(promptDownload.suggestedFilename()).toBe("prompt-treino-modelo.md");
 
   await page.getByRole("radio", { name: "Claro" }).click();
   await expect
@@ -204,6 +212,7 @@ test("invalid import shows the dedicated recovery screen", async ({ page }) => {
     page.getByRole("button", { name: "Escolher outro arquivo" }),
   ).toBeVisible();
   await expect(page.getByRole("link", { name: "Baixar modelo" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Baixar prompt" })).toBeVisible();
   await assertMobileUsability(page);
 
   await screenshot(page, "08-ux-11-erro-importacao.png");

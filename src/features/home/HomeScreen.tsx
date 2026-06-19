@@ -10,9 +10,11 @@ import {
   RefreshCw,
   ShieldCheck,
   TrendingUp,
+  FileText,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import modelJsonUrl from "@/assets/meu-treino-modelo.json?url";
+import promptTemplateUrl from "@/assets/prompt-treino-modelo.md?url";
 import { Button } from "@/components/ui/button";
 import type {
   CycleProgressSummary,
@@ -88,6 +90,16 @@ export function HomeScreen({
               <a download="meu-treino-modelo.json" href={modelJsonUrl}>
                 <Download className="h-5 w-5" aria-hidden="true" />
                 Baixar modelo
+              </a>
+            </Button>
+            <Button
+              asChild
+              className="h-14 justify-start gap-3 text-base"
+              variant="secondary"
+            >
+              <a download="prompt-treino-modelo.md" href={promptTemplateUrl}>
+                <FileText className="h-5 w-5" aria-hidden="true" />
+                Baixar prompt
               </a>
             </Button>
           </div>

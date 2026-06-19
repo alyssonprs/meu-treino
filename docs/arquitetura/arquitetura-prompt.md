@@ -6,7 +6,7 @@ Voce e um engenheiro de software senior especializado em aplicativos mobile web 
 
 Criar um app para o aluno importar um plano de treino em JSON, executar os treinos, registrar progresso, acompanhar cargas usadas em cada exercicio e saber quando ja completou treinos suficientes para pedir um novo plano.
 
-O app tambem deve disponibilizar para download um JSON de modelo, para que o aluno ou professor possa enviar esse modelo a uma IA e pedir a geracao de um novo treino compativel com o aplicativo.
+O app tambem deve disponibilizar para download um JSON de modelo e um prompt recomendado, para que o aluno ou professor possa enviar esses arquivos a uma IA e pedir a geracao de um novo treino compativel com o aplicativo.
 
 ## Decisoes arquiteturais
 
@@ -83,7 +83,7 @@ Organizar o projeto em camadas simples:
 - `src/storage`: repositorios e adaptadores SQLite/IndexedDB.
 - `src/platform`: adaptadores para recursos especificos de PWA ou Android, como download, compartilhamento, arquivos e armazenamento.
 - `src/theme`: tokens visuais, variaveis CSS e configuracao de tema claro/escuro.
-- `src/assets`: arquivo `meu-treino-modelo.json` usado no download do modelo.
+- `src/assets`: arquivos `meu-treino-modelo.json` e `prompt-treino-modelo.md` usados no download do modelo e do prompt recomendado.
 
 ### Backend local
 
@@ -93,7 +93,7 @@ Tratar o "backend" como uma camada local de servicos TypeScript dentro do aplica
 - `WorkoutSessionService`: inicia, atualiza e finaliza uma sessao de treino.
 - `RoutineRecommendationService`: identifica a proxima rotina recomendada com base na ultima rotina finalizada no plano ativo.
 - `ProgressService`: calcula treinos completos, cargas anteriores e evolucao por exercicio.
-- `TemplateExportService`: fornece o JSON de modelo para download ou compartilhamento.
+- `TemplateExportService`: fornece o JSON de modelo e o prompt recomendado para download ou compartilhamento.
 - `ExerciseMatchService`: reaproveita cargas antigas quando o novo plano contem exercicios ja realizados.
 
 Essa camada nao deve depender diretamente da UI. A UI chama servicos e repositorios por interfaces.
@@ -213,7 +213,7 @@ Regra simples para aviso de novo treino:
 - Execucao de exercicio: registro rapido de cada serie, com carga, repeticoes e observacoes.
 - Historico: treinos concluidos e evolucao de carga por exercicio.
 - Importar treino: acao contextual na Home sem treino ou em Configuracoes com treino ativo; selecionar JSON, validar, mostrar preview e substituir plano atual.
-- Baixar modelo: acao contextual na Home sem treino ou em Configuracoes com treino ativo; executa download direto de `meu-treino-modelo.json`.
+- Baixar modelo: acao contextual na Home sem treino ou em Configuracoes com treino ativo; executa download direto de `meu-treino-modelo.json` e deve aparecer junto da acao para baixar `prompt-treino-modelo.md`.
 - Configuracoes: exportar backup local, apagar dados locais e informacoes da versao.
 
 ### Direcao de usabilidade aprovada
@@ -261,7 +261,7 @@ Regras:
 - Importar um novo JSON de treino.
 - Validar estrutura antes de salvar.
 - Substituir o treino ativo atual.
-- Baixar o JSON de modelo.
+- Baixar o JSON de modelo e o prompt recomendado.
 - Visualizar plano ativo e rotinas.
 - Recomendar automaticamente a proxima rotina com base na ultima rotina finalizada.
 - Escolher entre tema claro e tema escuro.
@@ -300,7 +300,7 @@ Regras:
 
 ## Criterios de aceite da primeira versao
 
-- O usuario consegue baixar o JSON de modelo pelo app.
+- O usuario consegue baixar o JSON de modelo e o prompt recomendado pelo app.
 - O usuario consegue importar um JSON valido seguindo o modelo.
 - O app exibe o plano importado com rotinas e exercicios.
 - O app recomenda a primeira rotina quando nenhum treino foi finalizado no plano ativo.
