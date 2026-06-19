@@ -92,7 +92,21 @@ Use [docs/arquitetura/arquitetura-prompt.md](docs/arquitetura/arquitetura-prompt
 ## Verification
 
 - When package scripts exist, run the narrowest relevant checks after changes.
-- Prefer `npm run build`, `npm run lint`, and targeted tests when available.
+- Prefer `pnpm build`, `pnpm lint`, and targeted tests when available.
+- If `node`, `pnpm`, `npm`, `npx`, or `corepack` are not available in the PowerShell `PATH`, do not stop immediately. First look for the Codex-managed Node runtime under `$env:LOCALAPPDATA\OpenAI\Codex\runtimes\cua_node\*\bin`.
+- In Codex PowerShell sessions, use the runtime directly when needed:
+
+```powershell
+$nodeBin = Get-ChildItem "$env:LOCALAPPDATA\OpenAI\Codex\runtimes\cua_node" -Directory |
+  Sort-Object LastWriteTime -Descending |
+  Select-Object -First 1 |
+  ForEach-Object { Join-Path $_.FullName "bin" }
+$env:PATH = "$nodeBin;$nodeBin\node_modules\corepack\shims;" + $env:PATH
+& "$nodeBin\node_modules\corepack\shims\pnpm.cmd" build
+& "$nodeBin\node_modules\corepack\shims\pnpm.cmd" test
+```
+
+- Call `pnpm.cmd` directly on Windows when PowerShell blocks the `pnpm.ps1` shim by execution policy.
 - For domain logic, add or update unit tests.
 - For storage logic, test import, replacement, and retrieval flows.
 - For frontend changes, verify the app in a mobile-sized viewport when possible.
