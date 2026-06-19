@@ -38,7 +38,7 @@ Dividir em dois contextos principais:
 
 Usar um terceiro contexto somente se a regressao visual ou os testes indicarem ajustes finos.
 
-## Execucao 9 - Limpeza visual da UX-03 e topo da UX-04
+## Execucao 1 - Limpeza visual da UX-03 e topo da UX-04
 
 Status: Pendente
 
@@ -86,7 +86,7 @@ Evidencias esperadas:
 - Captura mobile atualizada de `UX-03`.
 - Captura mobile atualizada de `UX-04`, se o teste visual cobrir a tela.
 
-## Execucao 10 - Registro por exercicio e remocao de RIR na UX-04
+## Execucao 2 - Registro por exercicio e remocao de RIR na UX-04
 
 Status: Pendente
 
@@ -151,7 +151,7 @@ Evidencias esperadas:
 - Evidencia de registro de exercicio e finalizacao.
 - Evidencia de historico com carga registrada.
 
-## Execucao 11 - Atualizar documentacao canonica e plano de correcoes
+## Execucao 3 - Atualizar documentacao canonica e plano de correcoes
 
 Status: Pendente
 
@@ -182,7 +182,7 @@ Checks recomendados:
 
 - Revisao manual do diff.
 
-## Execucao 12 - Regressao mobile e ajustes finos
+## Execucao 4 - Regressao mobile e ajustes finos
 
 Status: Pendente
 
@@ -213,15 +213,15 @@ Pronto quando:
 
 ## Ordem recomendada
 
-1. `Execucao 9`: limpeza visual de baixo risco.
-2. `Execucao 10`: registro por exercicio e remocao de RIR.
-3. `Execucao 11`: documentacao canonica.
-4. `Execucao 12`: regressao mobile e ajustes finos.
+1. `Execucao 1`: limpeza visual de baixo risco.
+2. `Execucao 2`: registro por exercicio e remocao de RIR.
+3. `Execucao 3`: documentacao canonica.
+4. `Execucao 4`: regressao mobile e ajustes finos.
 
-Se a `Execucao 10` exigir mudancas de storage maiores que o esperado, separar em:
+Se a `Execucao 2` exigir mudancas de storage maiores que o esperado, separar em:
 
-- `10A`: UI e draft local de registro por exercicio.
-- `10B`: persistencia, historico e testes.
+- `2A`: UI e draft local de registro por exercicio.
+- `2B`: persistencia, historico e testes.
 
 ## Prompt base para proximas execucoes
 
