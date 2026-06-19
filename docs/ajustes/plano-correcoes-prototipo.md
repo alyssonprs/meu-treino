@@ -41,7 +41,7 @@ O Excalidraw V2 contem as telas `UX-01` a `UX-14`, com `UX-09` e `UX-12` removid
 1. `UX-01 Inicio sem treino`: estado vazio com acao principal `Importar JSON`, acao secundaria `Baixar modelo`, reforcos de dados locais/offline e bottom nav.
 2. `UX-02 Inicio com treino`: plano ativo, progresso do ciclo, proximo treino recomendado, resumo de ultimo treino/proxima troca/carga preservada e atalhos.
 3. `UX-03 Detalhe do treino`: tela intermediaria antes da execucao, com aquecimento, lista de exercicios tocaveis e cargas sugeridas; tocar em um exercicio abre `UX-04` naquele exercicio.
-4. `UX-04 Execucao do treino`: experiencia focada durante a academia, sem bottom nav, com progresso da rotina, exercicio atual, um conjunto principal de campos para carga/reps/RIR, `Salvar serie`, card de descanso e `Proximo exercicio`.
+4. `UX-04 Execucao do treino`: experiencia focada durante a academia, sem bottom nav, com progresso da rotina, exercicio atual, um conjunto principal de campos para carga/reps, `Registrar exercicio`, card de descanso e `Proximo exercicio`.
 5. `UX-05`: nao deve ser implementada como tela separada. O descanso entre series foi absorvido pela `UX-04` como card/estado interno com `+30s`, `Pular` e `Iniciar proxima serie`.
 6. `UX-06 Finalizacao`: confirmacao de treino concluido, resumo salvo e proxima recomendacao.
 7. `UX-07 Historico`: resumo do ciclo, evolucao de carga e ultimos treinos.
@@ -117,9 +117,9 @@ Troca de tema em `UX-13 Configuracoes` deve aplicar sem reiniciar e persistir lo
 ### Execucao do treino
 
 - A tela atual mostra todos os exercicios e todas as series em uma lista longa.
-- O prototipo exige uma experiencia guiada por exercicio atual, com progresso da rotina, timer em destaque, um conjunto principal de campos para carga/reps/RIR, `Salvar serie` e `Proximo exercicio`.
-- A entrada de carga, reps e RIR deve ser preenchida para o exercicio em execucao, sem repetir uma grade de campos para cada repeticao ou para todos os exercicios ao mesmo tempo.
-- Nao ha controles de incremento/decremento para carga, reps e RIR.
+- O prototipo exige uma experiencia guiada por exercicio atual, com progresso da rotina, timer em destaque, um conjunto principal de campos para carga/reps, `Registrar exercicio` e `Proximo exercicio`.
+- A entrada de carga e reps deve ser preenchida para o exercicio em execucao, sem repetir uma grade de campos para cada repeticao ou para todos os exercicios ao mesmo tempo.
+- Nao ha controles de incremento/decremento para carga e reps.
 - Nao ha estados visuais de serie concluida, serie em execucao e serie pendente como em `UX-04`.
 - Nao ha cabecalho com voltar, pausar e parar.
 - A bottom nav fica visivel durante o treino.
@@ -182,9 +182,9 @@ Decisao de fluxo para JSON:
 
 Decisao de execucao para `UX-04`:
 
-- A tela de execucao deve ter um conjunto principal de campos de carga, reps e RIR para o exercicio em andamento.
+- A tela de execucao deve ter um conjunto principal de campos de carga e reps para o exercicio em andamento.
 - Nao criar uma grade repetida de campos por repeticao ou por todos os exercicios ao mesmo tempo.
-- O descanso deve ficar dentro da propria `UX-04` como card/estado apos salvar serie.
+- O descanso deve ficar dentro da propria `UX-04` como card/estado apos registrar exercicio.
 - Nao criar rota/tela separada para `UX-05`.
 
 Decisao de entrada na execucao:
@@ -316,11 +316,11 @@ Escopo:
 - Inicializar `currentExerciseIndex` a partir do exercicio tocado na lista de `UX-03`, nao fixar sempre no primeiro exercicio.
 - Mostrar apenas o exercicio atual com contexto de progresso da rotina.
 - Implementar cabecalho com voltar, pausar e parar/cancelar.
-- Implementar um conjunto principal de controles grandes de incremento/decremento para carga, reps e RIR do exercicio atual.
-- Nao renderizar campos de carga/reps/RIR para todos os exercicios ou repeticoes ao mesmo tempo.
-- Implementar `Salvar serie`.
-- `Salvar serie` deve salvar os valores atuais do exercicio em andamento, sem pedir campos separados por repeticao.
-- Apos salvar serie, exibir card/estado de descanso dentro da propria `UX-04`.
+- Implementar um conjunto principal de controles grandes de incremento/decremento para carga e reps do exercicio atual.
+- Nao renderizar campos de carga/reps para todos os exercicios ou repeticoes ao mesmo tempo.
+- Implementar `Registrar exercicio`.
+- `Registrar exercicio` deve salvar os valores atuais do exercicio em andamento, sem pedir campos separados por repeticao.
+- Apos registrar exercicio, exibir card/estado de descanso dentro da propria `UX-04`.
 - Implementar `+30s`, `Pular` e `Iniciar proxima serie` nesse card de descanso.
 - Permitir voltar a lista/detalhe e tocar em outro exercicio quando o proximo aparelho estiver ocupado.
 - Manter os dados no draft ate finalizar a rotina.
@@ -329,10 +329,10 @@ Pronto quando:
 
 - A execucao nao lista todos os exercicios ao mesmo tempo.
 - A execucao inicia no exercicio tocado no detalhe do treino.
-- Usuario registra serie em poucos toques.
-- O exercicio atual apresenta carga, reps e RIR em um unico bloco de entrada.
+- Usuario registra exercicio em poucos toques.
+- O exercicio atual apresenta carga e reps em um unico bloco de entrada.
 - Estados de progresso deixam claro o que ja foi concluido, o que esta em execucao e o que esta pendente.
-- Card de descanso esta ligado a serie recem-salva.
+- Card de descanso esta ligado ao exercicio recem-registrado.
 - Bottom nav nao aparece durante treino.
 - Testes cobrem conversao do draft em sessao salva.
 

@@ -110,7 +110,7 @@ Criar tabelas locais aproximadas:
 - `workout_sessions`: execucoes de treino, rotina executada, inicio, fim, status e plano ativo no momento.
 - `workout_plan_progress`: estado do plano ativo, com total de treinos concluidos, ultima rotina finalizada, ordem da ultima rotina finalizada e data da ultima conclusao.
 - `exercise_logs`: execucao de cada exercicio dentro de uma sessao.
-- `set_logs`: carga, repeticoes, RIR percebido, observacoes e numero da serie.
+- `set_logs`: registro tecnico local com carga, repeticoes, RIR opcional/nulo, observacoes e numero do registro.
 - `exercise_load_history`: historico resumido por exercicio para recuperar ultima carga usada e acompanhar progressao.
 - `app_settings`: configuracoes locais, versao do schema, tema escolhido e preferencias simples.
 
@@ -210,8 +210,8 @@ Regra simples para aviso de novo treino:
 
 - Inicio: plano ativo, proximo treino sugerido, progresso do ciclo e botao para iniciar o treino recomendado.
 - Treino: lista todas as rotinas do plano ativo para o usuario escolher qual rotina quer executar no dia, com a rotina recomendada destacada.
-- Detalhe da rotina selecionada: lista de aquecimento, exercicios, series, carga sugerida, repeticoes, RIR e descanso, abrindo a execucao ao tocar em um exercicio.
-- Execucao de exercicio: registro rapido de cada serie, com carga, repeticoes e observacoes.
+- Detalhe da rotina selecionada: lista de aquecimento, exercicios, series planejadas, carga sugerida, repeticoes, RIR alvo quando existir e descanso, abrindo a execucao ao tocar em um exercicio.
+- Execucao de exercicio: registro rapido de carga e repeticoes uma vez por exercicio; RIR nao e obrigatorio na primeira versao.
 - Historico: treinos concluidos e evolucao de carga por exercicio.
 - Importar treino: acao contextual na Home sem treino ou em Configuracoes com treino ativo; selecionar JSON, validar, mostrar preview e substituir plano atual.
 - Baixar modelo: acao contextual na Home sem treino ou em Configuracoes com treino ativo; executa download direto de `meu-treino-modelo.json` e deve aparecer junto da acao para baixar `prompt-treino-modelo.md`.
@@ -226,7 +226,7 @@ A primeira versao deve seguir o modelo de usabilidade **Guiada**:
 - O plano completo deve existir, mas nao deve competir com a acao principal da tela inicial.
 - O item `Treino` da navegacao inferior deve listar todas as rotinas do plano ativo, permitindo escolher uma rotina diferente da recomendada quando fizer sentido para o usuario.
 - Ao tocar em uma rotina na lista do menu `Treino`, o app deve abrir o detalhe da rotina selecionada antes da execucao.
-- A tela de execucao deve ser focada no uso durante a academia, com registro rapido de series, timer de descanso e poucos elementos concorrendo por atencao.
+- A tela de execucao deve ser focada no uso durante a academia, com registro rapido por exercicio, timer de descanso e poucos elementos concorrendo por atencao.
 - O detalhamento e aprovacao das telas deve seguir `docs/arquitetura/ux-prototipo-aprovado.md` antes da implementacao visual final.
 
 ## Experiencia mobile

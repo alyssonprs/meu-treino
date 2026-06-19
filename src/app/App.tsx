@@ -335,7 +335,7 @@ export function App() {
       completedAt: result.completedAt,
       routineName: result.routineName,
       completedExercisesCount: result.completedExercisesCount,
-      completedSetsCount: result.completedSetsCount,
+      completedRecordsCount: result.completedRecordsCount,
     });
     setActiveScreen("workout-finished");
   }

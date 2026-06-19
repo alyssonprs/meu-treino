@@ -96,7 +96,7 @@ Checks e evidencias:
 
 ## Execucao 2 - Registro por exercicio e remocao de RIR na UX-04
 
-Status: Pendente
+Status: Concluida
 
 Objetivo: alterar a experiencia de execucao para registrar carga e repeticoes uma vez por exercicio, reduzindo cliques durante o treino.
 
@@ -158,6 +158,15 @@ Evidencias esperadas:
 - Captura mobile da nova `UX-04`.
 - Evidencia de registro de exercicio e finalizacao.
 - Evidencia de historico com carga registrada.
+
+Checks e evidencias:
+
+- `pnpm test`: 6 arquivos e 31 testes passaram.
+- `pnpm lint`: passou.
+- `pnpm build`: passou.
+- `pnpm visual:check`: 4 testes Playwright passaram.
+- `UX-04` atualizada para registrar carga e repeticoes por exercicio, sem controle de RIR.
+- Capturas mobile atualizadas em `docs/ajustes/auditoria-entrega/13-ux-04-descanso-integrado.png`, `10-ux-06-finalizacao.png`, `11-ux-07-08-historico.png`, `12-ux-13-ajustes-tema-claro.png` e `14-ux-08-detalhe-exercicio.png`.
 
 ## Execucao 3 - Atualizar documentacao canonica e plano de correcoes
 

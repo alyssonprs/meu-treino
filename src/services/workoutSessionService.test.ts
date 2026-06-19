@@ -5,6 +5,7 @@ import type { ActiveWorkoutPlanSnapshot } from "@/storage/workoutPlanRepository"
 import {
   createWorkoutSessionDraft,
   finishWorkoutSession,
+  getNextPendingSetIndex,
   saveWorkoutSetInDraft,
 } from "./workoutSessionService";
 
@@ -36,6 +37,20 @@ describe("workoutSessionService", () => {
 
     expect(draft.exercises[0].sets[0].loadKg).toBe("62.5");
     expect(draft.exercises[0].sets[0].reps).toBe("");
+    expect(draft.exercises[0].sets[0].rir).toBe("");
+  });
+
+  it("creates one technical registration per exercise", () => {
+    const snapshot = createSnapshot();
+
+    const draft = createWorkoutSessionDraft({
+      planId: snapshot.plan.id,
+      routine: snapshot.routines[0],
+      startedAt: "2026-06-15T12:00:00.000Z",
+    });
+
+    expect(draft.exercises[0].sets).toHaveLength(1);
+    expect(getNextPendingSetIndex(draft, 0)).toBe(0);
   });
 
   it("stores the exercise chosen from the routine detail", () => {
@@ -66,7 +81,7 @@ describe("workoutSessionService", () => {
       values: {
         loadKg: "60",
         reps: "8",
-        rir: "2",
+        rir: "",
         notes: "Boa execucao",
       },
     });
@@ -89,7 +104,7 @@ describe("workoutSessionService", () => {
       completedAt: "2026-06-15T13:00:00.000Z",
       routineName: "Treino A",
       completedExercisesCount: 1,
-      completedSetsCount: 1,
+      completedRecordsCount: 1,
     });
     expect(repository.saveCompletedWorkoutSession).toHaveBeenCalledWith({
       planId: "plan-1",
@@ -110,7 +125,7 @@ describe("workoutSessionService", () => {
               setNumber: 1,
               loadKg: 60,
               reps: 8,
-              rir: 2,
+              rir: null,
               notes: "Boa execucao",
             },
           ],
@@ -130,7 +145,7 @@ describe("workoutSessionService", () => {
     draft.exercises[0].sets[0] = {
       loadKg: "60",
       reps: "8",
-      rir: "2",
+      rir: "",
       notes: "Boa execucao",
       completedAt: null,
     };
@@ -147,7 +162,7 @@ describe("workoutSessionService", () => {
 
     expect(result).toEqual({
       success: false,
-      message: "Registre carga e repeticoes em pelo menos uma serie.",
+      message: "Registre carga e repeticoes em pelo menos um exercicio.",
     });
     expect(repository.saveCompletedWorkoutSession).not.toHaveBeenCalled();
   });
@@ -171,7 +186,7 @@ describe("workoutSessionService", () => {
 
     expect(result).toEqual({
       success: false,
-      message: "Registre carga e repeticoes em pelo menos uma serie.",
+      message: "Registre carga e repeticoes em pelo menos um exercicio.",
     });
     expect(repository.saveCompletedWorkoutSession).not.toHaveBeenCalled();
   });

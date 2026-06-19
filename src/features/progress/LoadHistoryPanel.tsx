@@ -46,7 +46,7 @@ export function LoadHistoryPanel({
                 {summary.exerciseName}
               </h3>
               <span className="shrink-0 text-xs font-medium text-muted-foreground">
-                {summary.completedSetsCount} séries
+                {summary.completedSetsCount} registros
               </span>
             </div>
             <div className="mt-3 grid grid-cols-2 gap-2 text-sm">

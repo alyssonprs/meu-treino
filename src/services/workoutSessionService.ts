@@ -35,7 +35,7 @@ export type FinishWorkoutSessionResult =
       completedAt: string;
       routineName: string;
       completedExercisesCount: number;
-      completedSetsCount: number;
+      completedRecordsCount: number;
     }
   | {
       success: false;
@@ -72,19 +72,18 @@ export function createWorkoutSessionDraft({
 
       return {
         plannedExerciseId: exercise.id,
-        sets: Array.from({ length: exercise.sets }, () => ({
-          loadKg:
-            typeof loadHistory?.lastLoadKg === "number"
-              ? String(loadHistory.lastLoadKg)
-              : "",
-          reps: "",
-          rir:
-            typeof exercise.target_rir === "number"
-              ? String(exercise.target_rir)
-              : "",
-          notes: "",
-          completedAt: null,
-        })),
+        sets: [
+          {
+            loadKg:
+              typeof loadHistory?.lastLoadKg === "number"
+                ? String(loadHistory.lastLoadKg)
+                : "",
+            reps: "",
+            rir: "",
+            notes: "",
+            completedAt: null,
+          },
+        ],
       };
     }),
   };
@@ -175,7 +174,7 @@ export async function finishWorkoutSession({
   if (!input) {
     return {
       success: false,
-      message: "Registre carga e repeticoes em pelo menos uma serie.",
+      message: "Registre carga e repeticoes em pelo menos um exercicio.",
     };
   }
 
@@ -187,7 +186,7 @@ export async function finishWorkoutSession({
     completedAt,
     routineName: input.routineName,
     completedExercisesCount: input.exercises.length,
-    completedSetsCount: input.exercises.reduce(
+    completedRecordsCount: input.exercises.reduce(
       (total, exercise) => total + exercise.sets.length,
       0,
     ),

@@ -171,7 +171,10 @@ test("active workout keeps bottom nav hidden and shows integrated rest, finish a
   await expect(
     page.getByRole("heading", { name: "Treino em andamento" }),
   ).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Registrar agora" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Registrar exercício" }),
+  ).toBeVisible();
+  await expect(page.getByLabel("Aumentar RIR")).toHaveCount(0);
   await expect(page.getByRole("navigation")).toHaveCount(0);
   await assertNoHorizontalOverflow(page);
 
@@ -179,10 +182,9 @@ test("active workout keeps bottom nav hidden and shows integrated rest, finish a
   await page.getByLabel("Aumentar Carga").click();
   await page.getByLabel("Aumentar Reps").click();
   await page.getByLabel("Aumentar Reps").click();
-  await page.getByLabel("Aumentar RIR").click();
-  await page.getByRole("button", { name: "Salvar série" }).click();
+  await page.getByRole("button", { name: "Registrar exercício" }).click();
 
-  await expect(page.getByText("Descanso após série 1")).toBeVisible();
+  await expect(page.getByText("Descanso após registro")).toBeVisible();
   await expect(page.getByRole("button", { name: "+30s" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Pular" })).toBeVisible();
   await expect(page.getByRole("button", { name: /Próximo|Próxima/ })).toBeVisible();
@@ -214,7 +216,9 @@ test("active workout keeps bottom nav hidden and shows integrated rest, finish a
   await expect(
     page.getByRole("heading", { name: "Agachamento livre" }),
   ).toBeVisible();
-  await expect(page.getByText("Registros recentes")).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Registros recentes" }),
+  ).toBeVisible();
   await assertMobileUsability(page);
 
   await screenshot(page, "14-ux-08-detalhe-exercicio.png");

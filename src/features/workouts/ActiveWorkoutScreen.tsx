@@ -47,8 +47,6 @@ type ActiveWorkoutScreenProps = {
 };
 
 type RestState = {
-  exerciseIndex: number;
-  setNumber: number;
   remainingSeconds: number;
 };
 
@@ -71,15 +69,14 @@ export function ActiveWorkoutScreen({
   const currentSetIndex = getNextPendingSetIndex(draft, currentExerciseIndex);
   const currentSet =
     currentSetIndex === null ? null : currentExerciseDraft?.sets[currentSetIndex];
-  const completedSets = currentExerciseDraft
-    ? currentExerciseDraft.sets.filter((set) => set.completedAt !== null).length
-    : 0;
-  const totalSets = currentExerciseDraft?.sets.length ?? 0;
+  const registeredExercises = draft.exercises.filter((exercise) =>
+    exercise.sets.some((set) => set.completedAt !== null),
+  ).length;
   const loadHistory = currentExercise
     ? loadHistoryByExerciseId.get(currentExercise.exerciseId)
     : undefined;
   const nextExerciseIndex = getNextExerciseIndex(draft, currentExerciseIndex);
-  const isCurrentExerciseDone = currentSetIndex === null;
+  const isCurrentExerciseRegistered = currentSetIndex === null;
 
   const [setValues, setSetValues] = useState<
     Pick<WorkoutSetDraft, "loadKg" | "reps" | "rir" | "notes">
@@ -148,7 +145,7 @@ export function ActiveWorkoutScreen({
     });
   }
 
-  function incrementField(field: "loadKg" | "reps" | "rir", amount: number) {
+  function incrementField(field: "loadKg" | "reps", amount: number) {
     const currentValue = Number(setValues[field].replace(",", ".") || "0");
     const nextValue = Math.max(0, currentValue + amount);
     const formattedValue =
@@ -159,7 +156,7 @@ export function ActiveWorkoutScreen({
     updateSetValue(field, formattedValue);
   }
 
-  function saveCurrentSet() {
+  function saveCurrentExercise() {
     if (!canSaveSet || currentSetIndex === null) {
       return;
     }
@@ -167,11 +164,12 @@ export function ActiveWorkoutScreen({
     onSaveSet({
       exerciseIndex: currentExerciseIndex,
       setIndex: currentSetIndex,
-      values: setValues,
+      values: {
+        ...setValues,
+        rir: "",
+      },
     });
     setRestState({
-      exerciseIndex: currentExerciseIndex,
-      setNumber: currentSetIndex + 1,
       remainingSeconds: currentExercise.rest_seconds ?? 90,
     });
   }
@@ -179,7 +177,7 @@ export function ActiveWorkoutScreen({
   function startNextStep() {
     setRestState(null);
 
-    if (isCurrentExerciseDone && nextExerciseIndex !== null) {
+    if (isCurrentExerciseRegistered && nextExerciseIndex !== null) {
       onSelectExercise(nextExerciseIndex);
     }
   }
@@ -238,15 +236,12 @@ export function ActiveWorkoutScreen({
               {currentExercise.name}
             </h3>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              {currentExercise.sets}x {currentExercise.target_reps}
-              {typeof currentExercise.target_rir === "number"
-                ? ` - RIR ${currentExercise.target_rir}`
-                : ""}{" "}
-              - {currentExercise.rest_seconds ?? 90}s descanso
+              Meta: {currentExercise.sets}x {currentExercise.target_reps} -{" "}
+              {currentExercise.rest_seconds ?? 90}s descanso
             </p>
           </div>
           <span className="shrink-0 rounded-md bg-muted px-2 py-1 text-xs font-medium">
-            {completedSets}/{totalSets}
+            {registeredExercises}/{draft.exercises.length}
           </span>
         </div>
 
@@ -267,7 +262,7 @@ export function ActiveWorkoutScreen({
       {restState ? (
         <RestCard
           exerciseName={currentExercise.name}
-          isExerciseDone={isCurrentExerciseDone}
+          isExerciseDone={isCurrentExerciseRegistered}
           restState={restState}
           onAddThirtySeconds={() =>
             setRestState((current) =>
@@ -282,7 +277,7 @@ export function ActiveWorkoutScreen({
           onSkip={() => setRestState(null)}
           onStartNext={startNextStep}
         />
-      ) : isCurrentExerciseDone ? (
+      ) : isCurrentExerciseRegistered ? (
         <ExerciseDoneCard
           hasNextExercise={nextExerciseIndex !== null}
           onFinish={onFinish}
@@ -293,9 +288,9 @@ export function ActiveWorkoutScreen({
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="text-sm font-medium text-info">
-                Série {(currentSetIndex ?? 0) + 1}
+                Exercício atual
               </p>
-              <h3 className="mt-1 text-xl font-semibold">Registrar agora</h3>
+              <h3 className="mt-1 text-xl font-semibold">Registrar exercício</h3>
             </div>
             {isPaused ? (
               <span className="rounded-md border border-info px-2 py-1 text-xs font-medium text-info">
@@ -320,13 +315,6 @@ export function ActiveWorkoutScreen({
               onDecrement={() => incrementField("reps", -1)}
               onIncrement={() => incrementField("reps", 1)}
             />
-            <StepperInput
-              label="RIR"
-              value={setValues.rir}
-              onChange={(value) => updateSetValue("rir", value)}
-              onDecrement={() => incrementField("rir", -1)}
-              onIncrement={() => incrementField("rir", 1)}
-            />
           </div>
 
           {currentExercise.notes ? (
@@ -338,11 +326,11 @@ export function ActiveWorkoutScreen({
           <Button
             className="mt-4 h-14 w-full gap-3 text-base"
             disabled={!canSaveSet || isPaused}
-            onClick={saveCurrentSet}
+            onClick={saveCurrentExercise}
             type="button"
           >
             <Save className="h-5 w-5" aria-hidden="true" />
-            Salvar série
+            Registrar exercício
           </Button>
         </div>
       )}
@@ -451,7 +439,7 @@ function RestCard({
         <div>
           <p className="flex items-center gap-2 text-sm font-medium text-info">
             <TimerReset className="h-4 w-4" aria-hidden="true" />
-            Descanso após série {restState.setNumber}
+            Descanso após registro
           </p>
           <p className="mt-1 text-sm text-muted-foreground">{exerciseName}</p>
         </div>
@@ -498,7 +486,7 @@ function ExerciseDoneCard({
     <div className="rounded-lg border border-primary bg-card p-4">
       <p className="text-sm font-medium text-primary">Exercício concluído</p>
       <h3 className="mt-1 text-xl font-semibold">
-        Todas as séries foram registradas.
+        Carga e repetições foram registradas.
       </h3>
       <Button
         className="mt-4 h-14 w-full gap-2 text-base"

@@ -225,7 +225,7 @@ export function ProgressScreen({
                     </p>
                   </div>
                   <span className="shrink-0 rounded-md bg-card px-2 py-1 text-xs font-semibold">
-                    {session.setsCount} séries
+                    {session.setsCount} registros
                   </span>
                 </div>
                 <p className="mt-3 text-sm text-muted-foreground">
@@ -262,7 +262,7 @@ function ExerciseHistoryScreen({
           {details?.exerciseName ?? "Carregando"}
         </h2>
         <p className="mt-3 text-sm leading-6 text-muted-foreground">
-          Última carga, maior carga e séries recentes salvas neste dispositivo.
+          Última carga, maior carga e registros recentes salvos neste dispositivo.
         </p>
       </div>
 
@@ -293,7 +293,7 @@ function ExerciseHistoryScreen({
             />
             <HistoryMetric
               icon={CalendarCheck2}
-              label="Séries"
+              label="Registros"
               value={String(details.completedSetsCount)}
             />
           </div>
@@ -302,7 +302,7 @@ function ExerciseHistoryScreen({
             <h3 className="font-semibold">Registros recentes</h3>
             {details.records.length === 0 ? (
               <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                Nenhuma série encontrada para este exercício.
+                Nenhum registro encontrado para este exercício.
               </p>
             ) : (
               <div className="mt-4 space-y-3">
@@ -314,8 +314,7 @@ function ExerciseHistoryScreen({
                           {record.routineName}
                         </h4>
                         <p className="mt-1 text-xs text-muted-foreground">
-                          {formatShortDate(record.completedAt)} - série{" "}
-                          {record.setNumber}
+                          {formatShortDate(record.completedAt)}
                         </p>
                       </div>
                       <span className="shrink-0 text-sm font-semibold">
@@ -324,7 +323,6 @@ function ExerciseHistoryScreen({
                     </div>
                     <p className="mt-3 text-sm text-muted-foreground">
                       {record.reps} reps
-                      {record.rir === null ? "" : ` - RIR ${record.rir}`}
                     </p>
                     {record.notes ? (
                       <p className="mt-2 text-sm leading-6">{record.notes}</p>

@@ -15,7 +15,7 @@ export type WorkoutCompletionSummary = {
   completedAt: string;
   routineName: string;
   completedExercisesCount: number;
-  completedSetsCount: number;
+  completedRecordsCount: number;
 };
 
 type WorkoutFinishedScreenProps = {
@@ -62,8 +62,8 @@ export function WorkoutFinishedScreen({
         />
         <SummaryMetric
           icon={CalendarCheck2}
-          label="Séries"
-          value={String(completion.completedSetsCount)}
+          label="Registros"
+          value={String(completion.completedRecordsCount)}
         />
       </div>
 

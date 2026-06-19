@@ -81,7 +81,7 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 | UX-02 | Inicio com treino ativo | Mostrar plano ativo, proximo treino recomendado, progresso do ciclo e botao iniciar | Aprovada |
 | Treino | Lista de rotinas do plano | Listar todas as rotinas pelo menu Treino e destacar a rotina recomendada | Aprovada |
 | UX-03 | Detalhe da rotina selecionada | Mostrar aquecimento, exercicios, cargas sugeridas e abrir execucao ao tocar em um exercicio | Aprovada |
-| UX-04 | Execucao do treino | Registrar series, reps, carga, RIR e descanso integrado por card na propria tela | Aprovada |
+| UX-04 | Execucao do treino | Registrar carga e reps por exercicio, sem RIR obrigatorio, com descanso integrado por card na propria tela | Aprovada |
 | UX-05 | Descanso integrado na UX-04 | Nao criar tela separada; controlar descanso entre series dentro da UX-04 | Substituida pela UX-04 |
 | UX-06 | Finalizacao do treino | Confirmar treino concluido, salvar ultima rotina e mostrar proxima recomendacao | Aprovada |
 | UX-07 | Historico | Listar treinos concluidos e evolucao basica de carga | Aprovada |
@@ -111,8 +111,8 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 4. App abre a `UX-03` da rotina recomendada.
 5. Usuario toca no exercicio que vai fazer.
 6. App abre a `UX-04` diretamente naquele exercicio.
-7. Usuario registra series.
-8. App salva cargas, reps e RIR.
+7. Usuario registra carga e repeticoes do exercicio.
+8. App salva carga e reps; RIR permanece opcional para melhoria futura.
 9. Usuario finaliza treino.
 10. App salva a ultima rotina finalizada.
 11. App recomenda a proxima rotina pela ordem.
@@ -153,7 +153,7 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 - Lista de rotinas do plano acessivel pelo item `Treino` da navegacao inferior.
 - Selo visual para a rotina recomendada dentro da lista de rotinas.
 - Lista compacta de exercicios.
-- Registro de serie com carga, reps e RIR.
+- Registro de exercicio com carga e reps.
 - Controles de incremento/decremento para carga e reps.
 - Card de descanso dentro da execucao.
 - Estado vazio para nenhum treino importado.
@@ -243,6 +243,6 @@ Pontos aprovados:
 Pontos aprovados:
 
 - O card de descanso esta visivel sem atrapalhar o registro.
-- A serie atual tem destaque suficiente.
-- Os controles de carga, reps e RIR parecem confortaveis para uso com uma mao.
+- O exercicio atual tem destaque suficiente.
+- Os controles de carga e reps parecem confortaveis para uso com uma mao.
 - A navegacao inferior some durante o treino para reduzir distracao.
