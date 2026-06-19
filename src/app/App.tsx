@@ -26,9 +26,11 @@ import {
   getCycleProgressSummary,
   getExerciseLoadSummaries,
   getRecentCompletedWorkoutSessions,
+  getRoutineExecutionSummaries,
   type CompletedWorkoutSessionSummary,
   type ExerciseHistoryDetails,
   type ExerciseLoadSummary,
+  type RoutineExecutionSummary,
 } from "@/services/progressService";
 import {
   activateImportedWorkoutPlan,
@@ -71,6 +73,9 @@ export function App() {
   const [recentSessions, setRecentSessions] = useState<
     CompletedWorkoutSessionSummary[]
   >([]);
+  const [routineExecutionSummaries, setRoutineExecutionSummaries] = useState<
+    RoutineExecutionSummary[]
+  >([]);
   const [workoutMessage, setWorkoutMessage] = useState<string | null>(null);
   const [workoutCompletion, setWorkoutCompletion] =
     useState<WorkoutCompletionSummary | null>(null);
@@ -112,6 +117,7 @@ export function App() {
     if (!activePlan) {
       setLoadSummaries([]);
       setRecentSessions([]);
+      setRoutineExecutionSummaries([]);
       return () => {
         isMounted = false;
       };
@@ -125,13 +131,18 @@ export function App() {
       getRecentCompletedWorkoutSessions({
         repository: pwaWorkoutPlanRepository,
       }),
-    ]).then(([summaries, sessions]) => {
+      getRoutineExecutionSummaries({
+        activePlan,
+        repository: pwaWorkoutPlanRepository,
+      }),
+    ]).then(([summaries, sessions, routineSummaries]) => {
       if (!isMounted) {
         return;
       }
 
       setLoadSummaries(summaries);
       setRecentSessions(sessions);
+      setRoutineExecutionSummaries(routineSummaries);
     });
 
     return () => {
@@ -352,6 +363,7 @@ export function App() {
       setWorkoutLoadHistory(new Map());
       setLoadSummaries([]);
       setRecentSessions([]);
+      setRoutineExecutionSummaries([]);
       setWorkoutCompletion(null);
       setImportStatus(idleImportStatus);
       setWorkoutMessage("Dados de treino apagados deste dispositivo.");
@@ -507,6 +519,7 @@ export function App() {
           activePlan={activePlan}
           nextRecommendation={nextRecommendation}
           onOpenRoutine={handleOpenRoutineDetail}
+          routineExecutionSummaries={routineExecutionSummaries}
         />
       );
     }

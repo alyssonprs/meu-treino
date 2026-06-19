@@ -3,6 +3,7 @@ import type {
   CompletedWorkoutSessionSummaryRecord,
   ExerciseLoadHistoryRecord,
   ExerciseSetHistoryRecord,
+  RoutineExecutionSummaryRecord,
   WorkoutPlanRepository,
 } from "@/storage/workoutPlanRepository";
 
@@ -31,6 +32,14 @@ export type CompletedWorkoutSessionSummary = {
   completedAt: string;
   exercisesCount: number;
   setsCount: number;
+};
+
+export type RoutineExecutionSummary = {
+  routineId: string;
+  routineName: string;
+  routineOrder: number;
+  completedSessionsCount: number;
+  lastCompletedAt: string | null;
 };
 
 export type ExerciseSetHistoryEntry = {
@@ -111,6 +120,37 @@ export async function getRecentCompletedWorkoutSessions({
   return sessions.map(toSessionSummary);
 }
 
+export async function getRoutineExecutionSummaries({
+  activePlan,
+  repository,
+}: {
+  activePlan: ActiveWorkoutPlanSnapshot;
+  repository: Pick<WorkoutPlanRepository, "getRoutineExecutionSummaries">;
+}): Promise<RoutineExecutionSummary[]> {
+  const summaries = await repository.getRoutineExecutionSummaries(
+    activePlan.plan.id,
+  );
+  const summaryByRoutineId = new Map(
+    summaries.map((summary) => [summary.routineId, summary]),
+  );
+
+  return [...activePlan.routines]
+    .sort((left, right) => left.order - right.order)
+    .map((routine) => {
+      const summary = summaryByRoutineId.get(routine.id);
+
+      return summary
+        ? toRoutineExecutionSummary(summary)
+        : {
+            routineId: routine.id,
+            routineName: routine.name,
+            routineOrder: routine.order,
+            completedSessionsCount: 0,
+            lastCompletedAt: null,
+          };
+    });
+}
+
 export async function getExerciseHistoryDetails({
   activePlan,
   exerciseId,
@@ -178,6 +218,18 @@ function toSessionSummary(
     completedAt: session.completedAt,
     exercisesCount: session.exercisesCount,
     setsCount: session.setsCount,
+  };
+}
+
+function toRoutineExecutionSummary(
+  summary: RoutineExecutionSummaryRecord,
+): RoutineExecutionSummary {
+  return {
+    routineId: summary.routineId,
+    routineName: summary.routineName,
+    routineOrder: summary.routineOrder,
+    completedSessionsCount: summary.completedSessionsCount,
+    lastCompletedAt: summary.lastCompletedAt,
   };
 }
 

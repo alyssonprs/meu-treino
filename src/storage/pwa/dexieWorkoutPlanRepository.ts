@@ -10,6 +10,7 @@ import type {
   ExerciseRecord,
   PlannedExerciseRecord,
   RoutineRecord,
+  RoutineExecutionSummaryRecord,
   RoutineStepRecord,
   MarkRoutineAsCompletedInput,
   SaveCompletedWorkoutSessionInput,
@@ -260,6 +261,43 @@ export class DexieWorkoutPlanRepository implements WorkoutPlanRepository {
           setsCount: setLogs.length,
         };
       }),
+    );
+  }
+
+  async getRoutineExecutionSummaries(
+    planId: string,
+  ): Promise<RoutineExecutionSummaryRecord[]> {
+    const sessions = (await this.database.workoutSessions.toArray())
+      .filter(
+        (session) =>
+          session.planId === planId && session.status === "completed",
+      )
+      .sort((left, right) => right.completedAt.localeCompare(left.completedAt));
+
+    const summariesByRoutine = new Map<string, RoutineExecutionSummaryRecord>();
+
+    sessions.forEach((session) => {
+      const current = summariesByRoutine.get(session.routineId);
+
+      if (!current) {
+        summariesByRoutine.set(session.routineId, {
+          routineId: session.routineId,
+          routineName: session.routineName,
+          routineOrder: session.routineOrder,
+          completedSessionsCount: 1,
+          lastCompletedAt: session.completedAt,
+        });
+        return;
+      }
+
+      summariesByRoutine.set(session.routineId, {
+        ...current,
+        completedSessionsCount: current.completedSessionsCount + 1,
+      });
+    });
+
+    return Array.from(summariesByRoutine.values()).sort(
+      (left, right) => left.routineOrder - right.routineOrder,
     );
   }
 

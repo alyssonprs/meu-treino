@@ -368,6 +368,105 @@ describe("DexieWorkoutPlanRepository", () => {
     });
   });
 
+  it("summarizes the last execution and completion count for each routine", async () => {
+    const repository = createRepository();
+
+    await repository.saveActivePlan({ plan: basePlan });
+    const activePlan = await repository.getActivePlan();
+    const firstRoutine = activePlan?.routines[0];
+    const secondRoutine = activePlan?.routines[1];
+    const firstExercise = firstRoutine?.exercises[0];
+    const secondExercise = secondRoutine?.exercises[0];
+
+    if (
+      !activePlan ||
+      !firstRoutine ||
+      !secondRoutine ||
+      !firstExercise ||
+      !secondExercise
+    ) {
+      throw new Error("Fixture should create routines with exercises");
+    }
+
+    await repository.saveCompletedWorkoutSession({
+      planId: activePlan.plan.id,
+      routineId: firstRoutine.id,
+      routineName: firstRoutine.name,
+      routineOrder: firstRoutine.order,
+      startedAt: "2026-06-15T12:00:00.000Z",
+      completedAt: "2026-06-15T13:00:00.000Z",
+      exercises: [
+        {
+          plannedExerciseId: firstExercise.id,
+          exerciseId: firstExercise.exerciseId,
+          sourceExerciseId: firstExercise.sourceExerciseId,
+          exerciseName: firstExercise.name,
+          order: firstExercise.order,
+          sets: [{ setNumber: 1, loadKg: 60, reps: 8, rir: null, notes: null }],
+        },
+      ],
+    });
+
+    await repository.saveCompletedWorkoutSession({
+      planId: activePlan.plan.id,
+      routineId: secondRoutine.id,
+      routineName: secondRoutine.name,
+      routineOrder: secondRoutine.order,
+      startedAt: "2026-06-16T12:00:00.000Z",
+      completedAt: "2026-06-16T13:00:00.000Z",
+      exercises: [
+        {
+          plannedExerciseId: secondExercise.id,
+          exerciseId: secondExercise.exerciseId,
+          sourceExerciseId: secondExercise.sourceExerciseId,
+          exerciseName: secondExercise.name,
+          order: secondExercise.order,
+          sets: [{ setNumber: 1, loadKg: 50, reps: 10, rir: null, notes: null }],
+        },
+      ],
+    });
+
+    await repository.saveCompletedWorkoutSession({
+      planId: activePlan.plan.id,
+      routineId: firstRoutine.id,
+      routineName: firstRoutine.name,
+      routineOrder: firstRoutine.order,
+      startedAt: "2026-06-17T12:00:00.000Z",
+      completedAt: "2026-06-17T13:00:00.000Z",
+      exercises: [
+        {
+          plannedExerciseId: firstExercise.id,
+          exerciseId: firstExercise.exerciseId,
+          sourceExerciseId: firstExercise.sourceExerciseId,
+          exerciseName: firstExercise.name,
+          order: firstExercise.order,
+          sets: [{ setNumber: 1, loadKg: 62.5, reps: 8, rir: null, notes: null }],
+        },
+      ],
+    });
+
+    const summaries = await repository.getRoutineExecutionSummaries(
+      activePlan.plan.id,
+    );
+
+    expect(summaries).toEqual([
+      {
+        routineId: firstRoutine.id,
+        routineName: firstRoutine.name,
+        routineOrder: firstRoutine.order,
+        completedSessionsCount: 2,
+        lastCompletedAt: "2026-06-17T13:00:00.000Z",
+      },
+      {
+        routineId: secondRoutine.id,
+        routineName: secondRoutine.name,
+        routineOrder: secondRoutine.order,
+        completedSessionsCount: 1,
+        lastCompletedAt: "2026-06-16T13:00:00.000Z",
+      },
+    ]);
+  });
+
   it("lists recent set history for an exercise with routine context", async () => {
     const repository = createRepository();
 

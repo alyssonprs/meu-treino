@@ -116,6 +116,14 @@ export type CompletedWorkoutSessionSummaryRecord = WorkoutSessionRecord & {
   setsCount: number;
 };
 
+export type RoutineExecutionSummaryRecord = {
+  routineId: string;
+  routineName: string;
+  routineOrder: number;
+  completedSessionsCount: number;
+  lastCompletedAt: string;
+};
+
 export type ExerciseSetHistoryRecord = {
   id: string;
   sessionId: string;
@@ -199,6 +207,9 @@ export interface WorkoutPlanRepository {
   getRecentCompletedWorkoutSessions(
     limit?: number,
   ): Promise<CompletedWorkoutSessionSummaryRecord[]>;
+  getRoutineExecutionSummaries(
+    planId: string,
+  ): Promise<RoutineExecutionSummaryRecord[]>;
   getExerciseLoadHistory(
     exerciseIds?: string[],
   ): Promise<ExerciseLoadHistoryRecord[]>;

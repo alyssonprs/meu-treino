@@ -7,6 +7,7 @@ import {
   getCycleProgressSummary,
   getExerciseLoadSummaries,
   getRecentCompletedWorkoutSessions,
+  getRoutineExecutionSummaries,
 } from "./progressService";
 
 describe("progressService", () => {
@@ -103,6 +104,56 @@ describe("progressService", () => {
         completedAt: "2026-06-16T13:00:00.000Z",
         exercisesCount: 3,
         setsCount: 9,
+      },
+    ]);
+  });
+
+  it("returns routine execution summaries including routines never completed", async () => {
+    const snapshot = createSnapshot();
+    snapshot.routines.push({
+      id: "routine-b",
+      planId: "plan-1",
+      sourceRoutineId: "treino-b",
+      name: "Treino B",
+      order: 2,
+      warmup: [],
+      cooldown: [],
+      exercises: [],
+    });
+    const repository = {
+      getRoutineExecutionSummaries: vi.fn().mockResolvedValue([
+        {
+          routineId: "routine-a",
+          routineName: "Treino A",
+          routineOrder: 1,
+          completedSessionsCount: 2,
+          lastCompletedAt: "2026-06-16T13:00:00.000Z",
+        },
+      ]),
+    };
+
+    const summaries = await getRoutineExecutionSummaries({
+      activePlan: snapshot,
+      repository,
+    });
+
+    expect(repository.getRoutineExecutionSummaries).toHaveBeenCalledWith(
+      "plan-1",
+    );
+    expect(summaries).toEqual([
+      {
+        routineId: "routine-a",
+        routineName: "Treino A",
+        routineOrder: 1,
+        completedSessionsCount: 2,
+        lastCompletedAt: "2026-06-16T13:00:00.000Z",
+      },
+      {
+        routineId: "routine-b",
+        routineName: "Treino B",
+        routineOrder: 2,
+        completedSessionsCount: 0,
+        lastCompletedAt: null,
       },
     ]);
   });

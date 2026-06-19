@@ -6,18 +6,21 @@ import {
   RefreshCw,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import type { RoutineExecutionSummary } from "@/services/progressService";
 import type { NextRoutineRecommendation } from "@/services/workoutRecommendationService";
 import type { ActiveWorkoutPlanSnapshot } from "@/storage/workoutPlanRepository";
 
 type RoutineListScreenProps = {
   activePlan: ActiveWorkoutPlanSnapshot | null;
   nextRecommendation: NextRoutineRecommendation | null;
+  routineExecutionSummaries: RoutineExecutionSummary[];
   onOpenRoutine: (routineId: string) => void;
 };
 
 export function RoutineListScreen({
   activePlan,
   nextRecommendation,
+  routineExecutionSummaries,
   onOpenRoutine,
 }: RoutineListScreenProps) {
   if (!activePlan) {
@@ -35,6 +38,9 @@ export function RoutineListScreen({
   const routines = [...activePlan.routines].sort(
     (left, right) => left.order - right.order,
   );
+  const routineExecutionById = new Map(
+    routineExecutionSummaries.map((summary) => [summary.routineId, summary]),
+  );
 
   return (
     <section className="mt-4 space-y-5">
@@ -50,6 +56,7 @@ export function RoutineListScreen({
       <div className="space-y-3">
         {routines.map((routine) => {
           const isRecommended = routine.id === nextRecommendation?.routineId;
+          const executionSummary = routineExecutionById.get(routine.id);
 
           return (
             <button
@@ -77,6 +84,9 @@ export function RoutineListScreen({
                   <p className="mt-2 text-sm leading-6 text-muted-foreground">
                     Ordem {routine.order} - {routine.exercises.length}{" "}
                     exercícios
+                  </p>
+                  <p className="mt-1 text-sm font-medium text-info">
+                    {getRoutineExecutionLabel(executionSummary)}
                   </p>
                 </div>
                 <ChevronRight
@@ -126,6 +136,36 @@ function RoutineMetric({
       <p className="mt-1 text-xs text-muted-foreground">{label}</p>
     </div>
   );
+}
+
+function getRoutineExecutionLabel(
+  summary: RoutineExecutionSummary | undefined,
+) {
+  if (!summary || !summary.lastCompletedAt) {
+    return "Ainda não executada";
+  }
+
+  const completedCount = summary.completedSessionsCount;
+  const countLabel =
+    completedCount === 1
+      ? "1 vez concluída"
+      : `${completedCount} vezes concluídas`;
+
+  return `Última execução: ${formatShortDate(summary.lastCompletedAt)} - ${countLabel}`;
+}
+
+function formatShortDate(value: string) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit",
+  }).format(date);
 }
 
 function getEstimatedRoutineDuration(
