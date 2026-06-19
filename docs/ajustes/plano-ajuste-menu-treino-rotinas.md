@@ -8,6 +8,14 @@ Alterar a usabilidade do item `Treino` da navegacao inferior para listar todas a
 
 Esta alteracao nao remove a recomendacao automatica de treino. A recomendacao continua existindo e deve permanecer em destaque na tela `Inicio`.
 
+Status: aprovado para implementacao em 2026-06-19.
+
+Referencias aprovadas:
+
+- `docs/arquitetura/prototipos/meu-treino-wireframes-v2.excalidraw`
+- `docs/arquitetura/ux-prototipo-aprovado.md`
+- `docs/arquitetura/arquitetura-prompt.md`
+
 ## Decisao de UX
 
 Fluxo desejado:
@@ -141,6 +149,10 @@ Decisao a registrar:
 - A `UX-03` deixa de ser apenas "Detalhe do treino recomendado" e passa a ser "Detalhe da rotina selecionada", podendo receber tanto a rotina recomendada quanto uma rotina escolhida manualmente.
 
 ## Plano de execucao
+
+Recomendacao de execucao: implementar em uma unica tarefa de Codex, no mesmo contexto, porque a mudanca e coesa e atravessa os mesmos pontos de navegacao, selecao de rotina, detalhe da rotina e testes visuais. Separar em contextos diferentes so faz sentido se a implementacao ficar bloqueada, se os testes visuais demorarem demais, ou se for desejada uma revisao manual entre a UI funcional e a atualizacao das evidencias.
+
+Mesmo executando em uma unica tarefa, seguir as etapas abaixo em ordem para manter o diff revisavel.
 
 ### Execucao 1 - Navegacao e estado da rotina selecionada
 
