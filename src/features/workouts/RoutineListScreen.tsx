@@ -145,13 +145,7 @@ function getRoutineExecutionLabel(
     return "Ainda não executada";
   }
 
-  const completedCount = summary.completedSessionsCount;
-  const countLabel =
-    completedCount === 1
-      ? "1 vez concluída"
-      : `${completedCount} vezes concluídas`;
-
-  return `Última execução: ${formatShortDate(summary.lastCompletedAt)} - ${countLabel}`;
+  return `Última execução: ${formatShortDate(summary.lastCompletedAt)}`;
 }
 
 function formatShortDate(value: string) {
