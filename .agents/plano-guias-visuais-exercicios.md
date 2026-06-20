@@ -389,4 +389,6 @@ Pronto quando: criterios de aceite da etapa estiverem cumpridos e os checks indi
 - O guia visual ja fica recolhido por padrao e abre por `Ver como fazer`.
 - O JSON ja aceita `primary_muscles`, `secondary_muscles`, `movement_pattern`, `visual_id` e `execution_cues`.
 - Execucao 1 consolidou a lista oficial de `movement_pattern` a partir de `src/config/exercise-guide-catalog.json`, adicionou catalogo inicial para guias especificos e genericos, e atualizou o prompt/modelo de geracao.
-- O proximo passo recomendado e a Execucao 2.
+- Execucao 2 adicionou a primeira leva de imagens genericas para `horizontal_push`, `horizontal_pull`, `vertical_push`, `vertical_pull`, `squat`, `hinge`, `elbow_flexion` e `elbow_extension`.
+- Execucao 3 adicionou a segunda leva de imagens genericas para `lunge`, `hip_thrust`, `leg_extension`, `leg_curl`, `calf_raise`, `shoulder_abduction`, `core_flexion`, `core_anti_extension` e `core_rotation`.
+- O proximo passo recomendado e a Execucao 4.

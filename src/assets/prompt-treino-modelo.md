@@ -124,6 +124,8 @@ Valores suportados para `movement_pattern`:
 - `core_anti_extension`: estabilidade contra extensão, como prancha.
 - `core_rotation`: rotação ou anti-rotação do tronco.
 
+Todos os valores acima possuem guia generico offline no app. Use o melhor `movement_pattern` disponivel antes de omitir esse campo.
+
 Não use valores fora dessa lista. Se nenhum valor representar bem o exercício, omita `movement_pattern`.
 
 Regras específicas para `visual_id`:

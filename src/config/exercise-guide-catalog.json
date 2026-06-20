@@ -81,6 +81,7 @@
     },
     {
       "id": "lunge",
+      "image_asset": "generic/lunge.webp",
       "image_alt": "Guia generico de avanco com seta diagonal.",
       "default_cues": [
         "Passo firme",
@@ -91,6 +92,7 @@
     },
     {
       "id": "hip_thrust",
+      "image_asset": "generic/hip-thrust.webp",
       "image_alt": "Guia generico de extensao de quadril com seta para cima.",
       "default_cues": [
         "Queixo levemente recolhido",
@@ -101,6 +103,7 @@
     },
     {
       "id": "leg_extension",
+      "image_asset": "generic/leg-extension.webp",
       "image_alt": "Guia generico de extensao de joelho com seta para frente.",
       "default_cues": [
         "Apoie bem o quadril",
@@ -111,6 +114,7 @@
     },
     {
       "id": "leg_curl",
+      "image_asset": "generic/leg-curl.webp",
       "image_alt": "Guia generico de flexao de joelho com seta para tras.",
       "default_cues": [
         "Quadril firme no apoio",
@@ -121,6 +125,7 @@
     },
     {
       "id": "calf_raise",
+      "image_asset": "generic/calf-raise.webp",
       "image_alt": "Guia generico de panturrilha com seta vertical.",
       "default_cues": [
         "Suba ate contrair a panturrilha",
@@ -131,6 +136,7 @@
     },
     {
       "id": "shoulder_abduction",
+      "image_asset": "generic/shoulder-abduction.webp",
       "image_alt": "Guia generico de elevacao lateral com setas para os lados.",
       "default_cues": [
         "Cotovelos levemente flexionados",
@@ -166,6 +172,7 @@
     },
     {
       "id": "core_flexion",
+      "image_asset": "generic/core-flexion.webp",
       "image_alt": "Guia generico de flexao de tronco com seta curva.",
       "default_cues": [
         "Contraia o abdomen",
@@ -176,6 +183,7 @@
     },
     {
       "id": "core_anti_extension",
+      "image_asset": "generic/core-anti-extension.webp",
       "image_alt": "Guia generico de estabilidade do core contra extensao.",
       "default_cues": [
         "Mantenha o tronco firme",
@@ -186,6 +194,7 @@
     },
     {
       "id": "core_rotation",
+      "image_asset": "generic/core-rotation.webp",
       "image_alt": "Guia generico de rotacao de tronco com seta curva.",
       "default_cues": [
         "Gire com controle",

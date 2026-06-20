@@ -87,7 +87,7 @@ describe("getExerciseGuide", () => {
     expect(guide.imageAlt).toContain("puxar na horizontal");
   });
 
-  it("keeps embedded generic SVG fallback for movement patterns without assets yet", () => {
+  it("uses second-batch generic images for real workout movement patterns", () => {
     const guide = getExerciseGuide({
       ...baseExercise,
       sourceExerciseId: null,
@@ -97,7 +97,7 @@ describe("getExerciseGuide", () => {
       movement_pattern: "core_anti_extension",
     });
 
-    expect(guide.imageUrl).toContain("data:image/svg+xml");
+    expect(guide.imageUrl).toContain("core-anti-extension");
     expect(guide.imageAlt).toContain("estabilidade do core");
   });
 
