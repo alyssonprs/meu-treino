@@ -54,7 +54,7 @@ describe("getExerciseGuide", () => {
 
     expect(guide.primaryMuscles).toEqual(["Peitoral"]);
     expect(guide.secondaryMuscles).toEqual([]);
-    expect(guide.imageUrl).toContain("data:image/svg+xml");
+    expect(guide.imageUrl).toContain("horizontal-push");
     expect(guide.executionCues).toEqual([
       "Pes firmes no chao",
       "Desca com controle",
@@ -83,8 +83,22 @@ describe("getExerciseGuide", () => {
       movement_pattern: "horizontal_pull",
     });
 
-    expect(guide.imageUrl).toContain("data:image/svg+xml");
+    expect(guide.imageUrl).toContain("horizontal-pull");
     expect(guide.imageAlt).toContain("puxar na horizontal");
+  });
+
+  it("keeps embedded generic SVG fallback for movement patterns without assets yet", () => {
+    const guide = getExerciseGuide({
+      ...baseExercise,
+      sourceExerciseId: null,
+      exerciseId: "prancha",
+      name: "Prancha",
+      muscleGroup: "Abdomen",
+      movement_pattern: "core_anti_extension",
+    });
+
+    expect(guide.imageUrl).toContain("data:image/svg+xml");
+    expect(guide.imageAlt).toContain("estabilidade do core");
   });
 
   it("keeps muscle and note fallback when no visual metadata is available", () => {

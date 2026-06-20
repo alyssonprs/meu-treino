@@ -15,6 +15,7 @@
   "movement_patterns": [
     {
       "id": "horizontal_push",
+      "image_asset": "generic/horizontal-push.webp",
       "image_alt": "Guia generico de empurrar na horizontal com seta de ida e volta.",
       "default_cues": [
         "Pes firmes no chao",
@@ -25,6 +26,7 @@
     },
     {
       "id": "horizontal_pull",
+      "image_asset": "generic/horizontal-pull.webp",
       "image_alt": "Guia generico de puxar na horizontal com seta de ida e volta.",
       "default_cues": [
         "Tronco firme",
@@ -35,6 +37,7 @@
     },
     {
       "id": "vertical_push",
+      "image_asset": "generic/vertical-push.webp",
       "image_alt": "Guia generico de empurrar acima da cabeca com seta vertical.",
       "default_cues": [
         "Costelas baixas",
@@ -45,6 +48,7 @@
     },
     {
       "id": "vertical_pull",
+      "image_asset": "generic/vertical-pull.webp",
       "image_alt": "Guia generico de puxar de cima para baixo com seta vertical.",
       "default_cues": [
         "Ombros longe das orelhas",
@@ -55,6 +59,7 @@
     },
     {
       "id": "squat",
+      "image_asset": "generic/squat.webp",
       "image_alt": "Guia generico de agachamento com seta vertical.",
       "default_cues": [
         "Pes firmes no chao",
@@ -65,6 +70,7 @@
     },
     {
       "id": "hinge",
+      "image_asset": "generic/hinge.webp",
       "image_alt": "Guia generico de dobradica de quadril com seta diagonal.",
       "default_cues": [
         "Coluna neutra",
@@ -138,6 +144,7 @@
     },
     {
       "id": "elbow_flexion",
+      "image_asset": "generic/elbow-flexion.webp",
       "image_alt": "Guia generico de flexao de cotovelo com seta de subida.",
       "default_cues": [
         "Cotovelos estaveis",
@@ -148,6 +155,7 @@
     },
     {
       "id": "elbow_extension",
+      "image_asset": "generic/elbow-extension.webp",
       "image_alt": "Guia generico de extensao de cotovelo com seta de descida.",
       "default_cues": [
         "Cotovelos perto do tronco",

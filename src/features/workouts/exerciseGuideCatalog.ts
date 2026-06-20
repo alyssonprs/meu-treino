@@ -8,13 +8,14 @@ export type VisualGuide = {
 
 type MovementPatternGuideConfig = {
   id: string;
+  image_asset?: string;
   image_alt: string;
   default_cues: string[];
   arrow_paths: string[];
 };
 
 const exerciseGuideAssets = import.meta.glob<string>(
-  "../../assets/exercise-guides/*",
+  "../../assets/exercise-guides/**/*",
   {
     eager: true,
     import: "default",
@@ -64,7 +65,9 @@ function createGenericMovementGuide(
   pattern: MovementPatternGuideConfig,
 ): VisualGuide {
   return {
-    imageUrl: createGenericMovementSvgUrl(pattern),
+    imageUrl: pattern.image_asset
+      ? resolveExerciseGuideAsset(pattern.image_asset)
+      : createGenericMovementSvgUrl(pattern),
     imageAlt: pattern.image_alt,
   };
 }
