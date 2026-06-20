@@ -92,7 +92,7 @@ O app pode mostrar um painel recolhido chamado "Ver como fazer" durante a execu�
 Regras gerais:
 
 - Os campos de orientação visual são opcionais.
-- Mesmo sem `visual_id`, o app consegue mostrar músculos e dicas usando `primary_muscles`, `secondary_muscles`, `movement_pattern` e `execution_cues`.
+- Mesmo sem `visual_id`, o app usa `movement_pattern` como fallback visual principal e tambem consegue mostrar músculos e dicas usando `primary_muscles`, `secondary_muscles` e `execution_cues`.
 - Portanto, preencha os campos de músculos e dicas sempre que conseguir fazer isso com segurança.
 - Não invente anatomia ou instruções se houver incerteza clínica, lesão importante ou exercício muito específico. Nesse caso, use dicas conservadoras e recomende orientação profissional nas `notes` quando apropriado.
 
@@ -104,7 +104,7 @@ Campos:
 - `visual_id`: identificador de asset visual local do app.
 - `execution_cues`: array com até 3 dicas curtas, práticas e seguras para execução.
 
-Valores recomendados para `movement_pattern`:
+Valores suportados para `movement_pattern`:
 
 - `horizontal_push`: empurrar na horizontal, como supino e flexão.
 - `horizontal_pull`: puxar na horizontal, como remadas.
@@ -123,6 +123,8 @@ Valores recomendados para `movement_pattern`:
 - `core_flexion`: flexão ou enrolamento do tronco, como abdominal crunch.
 - `core_anti_extension`: estabilidade contra extensão, como prancha.
 - `core_rotation`: rotação ou anti-rotação do tronco.
+
+Não use valores fora dessa lista. Se nenhum valor representar bem o exercício, omita `movement_pattern`.
 
 Regras específicas para `visual_id`:
 

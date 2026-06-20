@@ -380,4 +380,5 @@ Pronto quando: criterios de aceite da etapa estiverem cumpridos e os checks indi
 - Ja existe imagem especifica para `barbell_bench_press`.
 - O guia visual ja fica recolhido por padrao e abre por `Ver como fazer`.
 - O JSON ja aceita `primary_muscles`, `secondary_muscles`, `movement_pattern`, `visual_id` e `execution_cues`.
-- O proximo passo recomendado e a Execucao 1.
+- Execucao 1 consolidou a lista oficial de `movement_pattern` no dominio, adicionou catalogo inicial para guias especificos e genericos, e atualizou o prompt/modelo de geracao.
+- O proximo passo recomendado e a Execucao 2.

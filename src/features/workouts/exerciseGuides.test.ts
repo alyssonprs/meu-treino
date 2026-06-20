@@ -54,10 +54,52 @@ describe("getExerciseGuide", () => {
 
     expect(guide.primaryMuscles).toEqual(["Peitoral"]);
     expect(guide.secondaryMuscles).toEqual([]);
+    expect(guide.imageUrl).toContain("data:image/svg+xml");
     expect(guide.executionCues).toEqual([
       "Pes firmes no chao",
       "Desca com controle",
       "Empurre sem tirar o ombro do banco",
+    ]);
+  });
+
+  it("prefers known exercise mappings before generic movement guides", () => {
+    const guide = getExerciseGuide({
+      ...baseExercise,
+      visual_id: undefined,
+      movement_pattern: "horizontal_pull",
+    });
+
+    expect(guide.imageUrl).toContain("barbell-bench-press");
+    expect(guide.imageAlt).toContain("supino reto");
+  });
+
+  it("uses generic movement image when no specific visual is available", () => {
+    const guide = getExerciseGuide({
+      ...baseExercise,
+      sourceExerciseId: null,
+      exerciseId: "remada-baixa-cabo",
+      name: "Remada baixa",
+      muscleGroup: "Costas",
+      movement_pattern: "horizontal_pull",
+    });
+
+    expect(guide.imageUrl).toContain("data:image/svg+xml");
+    expect(guide.imageAlt).toContain("puxar na horizontal");
+  });
+
+  it("keeps muscle and note fallback when no visual metadata is available", () => {
+    const guide = getExerciseGuide({
+      ...baseExercise,
+      sourceExerciseId: null,
+      exerciseId: "exercicio-sem-guia",
+      movement_pattern: undefined,
+      notes: "Use carga leve e controle o movimento",
+    });
+
+    expect(guide.imageUrl).toBeNull();
+    expect(guide.primaryMuscles).toEqual(["Peitoral"]);
+    expect(guide.executionCues).toEqual([
+      "Use carga leve e controle o movimento",
     ]);
   });
 });

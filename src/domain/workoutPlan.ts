@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { supportedMovementPatterns } from "./movementPattern";
+
 const requiredText = (fieldName: string) =>
   z.string().trim().min(1, `${fieldName} e obrigatorio`);
 
@@ -37,7 +39,7 @@ export const plannedExerciseSchema = z
     advanced_technique: z.string().trim().optional(),
     primary_muscles: z.array(requiredText("Musculo principal")).optional(),
     secondary_muscles: z.array(requiredText("Musculo secundario")).optional(),
-    movement_pattern: z.string().trim().optional(),
+    movement_pattern: z.enum(supportedMovementPatterns).optional(),
     visual_id: z.string().trim().optional(),
     execution_cues: z.array(requiredText("Dica de execucao")).optional(),
     notes: z.string().trim().optional(),

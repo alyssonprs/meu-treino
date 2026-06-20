@@ -1,5 +1,11 @@
-import barbellBenchPressGuideUrl from "@/assets/exercise-guides/barbell-bench-press.jpg";
+import type { MovementPattern } from "@/domain/movementPattern";
 import type { PlannedExerciseRecord } from "@/storage/workoutPlanRepository";
+import {
+  genericVisualGuidesByMovementPattern,
+  visualGuideIdsByExerciseId,
+  visualGuidesById,
+  type VisualGuide,
+} from "./exerciseGuideCatalog";
 
 export type ExerciseGuide = {
   imageUrl: string | null;
@@ -9,20 +15,7 @@ export type ExerciseGuide = {
   executionCues: string[];
 };
 
-type VisualGuide = {
-  imageUrl: string;
-  imageAlt: string;
-};
-
-const visualGuidesById: Record<string, VisualGuide> = {
-  barbell_bench_press: {
-    imageUrl: barbellBenchPressGuideUrl,
-    imageAlt:
-      "Guia visual do supino reto com peitoral em destaque e seta do movimento da barra.",
-  },
-};
-
-const defaultCuesByMovementPattern: Record<string, string[]> = {
+const defaultCuesByMovementPattern: Record<MovementPattern, string[]> = {
   horizontal_push: [
     "Pes firmes no chao",
     "Desca com controle",
@@ -63,6 +56,51 @@ const defaultCuesByMovementPattern: Record<string, string[]> = {
     "Estenda ate contrair o triceps",
     "Volte com controle",
   ],
+  lunge: [
+    "Passo firme",
+    "Joelho acompanha o pe",
+    "Suba empurrando o chao",
+  ],
+  hip_thrust: [
+    "Queixo levemente recolhido",
+    "Suba ate alinhar o quadril",
+    "Controle a descida",
+  ],
+  leg_extension: [
+    "Apoie bem o quadril",
+    "Estenda sem travar o joelho",
+    "Volte com controle",
+  ],
+  leg_curl: [
+    "Quadril firme no apoio",
+    "Flexione com controle",
+    "Evite tirar o corpo do banco",
+  ],
+  calf_raise: [
+    "Suba ate contrair a panturrilha",
+    "Desca com amplitude",
+    "Mantenha o controle",
+  ],
+  shoulder_abduction: [
+    "Cotovelos levemente flexionados",
+    "Suba ate a linha dos ombros",
+    "Controle a descida",
+  ],
+  core_flexion: [
+    "Contraia o abdomen",
+    "Suba sem puxar o pescoco",
+    "Volte com controle",
+  ],
+  core_anti_extension: [
+    "Mantenha o tronco firme",
+    "Evite deixar o quadril cair",
+    "Respire de forma controlada",
+  ],
+  core_rotation: [
+    "Gire com controle",
+    "Mantenha o abdomen ativo",
+    "Evite impulso excessivo",
+  ],
 };
 
 export function getExerciseGuide(
@@ -72,9 +110,7 @@ export function getExerciseGuide(
   const primaryMuscles = normalizeList(exercise.primary_muscles);
   const secondaryMuscles = normalizeList(exercise.secondary_muscles);
   const executionCues = normalizeList(exercise.execution_cues);
-  const fallbackCues = exercise.movement_pattern
-    ? defaultCuesByMovementPattern[exercise.movement_pattern]
-    : undefined;
+  const fallbackCues = getFallbackCues(exercise.movement_pattern);
 
   return {
     imageUrl: visualGuide?.imageUrl ?? null,
@@ -98,11 +134,35 @@ function resolveVisualGuide(exercise: PlannedExerciseRecord) {
     return visualGuidesById[visualId];
   }
 
-  if (exercise.sourceExerciseId === "supino-reto-barra") {
-    return visualGuidesById.barbell_bench_press;
+  if (exercise.sourceExerciseId) {
+    const visualGuideId = visualGuideIdsByExerciseId[exercise.sourceExerciseId];
+
+    if (visualGuideId) {
+      return visualGuidesById[visualGuideId];
+    }
+  }
+
+  const movementPatternGuide = getGenericVisualGuide(exercise.movement_pattern);
+
+  if (movementPatternGuide) {
+    return movementPatternGuide;
   }
 
   return null;
+}
+
+function getGenericVisualGuide(
+  movementPattern: MovementPattern | undefined,
+): VisualGuide | null {
+  return movementPattern
+    ? genericVisualGuidesByMovementPattern[movementPattern]
+    : null;
+}
+
+function getFallbackCues(movementPattern: MovementPattern | undefined) {
+  return movementPattern
+    ? defaultCuesByMovementPattern[movementPattern]
+    : undefined;
 }
 
 function normalizeList(items: (string | undefined)[] | undefined) {
