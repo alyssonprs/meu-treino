@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { PlannedExerciseRecord } from "@/storage/workoutPlanRepository";
 
+import { visualGuidesById } from "./exerciseGuideCatalog";
 import { getExerciseGuide } from "./exerciseGuides";
 
 const baseExercise: PlannedExerciseRecord = {
@@ -20,6 +21,29 @@ const baseExercise: PlannedExerciseRecord = {
 };
 
 describe("getExerciseGuide", () => {
+  it("resolves the initial specific exercise catalog", () => {
+    expect(Object.keys(visualGuidesById).sort()).toEqual([
+      "barbell_bench_press",
+      "barbell_biceps_curl",
+      "barbell_row",
+      "dumbbell_bench_press",
+      "hip_thrust",
+      "lat_pulldown",
+      "lateral_raise",
+      "leg_press",
+      "plank",
+      "pull_up",
+      "romanian_deadlift",
+      "rope_triceps_pushdown",
+    ]);
+
+    expect(visualGuidesById.barbell_row.imageUrl).toContain(
+      "data:image/svg+xml",
+    );
+    expect(visualGuidesById.barbell_row.imageAlt).toContain("remada curvada");
+    expect(visualGuidesById.plank.imageAlt).toContain("prancha");
+  });
+
   it("uses visual metadata and cues from the workout JSON", () => {
     const guide = getExerciseGuide({
       ...baseExercise,
@@ -34,7 +58,8 @@ describe("getExerciseGuide", () => {
       ],
     });
 
-    expect(guide.imageUrl).toContain("barbell-bench-press");
+    expect(guide.imageUrl).toContain("data:image/svg+xml");
+    expect(guide.imageAlt).toContain("supino reto");
     expect(guide.primaryMuscles).toEqual(["Peitoral maior"]);
     expect(guide.secondaryMuscles).toEqual(["Triceps", "Deltoide anterior"]);
     expect(guide.executionCues).toEqual([
@@ -69,8 +94,23 @@ describe("getExerciseGuide", () => {
       movement_pattern: "horizontal_pull",
     });
 
-    expect(guide.imageUrl).toContain("barbell-bench-press");
+    expect(guide.imageUrl).toContain("data:image/svg+xml");
     expect(guide.imageAlt).toContain("supino reto");
+  });
+
+  it("uses the initial specific catalog by known exercise id", () => {
+    const guide = getExerciseGuide({
+      ...baseExercise,
+      sourceExerciseId: "remada-curvada-barra",
+      exerciseId: "remada-curvada-barra",
+      name: "Remada curvada",
+      muscleGroup: "Costas",
+      visual_id: undefined,
+      movement_pattern: "horizontal_pull",
+    });
+
+    expect(guide.imageUrl).toContain("data:image/svg+xml");
+    expect(guide.imageAlt).toContain("remada curvada");
   });
 
   it("uses generic movement image when no specific visual is available", () => {

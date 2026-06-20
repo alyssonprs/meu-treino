@@ -55,6 +55,7 @@
             "primary_muscles": ["Triceps braquial"],
             "secondary_muscles": ["Antebraco"],
             "movement_pattern": "elbow_extension",
+            "visual_id": "rope_triceps_pushdown",
             "execution_cues": [
               "Cotovelos perto do tronco",
               "Estenda ate contrair o triceps",
@@ -89,6 +90,7 @@
             "primary_muscles": ["Dorsal", "Romboides"],
             "secondary_muscles": ["Biceps", "Deltoide posterior"],
             "movement_pattern": "horizontal_pull",
+            "visual_id": "barbell_row",
             "execution_cues": [
               "Tronco firme",
               "Puxe a barra em direcao ao abdomen",
@@ -108,6 +110,7 @@
             "primary_muscles": ["Biceps braquial"],
             "secondary_muscles": ["Braquial", "Antebraco"],
             "movement_pattern": "elbow_flexion",
+            "visual_id": "barbell_biceps_curl",
             "execution_cues": [
               "Cotovelos estaveis",
               "Suba sem balancar o tronco",

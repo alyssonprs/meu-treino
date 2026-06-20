@@ -391,4 +391,6 @@ Pronto quando: criterios de aceite da etapa estiverem cumpridos e os checks indi
 - Execucao 1 consolidou a lista oficial de `movement_pattern` a partir de `src/config/exercise-guide-catalog.json`, adicionou catalogo inicial para guias especificos e genericos, e atualizou o prompt/modelo de geracao.
 - Execucao 2 adicionou a primeira leva de imagens genericas para `horizontal_push`, `horizontal_pull`, `vertical_push`, `vertical_pull`, `squat`, `hinge`, `elbow_flexion` e `elbow_extension`.
 - Execucao 3 adicionou a segunda leva de imagens genericas para `lunge`, `hip_thrust`, `leg_extension`, `leg_curl`, `calf_raise`, `shoulder_abduction`, `core_flexion`, `core_anti_extension` e `core_rotation`.
-- O proximo passo recomendado e a Execucao 4.
+- Execucao 4 adicionou o catalogo especifico inicial com 12 `visual_id`: `barbell_bench_press`, `dumbbell_bench_press`, `barbell_row`, `lat_pulldown`, `pull_up`, `rope_triceps_pushdown`, `barbell_biceps_curl`, `lateral_raise`, `romanian_deadlift`, `leg_press`, `hip_thrust` e `plank`.
+- Na Execucao 4, os assets especificos foram entregues como SVGs compactos locais em `src/assets/exercise-guides/specific/`. A meta original preferia WebP, mas SVG foi escolhido nesta etapa por manter os arquivos pequenos, offline e consistentes sem depender de conversao externa no ambiente atual.
+- O proximo passo recomendado e a Execucao 5.

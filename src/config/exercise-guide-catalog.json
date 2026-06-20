@@ -2,14 +2,125 @@
   "visual_guides": [
     {
       "id": "barbell_bench_press",
-      "image_asset": "barbell-bench-press.jpg",
+      "image_asset": "specific/barbell-bench-press.svg",
       "image_alt": "Guia visual do supino reto com peitoral em destaque e seta do movimento da barra."
+    },
+    {
+      "id": "dumbbell_bench_press",
+      "image_asset": "specific/dumbbell-bench-press.svg",
+      "image_alt": "Guia visual do supino com halteres com peitoral em destaque e seta do movimento."
+    },
+    {
+      "id": "barbell_row",
+      "image_asset": "specific/barbell-row.svg",
+      "image_alt": "Guia visual da remada curvada com costas em destaque e seta de puxada."
+    },
+    {
+      "id": "lat_pulldown",
+      "image_asset": "specific/lat-pulldown.svg",
+      "image_alt": "Guia visual da puxada na polia com costas em destaque e seta para baixo."
+    },
+    {
+      "id": "pull_up",
+      "image_asset": "specific/pull-up.svg",
+      "image_alt": "Guia visual da barra fixa com costas em destaque e seta de subida."
+    },
+    {
+      "id": "rope_triceps_pushdown",
+      "image_asset": "specific/rope-triceps-pushdown.svg",
+      "image_alt": "Guia visual do triceps corda com triceps em destaque e seta para baixo."
+    },
+    {
+      "id": "barbell_biceps_curl",
+      "image_asset": "specific/barbell-biceps-curl.svg",
+      "image_alt": "Guia visual da rosca direta com biceps em destaque e seta de flexao."
+    },
+    {
+      "id": "lateral_raise",
+      "image_asset": "specific/lateral-raise.svg",
+      "image_alt": "Guia visual da elevacao lateral com ombros em destaque e setas de subida lateral."
+    },
+    {
+      "id": "romanian_deadlift",
+      "image_asset": "specific/romanian-deadlift.svg",
+      "image_alt": "Guia visual do terra romeno com cadeia posterior em destaque e seta de dobradica."
+    },
+    {
+      "id": "leg_press",
+      "image_asset": "specific/leg-press.svg",
+      "image_alt": "Guia visual do leg press com pernas em destaque e seta de empurrar."
+    },
+    {
+      "id": "hip_thrust",
+      "image_asset": "specific/hip-thrust.svg",
+      "image_alt": "Guia visual do hip thrust com gluteos em destaque e seta de elevacao do quadril."
+    },
+    {
+      "id": "plank",
+      "image_asset": "specific/plank.svg",
+      "image_alt": "Guia visual da prancha com core em destaque e setas de estabilidade."
     }
   ],
   "exercise_visual_aliases": [
     {
       "exercise_id": "supino-reto-barra",
       "visual_id": "barbell_bench_press"
+    },
+    {
+      "exercise_id": "supino-halteres",
+      "visual_id": "dumbbell_bench_press"
+    },
+    {
+      "exercise_id": "remada-curvada-barra",
+      "visual_id": "barbell_row"
+    },
+    {
+      "exercise_id": "puxada-frente-polia",
+      "visual_id": "lat_pulldown"
+    },
+    {
+      "exercise_id": "puxada-alta-polia",
+      "visual_id": "lat_pulldown"
+    },
+    {
+      "exercise_id": "barra-fixa",
+      "visual_id": "pull_up"
+    },
+    {
+      "exercise_id": "triceps-corda",
+      "visual_id": "rope_triceps_pushdown"
+    },
+    {
+      "exercise_id": "rosca-direta-barra",
+      "visual_id": "barbell_biceps_curl"
+    },
+    {
+      "exercise_id": "elevacao-lateral",
+      "visual_id": "lateral_raise"
+    },
+    {
+      "exercise_id": "terra-romeno",
+      "visual_id": "romanian_deadlift"
+    },
+    {
+      "exercise_id": "stiff",
+      "visual_id": "romanian_deadlift"
+    },
+    {
+      "exercise_id": "leg-press",
+      "visual_id": "leg_press"
+    },
+    {
+      "exercise_id": "hip-thrust",
+      "visual_id": "hip_thrust"
+    },
+    {
+      "exercise_id": "elevacao-pelvica",
+      "visual_id": "hip_thrust"
+    },
+    {
+      "exercise_id": "prancha",
+      "visual_id": "plank"
     }
   ],
   "movement_patterns": [

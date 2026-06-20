@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img">
+  <defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path fill="#38bdf8" d="M0 0l8 4-8 4z"/></marker></defs>
+  <rect width="640" height="420" rx="32" fill="#101827"/>
+  <rect x="64" y="62" width="512" height="280" rx="28" fill="#172033" stroke="#263247" stroke-width="4"/>
+  <circle cx="414" cy="142" r="24" fill="#e5e7eb"/>
+  <path stroke="#7dd3fc" stroke-width="30" stroke-linecap="round" d="M386 170l-96 58"/>
+  <path stroke="#bef264" stroke-width="18" stroke-linecap="round" d="M316 220l102 30M314 232l-44 82M366 206l48 104"/>
+  <path stroke="#cbd5e1" stroke-width="8" stroke-linecap="round" d="M212 256h226"/>
+  <circle cx="206" cy="256" r="15" fill="#64748b"/><circle cx="444" cy="256" r="15" fill="#64748b"/>
+  <path stroke="#38bdf8" stroke-width="14" stroke-linecap="round" marker-end="url(#a)" d="M432 232H278"/>
+</svg>

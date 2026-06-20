@@ -135,7 +135,19 @@ Regras específicas para `visual_id`:
 - Se não souber o `visual_id` correto, omita o campo.
 - Nunca envie `visual_id` como string vazia.
 - Nunca invente `visual_id` para exercícios que não aparecem no modelo.
-- No modelo atual, o identificador conhecido é `barbell_bench_press` para supino reto com barra.
+- IDs oficiais disponíveis no app:
+  - `barbell_bench_press`: supino reto com barra.
+  - `dumbbell_bench_press`: supino com halteres.
+  - `barbell_row`: remada curvada com barra.
+  - `lat_pulldown`: puxada na polia.
+  - `pull_up`: barra fixa.
+  - `rope_triceps_pushdown`: triceps corda.
+  - `barbell_biceps_curl`: rosca direta com barra.
+  - `lateral_raise`: elevação lateral.
+  - `romanian_deadlift`: terra romeno ou stiff.
+  - `leg_press`: leg press.
+  - `hip_thrust`: hip thrust ou elevação pélvica.
+  - `plank`: prancha.
 - Para todos os outros exercícios, use os campos de músculos, padrão de movimento e dicas como fallback visual.
 
 Regras para `execution_cues`:
