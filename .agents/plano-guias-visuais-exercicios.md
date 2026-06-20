@@ -95,11 +95,19 @@ O codigo de resolucao deve continuar em:
 src/features/workouts/exerciseGuides.ts
 ```
 
-Se o catalogo crescer, extrair dados para:
+Os dados tabelados do catalogo ficam em:
 
 ```text
-src/features/workouts/exerciseGuideCatalog.ts
+src/config/exercise-guide-catalog.json
 ```
+
+Use esse arquivo para adicionar:
+
+- `movement_patterns`: padroes suportados, textos alternativos, dicas padrao e setas genericas;
+- `visual_guides`: assets especificos por `visual_id`;
+- `exercise_visual_aliases`: mapeamento de `exercise_id` conhecido para `visual_id`.
+
+O codigo em `src/features/workouts/exerciseGuideCatalog.ts` deve apenas carregar e resolver essa configuracao. Novas informacoes do catalogo devem ser adicionadas no JSON sempre que possivel, sem mudar a logica do resolver.
 
 ## Execucoes separadas
 
@@ -380,5 +388,5 @@ Pronto quando: criterios de aceite da etapa estiverem cumpridos e os checks indi
 - Ja existe imagem especifica para `barbell_bench_press`.
 - O guia visual ja fica recolhido por padrao e abre por `Ver como fazer`.
 - O JSON ja aceita `primary_muscles`, `secondary_muscles`, `movement_pattern`, `visual_id` e `execution_cues`.
-- Execucao 1 consolidou a lista oficial de `movement_pattern` no dominio, adicionou catalogo inicial para guias especificos e genericos, e atualizou o prompt/modelo de geracao.
+- Execucao 1 consolidou a lista oficial de `movement_pattern` a partir de `src/config/exercise-guide-catalog.json`, adicionou catalogo inicial para guias especificos e genericos, e atualizou o prompt/modelo de geracao.
 - O proximo passo recomendado e a Execucao 2.

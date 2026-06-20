@@ -130,6 +130,7 @@ Contrato inicial validado pelo app:
 - `primary_muscles`, `secondary_muscles` e `execution_cues` devem ser listas de textos curtos quando informados.
 - `movement_pattern` deve usar somente um identificador suportado pelo app. Lista oficial inicial: `horizontal_push`, `horizontal_pull`, `vertical_push`, `vertical_pull`, `squat`, `hinge`, `lunge`, `hip_thrust`, `leg_extension`, `leg_curl`, `calf_raise`, `shoulder_abduction`, `elbow_flexion`, `elbow_extension`, `core_flexion`, `core_anti_extension` ou `core_rotation`.
 - O app usa `movement_pattern` como principal fallback visual quando nao houver `visual_id` especifico conhecido.
+- A lista efetivamente validada pelo app vem de `src/config/exercise-guide-catalog.json`, para permitir evolucao do catalogo sem alterar a logica do resolver.
 - `visual_id` deve ser informado somente quando houver asset local ou mapeamento conhecido no app; se nao houver correspondencia, o app usa musculos e dicas como fallback.
 - `estimated_duration_weeks`, `days_per_week`, `order`, `duration_minutes`, `sets` e `rest_seconds` devem ser inteiros positivos.
 - `target_rir` deve ser inteiro maior ou igual a zero quando informado.

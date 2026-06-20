@@ -1,6 +1,7 @@
 import type { MovementPattern } from "@/domain/movementPattern";
 import type { PlannedExerciseRecord } from "@/storage/workoutPlanRepository";
 import {
+  defaultCuesByMovementPattern,
   genericVisualGuidesByMovementPattern,
   visualGuideIdsByExerciseId,
   visualGuidesById,
@@ -13,94 +14,6 @@ export type ExerciseGuide = {
   primaryMuscles: string[];
   secondaryMuscles: string[];
   executionCues: string[];
-};
-
-const defaultCuesByMovementPattern: Record<MovementPattern, string[]> = {
-  horizontal_push: [
-    "Pes firmes no chao",
-    "Desca com controle",
-    "Empurre sem tirar o ombro do banco",
-  ],
-  horizontal_pull: [
-    "Tronco firme",
-    "Puxe com os cotovelos",
-    "Controle a volta",
-  ],
-  vertical_push: [
-    "Costelas baixas",
-    "Suba em linha controlada",
-    "Desca sem perder tensao",
-  ],
-  vertical_pull: [
-    "Ombros longe das orelhas",
-    "Puxe com os cotovelos",
-    "Controle a subida",
-  ],
-  squat: [
-    "Pes firmes no chao",
-    "Joelhos acompanham os pes",
-    "Suba empurrando o chao",
-  ],
-  hinge: [
-    "Coluna neutra",
-    "Quadril vai para tras",
-    "Suba contraindo gluteos",
-  ],
-  elbow_flexion: [
-    "Cotovelos estaveis",
-    "Suba sem balancar o tronco",
-    "Desca com controle",
-  ],
-  elbow_extension: [
-    "Cotovelos perto do tronco",
-    "Estenda ate contrair o triceps",
-    "Volte com controle",
-  ],
-  lunge: [
-    "Passo firme",
-    "Joelho acompanha o pe",
-    "Suba empurrando o chao",
-  ],
-  hip_thrust: [
-    "Queixo levemente recolhido",
-    "Suba ate alinhar o quadril",
-    "Controle a descida",
-  ],
-  leg_extension: [
-    "Apoie bem o quadril",
-    "Estenda sem travar o joelho",
-    "Volte com controle",
-  ],
-  leg_curl: [
-    "Quadril firme no apoio",
-    "Flexione com controle",
-    "Evite tirar o corpo do banco",
-  ],
-  calf_raise: [
-    "Suba ate contrair a panturrilha",
-    "Desca com amplitude",
-    "Mantenha o controle",
-  ],
-  shoulder_abduction: [
-    "Cotovelos levemente flexionados",
-    "Suba ate a linha dos ombros",
-    "Controle a descida",
-  ],
-  core_flexion: [
-    "Contraia o abdomen",
-    "Suba sem puxar o pescoco",
-    "Volte com controle",
-  ],
-  core_anti_extension: [
-    "Mantenha o tronco firme",
-    "Evite deixar o quadril cair",
-    "Respire de forma controlada",
-  ],
-  core_rotation: [
-    "Gire com controle",
-    "Mantenha o abdomen ativo",
-    "Evite impulso excessivo",
-  ],
 };
 
 export function getExerciseGuide(

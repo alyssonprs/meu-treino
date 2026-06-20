@@ -1,0 +1,190 @@
+{
+  "visual_guides": [
+    {
+      "id": "barbell_bench_press",
+      "image_asset": "barbell-bench-press.jpg",
+      "image_alt": "Guia visual do supino reto com peitoral em destaque e seta do movimento da barra."
+    }
+  ],
+  "exercise_visual_aliases": [
+    {
+      "exercise_id": "supino-reto-barra",
+      "visual_id": "barbell_bench_press"
+    }
+  ],
+  "movement_patterns": [
+    {
+      "id": "horizontal_push",
+      "image_alt": "Guia generico de empurrar na horizontal com seta de ida e volta.",
+      "default_cues": [
+        "Pes firmes no chao",
+        "Desca com controle",
+        "Empurre sem tirar o ombro do banco"
+      ],
+      "arrow_paths": ["M206 156 H434"]
+    },
+    {
+      "id": "horizontal_pull",
+      "image_alt": "Guia generico de puxar na horizontal com seta de ida e volta.",
+      "default_cues": [
+        "Tronco firme",
+        "Puxe com os cotovelos",
+        "Controle a volta"
+      ],
+      "arrow_paths": ["M206 156 H434"]
+    },
+    {
+      "id": "vertical_push",
+      "image_alt": "Guia generico de empurrar acima da cabeca com seta vertical.",
+      "default_cues": [
+        "Costelas baixas",
+        "Suba em linha controlada",
+        "Desca sem perder tensao"
+      ],
+      "arrow_paths": ["M320 288 V132"]
+    },
+    {
+      "id": "vertical_pull",
+      "image_alt": "Guia generico de puxar de cima para baixo com seta vertical.",
+      "default_cues": [
+        "Ombros longe das orelhas",
+        "Puxe com os cotovelos",
+        "Controle a subida"
+      ],
+      "arrow_paths": ["M320 94 V252"]
+    },
+    {
+      "id": "squat",
+      "image_alt": "Guia generico de agachamento com seta vertical.",
+      "default_cues": [
+        "Pes firmes no chao",
+        "Joelhos acompanham os pes",
+        "Suba empurrando o chao"
+      ],
+      "arrow_paths": ["M200 252 H440"]
+    },
+    {
+      "id": "hinge",
+      "image_alt": "Guia generico de dobradica de quadril com seta diagonal.",
+      "default_cues": [
+        "Coluna neutra",
+        "Quadril vai para tras",
+        "Suba contraindo gluteos"
+      ],
+      "arrow_paths": ["M220 278 C278 226 338 198 420 164"]
+    },
+    {
+      "id": "lunge",
+      "image_alt": "Guia generico de avanco com seta diagonal.",
+      "default_cues": [
+        "Passo firme",
+        "Joelho acompanha o pe",
+        "Suba empurrando o chao"
+      ],
+      "arrow_paths": ["M220 278 C278 226 338 198 420 164"]
+    },
+    {
+      "id": "hip_thrust",
+      "image_alt": "Guia generico de extensao de quadril com seta para cima.",
+      "default_cues": [
+        "Queixo levemente recolhido",
+        "Suba ate alinhar o quadril",
+        "Controle a descida"
+      ],
+      "arrow_paths": ["M320 288 V132"]
+    },
+    {
+      "id": "leg_extension",
+      "image_alt": "Guia generico de extensao de joelho com seta para frente.",
+      "default_cues": [
+        "Apoie bem o quadril",
+        "Estenda sem travar o joelho",
+        "Volte com controle"
+      ],
+      "arrow_paths": ["M318 242 C366 230 414 224 462 226"]
+    },
+    {
+      "id": "leg_curl",
+      "image_alt": "Guia generico de flexao de joelho com seta para tras.",
+      "default_cues": [
+        "Quadril firme no apoio",
+        "Flexione com controle",
+        "Evite tirar o corpo do banco"
+      ],
+      "arrow_paths": ["M420 286 C374 278 342 252 322 214"]
+    },
+    {
+      "id": "calf_raise",
+      "image_alt": "Guia generico de panturrilha com seta vertical.",
+      "default_cues": [
+        "Suba ate contrair a panturrilha",
+        "Desca com amplitude",
+        "Mantenha o controle"
+      ],
+      "arrow_paths": ["M320 288 V132"]
+    },
+    {
+      "id": "shoulder_abduction",
+      "image_alt": "Guia generico de elevacao lateral com setas para os lados.",
+      "default_cues": [
+        "Cotovelos levemente flexionados",
+        "Suba ate a linha dos ombros",
+        "Controle a descida"
+      ],
+      "arrow_paths": [
+        "M248 158 C214 128 198 100 188 68",
+        "M392 158 C426 128 442 100 452 68"
+      ]
+    },
+    {
+      "id": "elbow_flexion",
+      "image_alt": "Guia generico de flexao de cotovelo com seta de subida.",
+      "default_cues": [
+        "Cotovelos estaveis",
+        "Suba sem balancar o tronco",
+        "Desca com controle"
+      ],
+      "arrow_paths": ["M238 218 C224 184 232 158 262 138"]
+    },
+    {
+      "id": "elbow_extension",
+      "image_alt": "Guia generico de extensao de cotovelo com seta de descida.",
+      "default_cues": [
+        "Cotovelos perto do tronco",
+        "Estenda ate contrair o triceps",
+        "Volte com controle"
+      ],
+      "arrow_paths": ["M320 94 V252"]
+    },
+    {
+      "id": "core_flexion",
+      "image_alt": "Guia generico de flexao de tronco com seta curva.",
+      "default_cues": [
+        "Contraia o abdomen",
+        "Suba sem puxar o pescoco",
+        "Volte com controle"
+      ],
+      "arrow_paths": ["M246 242 C292 184 348 166 418 188"]
+    },
+    {
+      "id": "core_anti_extension",
+      "image_alt": "Guia generico de estabilidade do core contra extensao.",
+      "default_cues": [
+        "Mantenha o tronco firme",
+        "Evite deixar o quadril cair",
+        "Respire de forma controlada"
+      ],
+      "arrow_paths": ["M200 252 H440"]
+    },
+    {
+      "id": "core_rotation",
+      "image_alt": "Guia generico de rotacao de tronco com seta curva.",
+      "default_cues": [
+        "Gire com controle",
+        "Mantenha o abdomen ativo",
+        "Evite impulso excessivo"
+      ],
+      "arrow_paths": ["M246 242 C292 184 348 166 418 188"]
+    }
+  ]
+}
