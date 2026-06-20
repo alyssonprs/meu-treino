@@ -154,6 +154,7 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 - Selo visual para a rotina recomendada dentro da lista de rotinas.
 - Lista compacta de exercicios.
 - Controle de series concluidas durante o exercicio.
+- Guia visual recolhivel durante o exercicio, aberto por `Ver como fazer`, com musculo principal, musculos auxiliares e dicas curtas.
 - Registro de exercicio com carga e reps no fim do exercicio, uma vez por exercicio na primeira versao.
 - Controles de incremento/decremento para carga e reps.
 - Card de descanso dentro da execucao.
@@ -212,6 +213,7 @@ Atualize esta tabela quando cada tela for aprovada.
 | Treino e UX-03 | Fluxo de escolha manual de rotina aprovado | O menu `Treino` lista todas as rotinas do plano, destaca a recomendada e abre a `UX-03` da rotina escolhida; a Home continua abrindo a `UX-03` da recomendada | 2026-06-19 |
 | UX-04 | Registro por exercicio aprovado | A primeira versao registra carga e repeticoes uma vez por exercicio, sem RIR obrigatorio na UI; RIR pode continuar opcional/nulo no dominio e storage para evolucao futura | 2026-06-19 |
 | UX-04 | Ajuste apos primeiro uso real | Usuario deve conseguir marcar cada serie como concluida para acompanhar descanso entre series; carga e repeticoes continuam sendo informadas apenas no fim do exercicio; remover pausa e cancelar do topo da tela de exercicio | 2026-06-19 |
+| UX-04 | Guia visual do exercicio aprovado | Orientacao fica recolhida por padrao e abre por `Ver como fazer`; quando aberta, prioriza musculo principal, secundarios em cor mais fria, seta de movimento quando houver asset e ate 3 dicas curtas | 2026-06-20 |
 
 ## Prototipos aprovados
 
@@ -246,3 +248,5 @@ Pontos aprovados:
 - A experiencia final da primeira versao deve manter carga e reps como unicos campos obrigatorios de conclusao do exercicio; RIR nao deve ser reintroduzido como campo visivel obrigatorio.
 - O topo da tela de exercicio nao deve exibir botoes de pausa nem de cancelar com `X`.
 - A lista de exercicios da rotina em progresso deve indicar `Pendente`, `Em progresso` e `Concluido`.
+- A orientacao visual do exercicio deve iniciar recolhida, abrir por `Ver como fazer` e poder ser ocultada sem mudar o estado do treino.
+- Quando houver dados do JSON, mostrar musculo principal com maior destaque, musculos secundarios com tom mais frio e ate 3 dicas curtas de execucao; quando houver `visual_id` mapeado, mostrar tambem o movimento com seta.

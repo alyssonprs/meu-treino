@@ -162,6 +162,8 @@ test("mobile visual regression covers first use, import, active home, settings a
 test("active workout keeps bottom nav hidden and shows integrated rest, finish and history states", async ({
   page,
 }) => {
+  test.setTimeout(60_000);
+
   await page.goto("/");
   await importPlanFromObject(page, cycleCompletePlan, "ciclo-curto.json");
   await page.getByRole("button", { name: "Confirmar importação" }).click();
@@ -175,7 +177,15 @@ test("active workout keeps bottom nav hidden and shows integrated rest, finish a
   await expect(page.getByRole("heading", { name: /S.rie 1 de 2/ })).toBeVisible();
   await expect(page.getByLabel("Aumentar RIR")).toHaveCount(0);
   await expect(page.getByRole("navigation")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: /Ver como fazer/ })).toBeVisible();
   await assertNoHorizontalOverflow(page);
+
+  await page.getByRole("button", { name: /Ver como fazer/ }).click();
+  await expect(page.getByText("Principal: Pernas")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Ocultar" })).toBeVisible();
+  await assertNoHorizontalOverflow(page);
+
+  await page.getByRole("button", { name: "Ocultar" }).click();
 
   await page.getByRole("button", { name: /S.rie conclu.da/ }).click();
 

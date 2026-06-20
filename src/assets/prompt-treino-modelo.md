@@ -53,6 +53,12 @@ Antes de gerar o treino, faça uma anamnese para coletar informações relevante
 - Priorize segurança e progressão sustentável.
 - Utilize princípios modernos de treinamento.
 - Defina séries, repetições, RIR, descanso e observações quando suportados pelo modelo.
+- Quando o modelo incluir campos de orientação visual do exercício, preencha:
+  - `primary_muscles`: principais músculos trabalhados.
+  - `secondary_muscles`: músculos auxiliares ou estabilizadores.
+  - `movement_pattern`: padrão de movimento em inglês simples, como `horizontal_push`, `horizontal_pull`, `vertical_push`, `vertical_pull`, `squat`, `hinge`, `elbow_flexion` ou `elbow_extension`.
+  - `visual_id`: somente quando houver identificador visual estável conhecido no modelo, como `barbell_bench_press`; deixe ausente quando não tiver certeza.
+  - `execution_cues`: até 3 dicas curtas, práticas e seguras para execução.
 - Inclua aquecimento e desaquecimento quando o modelo permitir.
 - Escolha exercícios coerentes com os equipamentos disponíveis.
 

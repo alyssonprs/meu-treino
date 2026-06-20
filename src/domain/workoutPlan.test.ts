@@ -36,6 +36,15 @@ const validWorkoutPlan = {
             rest_seconds: 90,
             tempo: "2-0-1",
             advanced_technique: "Nenhuma",
+            primary_muscles: ["Peitoral maior"],
+            secondary_muscles: ["Triceps", "Deltoide anterior"],
+            movement_pattern: "horizontal_push",
+            visual_id: "barbell_bench_press",
+            execution_cues: [
+              "Pes firmes no chao",
+              "Desca com controle",
+              "Empurre sem tirar os ombros do banco",
+            ],
             notes: "Controlar a descida",
             media_url: "https://example.com/supino-reto",
           },
@@ -58,6 +67,17 @@ describe("workoutPlanSchema", () => {
 
     expect(parsed.workout_plan.name).toBe("Hipertrofia 4 dias");
     expect(parsed.workout_plan.routines[0].exercises[0].sets).toBe(4);
+    expect(parsed.workout_plan.routines[0].exercises[0]).toMatchObject({
+      primary_muscles: ["Peitoral maior"],
+      secondary_muscles: ["Triceps", "Deltoide anterior"],
+      movement_pattern: "horizontal_push",
+      visual_id: "barbell_bench_press",
+      execution_cues: [
+        "Pes firmes no chao",
+        "Desca com controle",
+        "Empurre sem tirar os ombros do banco",
+      ],
+    });
   });
 
   it("returns basic validation errors for missing workout_plan root", () => {

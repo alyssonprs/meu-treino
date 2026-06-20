@@ -35,6 +35,11 @@ export const plannedExerciseSchema = z
     rest_seconds: positiveInteger("Descanso").optional(),
     tempo: z.string().trim().optional(),
     advanced_technique: z.string().trim().optional(),
+    primary_muscles: z.array(requiredText("Musculo principal")).optional(),
+    secondary_muscles: z.array(requiredText("Musculo secundario")).optional(),
+    movement_pattern: z.string().trim().optional(),
+    visual_id: z.string().trim().optional(),
+    execution_cues: z.array(requiredText("Dica de execucao")).optional(),
     notes: z.string().trim().optional(),
     media_url: z.string().trim().url("URL de midia invalida").optional(),
   })

@@ -31,6 +31,15 @@
             "target_rir": 2,
             "rest_seconds": 90,
             "tempo": "2-0-1",
+            "primary_muscles": ["Peitoral maior"],
+            "secondary_muscles": ["Triceps", "Deltoide anterior"],
+            "movement_pattern": "horizontal_push",
+            "visual_id": "barbell_bench_press",
+            "execution_cues": [
+              "Pes firmes no chao",
+              "Desca com controle",
+              "Empurre sem tirar os ombros do banco"
+            ],
             "notes": "Controlar a descida"
           },
           {
@@ -42,7 +51,15 @@
             "sets": 3,
             "target_reps": "10-12",
             "target_rir": 2,
-            "rest_seconds": 75
+            "rest_seconds": 75,
+            "primary_muscles": ["Triceps braquial"],
+            "secondary_muscles": ["Antebraco"],
+            "movement_pattern": "elbow_extension",
+            "execution_cues": [
+              "Cotovelos perto do tronco",
+              "Estenda ate contrair o triceps",
+              "Volte com controle"
+            ]
           }
         ],
         "cooldown": [
@@ -68,7 +85,15 @@
             "sets": 4,
             "target_reps": "8-10",
             "target_rir": 2,
-            "rest_seconds": 90
+            "rest_seconds": 90,
+            "primary_muscles": ["Dorsal", "Romboides"],
+            "secondary_muscles": ["Biceps", "Deltoide posterior"],
+            "movement_pattern": "horizontal_pull",
+            "execution_cues": [
+              "Tronco firme",
+              "Puxe a barra em direcao ao abdomen",
+              "Controle a descida"
+            ]
           },
           {
             "exercise_id": "rosca-direta-barra",
@@ -79,7 +104,15 @@
             "sets": 3,
             "target_reps": "10-12",
             "target_rir": 2,
-            "rest_seconds": 75
+            "rest_seconds": 75,
+            "primary_muscles": ["Biceps braquial"],
+            "secondary_muscles": ["Braquial", "Antebraco"],
+            "movement_pattern": "elbow_flexion",
+            "execution_cues": [
+              "Cotovelos estaveis",
+              "Suba sem balancar o tronco",
+              "Desca com controle"
+            ]
           }
         ],
         "cooldown": []

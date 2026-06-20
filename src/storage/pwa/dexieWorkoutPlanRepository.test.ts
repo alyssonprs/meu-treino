@@ -54,6 +54,15 @@ const basePlan: WorkoutPlan = {
           target_reps: "8-10",
           target_rir: 2,
           rest_seconds: 90,
+          primary_muscles: ["Peitoral maior"],
+          secondary_muscles: ["Triceps", "Deltoide anterior"],
+          movement_pattern: "horizontal_push",
+          visual_id: "barbell_bench_press",
+          execution_cues: [
+            "Pes firmes no chao",
+            "Desca com controle",
+            "Empurre sem tirar os ombros do banco",
+          ],
         },
       ],
       cooldown: [
@@ -148,6 +157,15 @@ describe("DexieWorkoutPlanRepository", () => {
       name: "Supino reto",
       sets: 4,
       target_rir: 2,
+      primary_muscles: ["Peitoral maior"],
+      secondary_muscles: ["Triceps", "Deltoide anterior"],
+      movement_pattern: "horizontal_push",
+      visual_id: "barbell_bench_press",
+      execution_cues: [
+        "Pes firmes no chao",
+        "Desca com controle",
+        "Empurre sem tirar os ombros do banco",
+      ],
     });
   });
 

@@ -106,7 +106,7 @@ Criar tabelas locais aproximadas:
 - `routines`: rotinas do plano, nome, ordem e referencia ao plano.
 - `routine_steps`: aquecimento e cooldown, com atividade, duracao, notas e tipo.
 - `exercises`: cadastro normalizado do exercicio, com nome, grupo muscular, equipamento, unilateral e chave canonica.
-- `planned_exercises`: exercicios de uma rotina especifica, com series planejadas, alvo de repeticoes, RIR alvo opcional, descanso, cadencia, tecnica avancada, notas e media_url.
+- `planned_exercises`: exercicios de uma rotina especifica, com series planejadas, alvo de repeticoes, RIR alvo opcional, descanso, cadencia, tecnica avancada, notas, orientacao visual opcional e media_url.
 - `workout_sessions`: execucoes de treino, rotina executada, inicio, fim, status e plano ativo no momento.
 - `workout_plan_progress`: estado do plano ativo, com total de treinos concluidos, ultima rotina finalizada, ordem da ultima rotina finalizada e data da ultima conclusao.
 - `exercise_logs`: execucao de cada exercicio dentro de uma sessao.
@@ -126,7 +126,10 @@ Contrato inicial validado pelo app:
 - Cada rotina deve conter `routine_id`, `name`, `order` e pelo menos um item em `exercises`.
 - Cada rotina pode conter `warmup` e `cooldown` como listas de passos com `activity`, `duration_minutes`, `type` opcional (`warmup` ou `cooldown`) e `notes` opcional.
 - Cada exercicio planejado deve conter `name`, `muscle_group`, `equipment`, `is_unilateral`, `sets` e `target_reps`.
-- Campos opcionais do exercicio: `exercise_id`, `target_rir`, `rest_seconds`, `tempo`, `advanced_technique`, `notes` e `media_url`.
+- Campos opcionais do exercicio: `exercise_id`, `target_rir`, `rest_seconds`, `tempo`, `advanced_technique`, `primary_muscles`, `secondary_muscles`, `movement_pattern`, `visual_id`, `execution_cues`, `notes` e `media_url`.
+- `primary_muscles`, `secondary_muscles` e `execution_cues` devem ser listas de textos curtos quando informados.
+- `movement_pattern` deve usar um identificador simples e estavel, como `horizontal_push`, `horizontal_pull`, `vertical_push`, `vertical_pull`, `squat`, `hinge`, `elbow_flexion` ou `elbow_extension`.
+- `visual_id` deve ser informado somente quando houver asset local ou mapeamento conhecido no app; se nao houver correspondencia, o app usa musculos e dicas como fallback.
 - `estimated_duration_weeks`, `days_per_week`, `order`, `duration_minutes`, `sets` e `rest_seconds` devem ser inteiros positivos.
 - `target_rir` deve ser inteiro maior ou igual a zero quando informado.
 
@@ -211,7 +214,7 @@ Regra simples para aviso de novo treino:
 - Inicio: plano ativo, proximo treino sugerido, progresso do ciclo e botao para iniciar o treino recomendado.
 - Treino: lista todas as rotinas do plano ativo para o usuario escolher qual rotina quer executar no dia, com a rotina recomendada destacada.
 - Detalhe da rotina selecionada: lista de aquecimento, exercicios, series planejadas, carga sugerida, repeticoes, RIR alvo quando existir no plano e descanso, abrindo a execucao ao tocar em um exercicio.
-- Execucao de exercicio: marcar series concluidas durante o exercicio para disparar descanso entre series; registrar carga e repeticoes apenas no fim do exercicio; RIR nao aparece como campo obrigatorio na primeira versao e fica reservado para melhoria futura.
+- Execucao de exercicio: marcar series concluidas durante o exercicio para disparar descanso entre series; registrar carga e repeticoes apenas no fim do exercicio; mostrar orientacao visual opcional em painel recolhido por padrao, abrindo por `Ver como fazer`; RIR nao aparece como campo obrigatorio na primeira versao e fica reservado para melhoria futura.
 - Historico: treinos concluidos e evolucao de carga por exercicio.
 - Importar treino: acao contextual na Home sem treino ou em Configuracoes com treino ativo; selecionar JSON, validar, mostrar preview e substituir plano atual.
 - Baixar modelo: acao contextual na Home sem treino ou em Configuracoes com treino ativo; executa download direto de `meu-treino-modelo.json` e deve aparecer junto da acao para baixar `prompt-treino-modelo.md`.
@@ -227,6 +230,7 @@ A primeira versao deve seguir o modelo de usabilidade **Guiada**:
 - O item `Treino` da navegacao inferior deve listar todas as rotinas do plano ativo, permitindo escolher uma rotina diferente da recomendada quando fizer sentido para o usuario.
 - Ao tocar em uma rotina na lista do menu `Treino`, o app deve abrir o detalhe da rotina selecionada antes da execucao.
 - A tela de execucao deve ser focada no uso durante a academia, com registro rapido por exercicio, timer de descanso e poucos elementos concorrendo por atencao.
+- A orientacao visual da tela de execucao deve ficar recolhida por padrao para nao competir com o treino; quando aberta, deve priorizar musculo principal, musculos auxiliares em cor mais fria, movimento do exercicio quando houver asset e ate 3 dicas curtas.
 - O detalhamento e aprovacao das telas deve seguir `docs/arquitetura/ux-prototipo-aprovado.md` antes da implementacao visual final.
 
 ## Experiencia mobile
@@ -270,6 +274,7 @@ Regras:
 - Escolher entre tema claro e tema escuro.
 - Iniciar e finalizar treino.
 - Marcar series concluidas durante a execucao, ver descanso entre series e registrar carga e repeticoes por exercicio apenas ao finalizar o exercicio.
+- Ver orientacao visual opcional do exercicio durante a execucao, com painel recolhivel e fallback baseado em musculos/dicas do JSON.
 - Manter RIR como dado opcional/nulo no dominio e storage, sem exigir preenchimento visivel na primeira versao.
 - Recuperar ultima carga usada em exercicios ja conhecidos.
 - Contar treinos concluidos no ciclo atual.
@@ -312,6 +317,7 @@ Regras:
 - Ao finalizar a ultima rotina da lista, o app recomenda novamente a primeira rotina.
 - O usuario consegue alternar entre tema claro e escuro, e a preferencia fica salva localmente.
 - O usuario consegue executar um treino, marcar series concluidas, ver descanso entre series e registrar carga e repeticoes ao final de cada exercicio.
+- Durante a execucao, o usuario consegue abrir e ocultar um guia visual do exercicio quando houver metadados ou mapeamento local disponivel.
 - O app salva carga, repeticoes e status do treino localmente.
 - Ao importar um novo plano, o app nao precisa manter o progresso do plano antigo, mas preserva e reaproveita cargas de exercicios ja realizados.
 - O app calcula treinos concluidos e avisa quando o ciclo planejado acabou.

@@ -5,10 +5,13 @@ import {
   ChevronRight,
   Circle,
   CircleDot,
+  Eye,
+  EyeOff,
   Minus,
   Plus,
   Save,
   Square,
+  Target,
   TimerReset,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,6 +22,7 @@ import {
   type WorkoutSetDraft,
 } from "@/services/workoutSessionService";
 import type { ExerciseLoadHistoryRecord } from "@/storage/workoutPlanRepository";
+import { getExerciseGuide, type ExerciseGuide } from "./exerciseGuides";
 import { formatLoad, formatTimer } from "./workoutFormatters";
 
 type EditableResultField = keyof Pick<
@@ -65,6 +69,7 @@ export function ActiveWorkoutScreen({
   onUpdateExerciseResult,
 }: ActiveWorkoutScreenProps) {
   const [restState, setRestState] = useState<RestState | null>(null);
+  const [isExerciseGuideOpen, setIsExerciseGuideOpen] = useState(false);
   const currentExerciseIndex = draft.currentExerciseIndex;
   const currentExercise = draft.routine.exercises[currentExerciseIndex];
   const currentExerciseDraft = draft.exercises[currentExerciseIndex];
@@ -83,6 +88,9 @@ export function ActiveWorkoutScreen({
     currentExerciseDraft?.result.completedAt !== null;
   const areAllSetsCompleted =
     currentExerciseDraft !== undefined && currentSetIndex === null;
+  const exerciseGuide = currentExercise
+    ? getExerciseGuide(currentExercise)
+    : null;
 
   const [resultValues, setResultValues] = useState<
     Pick<WorkoutSetDraft, "loadKg" | "reps" | "rir" | "notes">
@@ -95,6 +103,7 @@ export function ActiveWorkoutScreen({
 
   useEffect(() => {
     setRestState(null);
+    setIsExerciseGuideOpen(false);
   }, [currentExerciseIndex]);
 
   useEffect(() => {
@@ -248,6 +257,14 @@ export function ActiveWorkoutScreen({
           </div>
         </div>
 
+        {exerciseGuide ? (
+          <ExerciseGuideDisclosure
+            guide={exerciseGuide}
+            isOpen={isExerciseGuideOpen}
+            onToggle={() => setIsExerciseGuideOpen((current) => !current)}
+          />
+        ) : null}
+
         <div className="mt-4">
           <SetProgress
             completedSetsCount={completedSetsCount}
@@ -381,6 +398,110 @@ export function ActiveWorkoutScreen({
         </Button>
       </div>
     </section>
+  );
+}
+
+function ExerciseGuideDisclosure({
+  guide,
+  isOpen,
+  onToggle,
+}: {
+  guide: ExerciseGuide;
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
+  const primaryLabel = guide.primaryMuscles.join(", ");
+  const secondaryLabel = guide.secondaryMuscles.join(", ");
+
+  return (
+    <div className="mt-4 rounded-md border border-border bg-muted p-3">
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p className="flex items-center gap-2 text-sm font-semibold">
+            <Target className="h-4 w-4 text-primary" aria-hidden="true" />
+            Como fazer
+          </p>
+          <p className="mt-1 truncate text-xs text-muted-foreground">
+            {isOpen
+              ? "Musculos, movimento e dicas rapidas"
+              : "Veja musculos e dicas do movimento"}
+          </p>
+        </div>
+        <Button
+          className="h-10 shrink-0 gap-2 px-3"
+          onClick={onToggle}
+          type="button"
+          variant="secondary"
+        >
+          {isOpen ? (
+            <EyeOff className="h-4 w-4" aria-hidden="true" />
+          ) : (
+            <Eye className="h-4 w-4" aria-hidden="true" />
+          )}
+          {isOpen ? "Ocultar" : "Ver como fazer"}
+        </Button>
+      </div>
+
+      {isOpen ? (
+        <div className="mt-3 space-y-3">
+          {guide.imageUrl ? (
+            <div className="overflow-hidden rounded-md border border-border bg-background">
+              <img
+                alt={guide.imageAlt}
+                className="aspect-[16/9] w-full object-cover"
+                loading="lazy"
+                src={guide.imageUrl}
+              />
+            </div>
+          ) : null}
+
+          <div className="flex flex-wrap gap-2">
+            <MuscleBadge label={`Principal: ${primaryLabel}`} tone="primary" />
+            {secondaryLabel ? (
+              <MuscleBadge label={`Ajuda: ${secondaryLabel}`} tone="secondary" />
+            ) : null}
+          </div>
+
+          {guide.executionCues.length > 0 ? (
+            <ul className="space-y-2">
+              {guide.executionCues.map((cue) => (
+                <li
+                  className="flex items-start gap-2 text-sm leading-5 text-muted-foreground"
+                  key={cue}
+                >
+                  <Check
+                    className="mt-0.5 h-4 w-4 shrink-0 text-primary"
+                    aria-hidden="true"
+                  />
+                  <span>{cue}</span>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function MuscleBadge({
+  label,
+  tone,
+}: {
+  label: string;
+  tone: "primary" | "secondary";
+}) {
+  return (
+    <span
+      className={cn(
+        "rounded-md border px-2 py-1 text-xs font-semibold",
+        tone === "primary"
+          ? "border-primary/40 bg-primary/15 text-primary"
+          : "border-info/30 bg-info/10 text-info",
+      )}
+    >
+      {label}
+    </span>
   );
 }
 
