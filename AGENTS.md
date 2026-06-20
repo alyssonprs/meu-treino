@@ -33,6 +33,7 @@ Use [docs/arquitetura/arquitetura-prompt.md](docs/arquitetura/arquitetura-prompt
 
 ## Architecture Rules
 
+- Any implementation must respect the [Twelve-Factor App](https://12factor.net/) methodology where it applies to this PWA/Android codebase, especially explicit dependencies, environment-based deploy configuration, separation between build/release/run concerns, disposable processes, and logs through standard output. These rules must not override the product scope of keeping user data 100% local and avoiding a remote backend unless explicitly requested.
 - Keep domain types, validation, and business rules in `src/domain`.
 - Keep local use cases in `src/services`.
 - Keep database adapters and repositories in `src/storage`.

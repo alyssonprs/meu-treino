@@ -23,6 +23,7 @@ O app tambem deve disponibilizar para download um JSON de modelo e um prompt rec
 - Usar Zod para validar o JSON importado antes de gravar no banco.
 - Usar Zustand para estado de UI simples e TanStack Query apenas se a camada de dados ficar mais complexa.
 - Nao usar backend remoto, servidor, login obrigatorio, API externa ou banco em nuvem.
+- Toda implementacao deve respeitar a metodologia [Twelve-Factor App](https://12factor.net/) onde ela se aplica a este codigo PWA/Android: dependencias declaradas explicitamente, configuracao de deploy via ambiente, separacao clara entre build/release/run, processos descartaveis e logs como fluxo de eventos. Essa regra nao muda o escopo de dados 100% locais no dispositivo nem autoriza backend remoto sem pedido explicito.
 
 ### Estrategia de distribuicao
 
