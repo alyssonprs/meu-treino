@@ -170,7 +170,7 @@ Primeira leva:
 Contexto necessario:
 
 - `src/features/workouts/exerciseGuides.ts`;
-- `docs/arquitetura/plano-guias-visuais-exercicios.md`;
+- `.agents/plano-guias-visuais-exercicios.md`;
 - `docs/arquitetura/ux-prototipo-aprovado.md`;
 - assets existentes em `src/assets/exercise-guides`.
 
@@ -359,7 +359,7 @@ Use este modelo para pedir uma etapa especifica:
 ```text
 Use AGENTS.md, docs/arquitetura/arquitetura-prompt.md,
 docs/arquitetura/ux-prototipo-aprovado.md e
-docs/arquitetura/plano-guias-visuais-exercicios.md.
+.agents/plano-guias-visuais-exercicios.md.
 
 Objetivo: executar a etapa [numero e nome] do plano de guias visuais.
 Restricoes: manter app offline/local, nao adicionar backend, manter guia recolhido por padrao,

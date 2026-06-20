@@ -214,7 +214,7 @@ Atualize esta tabela quando cada tela for aprovada.
 | UX-04 | Registro por exercicio aprovado | A primeira versao registra carga e repeticoes uma vez por exercicio, sem RIR obrigatorio na UI; RIR pode continuar opcional/nulo no dominio e storage para evolucao futura | 2026-06-19 |
 | UX-04 | Ajuste apos primeiro uso real | Usuario deve conseguir marcar cada serie como concluida para acompanhar descanso entre series; carga e repeticoes continuam sendo informadas apenas no fim do exercicio; remover pausa e cancelar do topo da tela de exercicio | 2026-06-19 |
 | UX-04 | Guia visual do exercicio aprovado | Orientacao fica recolhida por padrao e abre por `Ver como fazer`; quando aberta, prioriza musculo principal, secundarios em cor mais fria, seta de movimento quando houver asset e ate 3 dicas curtas | 2026-06-20 |
-| UX-04 | Evolucao do guia visual | Seguir `docs/arquitetura/plano-guias-visuais-exercicios.md`: imagem especifica por `visual_id`, fallback por imagem generica de `movement_pattern` e ultimo fallback por musculos/dicas | 2026-06-20 |
+| UX-04 | Evolucao do guia visual | Seguir `.agents/plano-guias-visuais-exercicios.md`: imagem especifica por `visual_id`, fallback por imagem generica de `movement_pattern` e ultimo fallback por musculos/dicas | 2026-06-20 |
 
 ## Prototipos aprovados
 
