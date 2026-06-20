@@ -690,47 +690,77 @@ function ExerciseStatusList({
           ).length;
 
           return (
-            <button
-              aria-current={
-                status === "Em progresso" && draft.currentExerciseIndex === index
-                  ? "step"
-                  : undefined
-              }
-              aria-label={`${exercise.name}: ${status}, ${completedSetsCount} de ${exerciseDraft.completedSets.length} series concluidas`}
-              className={cn(
-                "flex w-full items-start gap-3 rounded-md border p-3 text-left transition-colors",
-                statusMeta.itemClassName,
-              )}
+            <ExerciseStatusButton
+              completedSetsCount={completedSetsCount}
+              exercise={exercise}
+              exerciseIndex={index}
+              isCurrent={draft.currentExerciseIndex === index}
               key={exercise.id}
-              onClick={() => onSelectExercise(index)}
-              type="button"
-            >
-              <statusMeta.Icon
-                className={cn("mt-0.5 h-4 w-4 shrink-0", statusMeta.iconClassName)}
-                aria-hidden="true"
-              />
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-sm font-semibold">
-                  {exercise.name}
-                </span>
-                <span className="mt-1 block text-xs leading-5 text-muted-foreground">
-                  {statusMeta.description} · {completedSetsCount}/
-                  {exerciseDraft.completedSets.length} séries
-                </span>
-              </span>
-              <span
-                className={cn(
-                  "shrink-0 rounded-md px-2 py-1 text-xs font-semibold",
-                  statusMeta.badgeClassName,
-                )}
-              >
-                {status}
-              </span>
-            </button>
+              onSelectExercise={onSelectExercise}
+              status={status}
+              statusMeta={statusMeta}
+              totalSets={exerciseDraft.completedSets.length}
+            />
           );
         })}
       </div>
     </div>
+  );
+}
+
+function ExerciseStatusButton({
+  completedSetsCount,
+  exercise,
+  exerciseIndex,
+  status,
+  statusMeta,
+  totalSets,
+  isCurrent,
+  onSelectExercise,
+}: {
+  completedSetsCount: number;
+  exercise: WorkoutSessionDraft["routine"]["exercises"][number];
+  exerciseIndex: number;
+  status: ReturnType<typeof getExerciseStatus>;
+  statusMeta: ReturnType<typeof getExerciseStatusMeta>;
+  totalSets: number;
+  isCurrent: boolean;
+  onSelectExercise: (exerciseIndex: number) => void;
+}) {
+  return (
+    <button
+      aria-current={status === "Em progresso" && isCurrent ? "step" : undefined}
+      aria-label={`${exercise.name}: ${status}, ${completedSetsCount} de ${totalSets} series concluidas`}
+      className={cn(
+        "w-full rounded-md border p-3 text-left transition-colors",
+        statusMeta.itemClassName,
+      )}
+      onClick={() => onSelectExercise(exerciseIndex)}
+      type="button"
+    >
+      <span className="flex items-center gap-3">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-background">
+          <statusMeta.Icon
+            className={cn("h-4 w-4", statusMeta.iconClassName)}
+            aria-hidden="true"
+          />
+        </span>
+        <span className="min-w-0 flex-1 truncate text-sm font-semibold">
+          {exercise.name}
+        </span>
+        <span
+          className={cn(
+            "shrink-0 rounded-md px-2 py-1 text-xs font-semibold",
+            statusMeta.badgeClassName,
+          )}
+        >
+          {status}
+        </span>
+      </span>
+      <span className="mt-3 block rounded-md bg-background/70 p-3 text-xs leading-5 text-muted-foreground">
+        {statusMeta.description} · {completedSetsCount}/{totalSets} séries
+      </span>
+    </button>
   );
 }
 

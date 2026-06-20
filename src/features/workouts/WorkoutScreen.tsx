@@ -168,16 +168,24 @@ function ExerciseButton({
 }) {
   return (
     <button
-      className="flex min-h-24 w-full items-center gap-3 rounded-lg border border-border bg-card p-4 text-left"
+      className="w-full rounded-lg border border-border bg-card p-4 text-left"
       onClick={onClick}
       type="button"
     >
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-secondary text-info">
-        <Dumbbell className="h-5 w-5" aria-hidden="true" />
+      <div className="flex items-center gap-3">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-secondary text-info">
+          <Dumbbell className="h-5 w-5" aria-hidden="true" />
+        </div>
+        <h3 className="min-w-0 flex-1 text-base font-semibold">
+          {exercise.name}
+        </h3>
+        <ChevronRight
+          className="h-5 w-5 shrink-0 text-muted-foreground"
+          aria-hidden="true"
+        />
       </div>
-      <div className="min-w-0 flex-1">
-        <h3 className="min-w-0 text-base font-semibold">{exercise.name}</h3>
-        <p className="mt-2 text-sm leading-6 text-muted-foreground">
+      <div className="mt-3 grid gap-2 rounded-md bg-muted p-3">
+        <p className="text-sm leading-6 text-muted-foreground">
           {exercise.sets}x {exercise.target_reps}
           {typeof exercise.target_rir === "number"
             ? ` · RIR alvo ${exercise.target_rir}`
@@ -189,10 +197,6 @@ function ExerciseButton({
             : "Sem carga anterior"}
         </p>
       </div>
-      <ChevronRight
-        className="h-5 w-5 shrink-0 text-muted-foreground"
-        aria-hidden="true"
-      />
     </button>
   );
 }
