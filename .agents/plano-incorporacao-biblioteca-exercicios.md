@@ -9,7 +9,7 @@ do guia visual:
 - painel recolhido por padrao;
 - abertura por `Ver como fazer`;
 - musculo principal, musculos auxiliares e ate 3 dicas curtas;
-- imagem ou GIF somente quando houver correspondencia especifica validada;
+- imagem ou GIF somente quando houver `visual_id` existente no catalogo local;
 - funcionamento offline e 100% local;
 - sem backend, login, cloud sync ou busca remota em tempo de uso.
 - nenhuma URL do repositorio externo, GitHub, raw.githubusercontent.com, CDN ou
@@ -18,8 +18,8 @@ do guia visual:
 O desafio central e garantir o elo:
 
 ```text
-prompt + JSON modelo + catalogo de exercicios suportados
-  -> JSON final do treino com exercise_id e visual_id corretos
+prompt + JSON modelo + catalogo de exercicios disponiveis
+  -> JSON final do treino com nome do exercicio e visual_id correto
   -> resolver local encontra a midia correta do exercicio
 ```
 
@@ -84,8 +84,11 @@ Regras:
 - scripts de importacao podem acessar o repositorio externo durante o
   desenvolvimento, mas o build gerado e a aplicacao em execucao nao podem
   depender desse acesso;
-- qualquer midia selecionada para um exercicio precisa estar copiada no
-  repositorio antes do `visual_id` ser considerado ativo.
+- qualquer midia de exercicio disponivel no catalogo precisa estar copiada no
+  repositorio antes do `visual_id` ser considerado ativo;
+- o dataset `hasaneyldrm/exercises-dataset` sera tratado como fonte consolidada
+  para o vinculo entre `source_id`, `source_name`, imagem e GIF. Nao sera feita
+  avaliacao semantica manual da midia exercicio por exercicio.
 
 ### Dados internos
 
@@ -109,8 +112,6 @@ Formato sugerido:
       "visual_id": "exdb_0025",
       "source_id": "0025",
       "source_name": "barbell bench press",
-      "aliases_pt": ["supino reto com barra", "supino reto barra"],
-      "exercise_ids": ["supino-reto-barra"],
       "body_part": "chest",
       "target": "pectorals",
       "secondary_muscles": ["triceps", "shoulders"],
@@ -127,9 +128,10 @@ Regras:
 
 - `visual_id` e interno do nosso app, derivado do dataset com prefixo `exdb_`.
 - `source_id` preserva o ID original do dataset.
-- `exercise_ids` sao os IDs que nosso JSON de treino deve usar para reaproveitar
-  historico e encontrar a midia.
-- `aliases_pt` existe para orientar prompt, revisao humana e futuras buscas.
+- `source_name` preserva o nome oficial do dataset e e a referencia principal
+  para a IA escolher o exercicio.
+- `aliases_pt` e `exercise_ids` podem existir no futuro para ajustes finos, mas
+  nao sao obrigatorios para a importacao inicial da biblioteca inteira.
 - `instructions` e `instruction_steps` nao entram nessa base.
 
 ### Midias
@@ -137,7 +139,7 @@ Regras:
 Nao colocar `index.html`, `setup.html`, README nem exemplos do repositorio
 externo no app.
 
-Diretorio sugerido para a primeira leva:
+Diretorio sugerido para a biblioteca local:
 
 ```text
 public/exercise-media/images/
@@ -149,13 +151,14 @@ Racional:
 - arquivos em `public/` podem ser servidos por caminho estavel sem inflar imports
   TypeScript;
 - o catalogo aponta para caminhos locais;
-- o service worker pode cachear sob demanda ou precachear uma lista controlada;
+- o service worker deve cachear sob demanda, sem precachear a biblioteca inteira;
 - evita importar 1.324 GIFs diretamente no bundle inicial.
 
-Importacao completa dos 1.324 exercicios so deve acontecer depois de medir o
-tamanho total. A primeira execucao deve importar uma leva pequena e validada.
-Mesmo nessa leva pequena, toda midia usada deve ser copiada para o nosso
-repositorio; nao pode haver referencia remota no catalogo final.
+A direcao aprovada e importar a biblioteca inteira. A E1 ainda deve medir o
+tamanho total para registrar impacto em PWA, Git e deploy. Se a aplicacao ficar
+lenta, pesada demais ou ruim de manter, uma execucao futura pode remover lotes
+menos usados. Mesmo importando tudo, nao pode haver referencia remota no
+catalogo final.
 
 ## Fluxo de ligacao prompt -> JSON -> midia
 
@@ -165,33 +168,35 @@ repositorio; nao pode haver referencia remota no catalogo final.
 meu-treino-catalogo-exercicios.json
 ```
 
-Esse arquivo e gerado a partir de `exercise-media-library.json`, contendo apenas
-o que a IA precisa para escolher IDs:
+Esse arquivo e gerado a partir de `exercise-media-library.json`, contendo uma
+lista resumida do que a IA precisa para escolher a midia:
 
 ```json
 [
   {
     "visual_id": "exdb_0025",
-    "exercise_id": "supino-reto-barra",
-    "name_pt": "Supino reto com barra",
-    "source_name": "barbell bench press",
-    "equipment": "barbell",
-    "target": "pectorals",
-    "movement_pattern": "horizontal_push"
+    "name": "barbell bench press"
   }
 ]
 ```
 
+Esse e o formato minimo preferido para reduzir tamanho e custo de contexto. Se
+os testes de geracao mostrarem ambiguidades demais, o catalogo auxiliar pode
+incluir campos curtos adicionais, como `equipment`, `body_part` e `target`, sem
+incluir instrucoes longas nem caminhos de arquivos.
+
 2. O prompt deve instruir:
 
 - quando o exercicio escolhido existir no catalogo, usar exatamente o
-  `exercise_id` e o `visual_id` do catalogo;
+  `visual_id` do catalogo;
 - se houver duvida entre variantes, omitir `visual_id` e manter musculos/dicas;
 - nunca inventar `visual_id`;
-- preferir nomes de exercicios em portugues, mas preservar IDs do catalogo.
+- preferir nomes de exercicios em portugues no treino final, mas preservar o
+  `visual_id` do catalogo.
 
-3. O JSON modelo deve demonstrar alguns exercicios com `visual_id` real da
-primeira leva importada.
+3. O JSON modelo pode demonstrar alguns exercicios com `visual_id` real da
+biblioteca importada, mas o modelo oficial nao deve ser usado como base para
+priorizar quais midias entram no repositorio.
 
 4. A validacao/importacao deve aceitar JSON sem `visual_id`, mas deve detectar
 `visual_id` desconhecido:
@@ -204,7 +209,7 @@ primeira leva importada.
 
 ```text
 exercise.visual_id conhecido -> midia local
-sourceExerciseId/exercise_id com alias exato -> midia local
+sourceExerciseId/exercise_id com correspondencia exata futura -> midia local
 sem correspondencia -> musculos + dicas, sem imagem
 ```
 
@@ -240,7 +245,7 @@ Arquivos provaveis:
 Criterios de aceite:
 
 - ha decisao explicita sobre licenca antes de copiar midias;
-- ha estimativa de tamanho total e tamanho da primeira leva;
+- ha estimativa de tamanho total da biblioteca completa;
 - esta claro que `index.html`, `setup.html`, README e instrucoes nao entram no
   app.
 
@@ -264,7 +269,7 @@ Contexto necessario:
 Entregas:
 
 - script em `scripts/import-exercise-media-library.mjs` ou equivalente;
-- `src/config/exercise-media-library.json` com primeira leva;
+- `src/config/exercise-media-library.json` com a biblioteca completa;
 - nenhuma instrucao textual longa do dataset externo no app;
 - IDs internos `visual_id` com prefixo `exdb_`.
 
@@ -287,10 +292,10 @@ Checks:
 pnpm build
 ```
 
-### E3 - Mapear exercicios do app para midias reais
+### E3 - Gerar catalogo resumido para IA
 
-Objetivo: resolver o elo entre os exercicios gerados no JSON de treino e as
-midias da biblioteca.
+Objetivo: permitir que a IA escolha exercicios disponiveis na biblioteca sem
+precisar receber metadados longos nem caminhos de midia.
 
 Contexto necessario:
 
@@ -298,48 +303,40 @@ Contexto necessario:
 - `src/assets/meu-treino-modelo.json`;
 - `src/assets/prompt-treino-modelo.md`;
 - `src/config/exercise-media-library.json`;
-- `src/features/workouts/exerciseGuides.ts`;
-- treinos reais ja usados no app, quando disponiveis.
+- `src/features/workouts/exerciseGuides.ts`.
 
 Entregas:
 
-- tabela de aliases aprovados por humano;
-- primeira leva de exercicios suportados, priorizando:
-  - supino reto com barra;
-  - supino com halteres;
-  - remada curvada;
-  - puxada na polia;
-  - barra fixa;
-  - triceps corda;
-  - rosca direta;
-  - elevacao lateral;
-  - terra romeno/stiff;
-  - leg press;
-  - hip thrust;
-  - prancha;
-  - exercicios que aparecerem nos treinos reais do usuario.
+- `src/assets/meu-treino-catalogo-exercicios.json` gerado com itens resumidos;
+- formato minimo inicial: `visual_id` e `name`;
+- opcionalmente incluir campos curtos como `equipment`, `body_part` e `target`
+  se a geracao de treinos ficar ambigua demais;
+- prompt atualizado para orientar que a IA escolha exercicios do catalogo e
+  preserve exatamente o `visual_id`.
 
 Arquivos provaveis:
 
 - `src/config/exercise-media-library.json`;
-- `src/config/exercise-guide-catalog.json`;
+- `src/assets/meu-treino-catalogo-exercicios.json`;
+- `src/assets/prompt-treino-modelo.md`;
+- `src/assets/meu-treino-modelo.json`;
 - `src/features/workouts/exerciseGuides.test.ts`;
-- `.agents/mapeamento-exercicios-midias.md`.
+- `.agents/inventario-exercises-dataset.md`.
 
-Regras de mapeamento:
+Regras:
 
-- alias exato e aprovado > correspondencia automatica;
-- fuzzy matching pode sugerir, mas nao deve entrar no app sem revisao;
-- variantes diferentes nao compartilham midia;
-- duplicidade de midia so e aceita quando representar exatamente a mesma
-  execucao.
+- o dataset e a fonte de verdade para nome, `source_id`, imagem e GIF;
+- nao avaliar visualmente cada midia para confirmar semantica do exercicio;
+- nao criar aliases amplos automaticamente;
+- nao exigir que o modelo oficial de 3 exercicios defina prioridade de
+  importacao.
 
 Criterios de aceite:
 
-- cada `exercise_id` aprovado aponta para um unico `visual_id`;
-- cada `visual_id` aponta para midias existentes;
-- nenhum alias amplo causa imagem errada em exercicio diferente;
-- ha teste cobrindo alias, asset ausente e fallback sem imagem.
+- cada item do catalogo resumido aponta para um `visual_id` existente;
+- o catalogo resumido nao contem URL nem caminho de arquivo;
+- o prompt instrui a IA a usar somente `visual_id` presente no catalogo;
+- JSON com `visual_id` desconhecido continua caindo no fallback sem imagem.
 
 Checks:
 
@@ -348,14 +345,15 @@ pnpm test -- exerciseGuides
 pnpm build
 ```
 
-### E4 - Copiar e servir a primeira leva de midias
+### E4 - Copiar e servir a biblioteca completa de midias
 
-Objetivo: adicionar somente as imagens/GIFs aprovados na primeira leva.
+Objetivo: adicionar as imagens/GIFs do dataset inteiro ao repositorio e servi-las
+como assets locais.
 
 Contexto necessario:
 
 - este plano;
-- `.agents/mapeamento-exercicios-midias.md`;
+- `.agents/inventario-exercises-dataset.md`;
 - `public/sw.js`;
 - `src/features/workouts/ActiveWorkoutScreen.tsx`;
 - `src/features/workouts/exerciseGuideCatalog.ts`;
@@ -370,6 +368,8 @@ Entregas:
 - service worker sem precache massivo da biblioteca inteira.
 - checagem garantindo que o catalogo de midias nao contenha `http://`,
   `https://`, `github.com` ou `raw.githubusercontent.com`.
+- checagem garantindo que todos os assets referenciados no catalogo existem no
+  repositorio.
 
 Arquivos provaveis:
 
@@ -382,7 +382,8 @@ Arquivos provaveis:
 
 Criterios de aceite:
 
-- a primeira leva aparece corretamente no painel `Ver como fazer`;
+- exercicios com `visual_id` conhecido aparecem corretamente no painel
+  `Ver como fazer`;
 - exercicios sem correspondencia continuam sem imagem;
 - GIFs nao quebram layout mobile;
 - bundle inicial nao cresce por import acidental de todas as midias.
@@ -399,7 +400,7 @@ rg -n "https?://|github.com|raw.githubusercontent.com" src/config public/exercis
 
 ### E5 - Atualizar prompt, modelo e downloads auxiliares
 
-Objetivo: garantir que a IA consiga gerar um JSON final com IDs que ligam ao
+Objetivo: garantir que a IA consiga gerar um JSON final com `visual_id` que liga ao
 catalogo de midias.
 
 Contexto necessario:
@@ -415,10 +416,9 @@ Entregas:
 
 - `src/assets/meu-treino-catalogo-exercicios.json`;
 - botoes/links de download do catalogo junto de modelo e prompt;
-- prompt atualizado para exigir uso exato de `exercise_id` e `visual_id` do
-  catalogo;
-- modelo JSON com exemplos reais da primeira leva;
-- texto deixando claro que IDs fora do catalogo devem ser omitidos.
+- prompt atualizado para exigir uso exato de `visual_id` do catalogo;
+- modelo JSON com exemplos reais da biblioteca importada;
+- texto deixando claro que `visual_id` fora do catalogo deve ser omitido.
 
 Arquivos provaveis:
 
@@ -433,7 +433,7 @@ Criterios de aceite:
 
 - usuario consegue baixar modelo, prompt e catalogo;
 - prompt explica o processo de anexar os tres arquivos na geracao do treino;
-- JSON gerado por IA tem caminho claro para usar IDs validos;
+- JSON gerado por IA tem caminho claro para usar `visual_id` valido;
 - app nao depende de instrucoes longas do dataset externo.
 
 Checks:
@@ -444,7 +444,7 @@ pnpm build
 
 ### E6 - Avisos na importacao e verificacao de qualidade
 
-Objetivo: evitar que JSONs gerados com IDs invalidos silenciosamente parecam
+Objetivo: evitar que JSONs gerados com `visual_id` invalido silenciosamente parecam
 corretos.
 
 Contexto necessario:
@@ -471,8 +471,8 @@ Arquivos provaveis:
 Criterios de aceite:
 
 - `visual_id` desconhecido nao quebra importacao;
-- usuario e avisado quando o treino tem IDs sem midia;
-- catalogo nao tem alias para asset inexistente;
+- usuario e avisado quando o treino tem `visual_id` sem midia;
+- catalogo nao referencia asset inexistente;
 - `movement_pattern` continua sem escolher imagem sozinho.
 
 Checks:
@@ -485,22 +485,24 @@ pnpm build
 ## Decisoes a nao repetir
 
 - Nao usar imagem generica por `movement_pattern`.
-- Nao aceitar alias amplo sem revisao humana.
+- Nao criar alias amplo automaticamente.
 - Nao importar `instructions` ou `instruction_steps` do dataset externo para o
   app.
 - Nao copiar `index.html`, `setup.html`, README ou exemplos de backend/API do
   repositorio externo.
-- Nao importar a biblioteca inteira de GIFs antes de medir peso e impacto no
-  PWA.
+- Nao avaliar manualmente a semantica de cada GIF/imagem; confiar no vinculo
+  interno do dataset e validar consistencia tecnica.
+- Nao precachear a biblioteca inteira no service worker.
 - Nao usar URL remota como fonte de imagem/GIF durante a execucao do app.
 - Nao depender do service worker para transformar asset remoto em asset local.
 
 ## Pronto quando
 
-- Existe uma primeira leva de exercicios com midias especificas corretas.
+- A biblioteca completa foi importada como assets locais ou houve decisao
+  explicita posterior para reduzir o escopo por peso/performance.
 - O usuario consegue baixar modelo, prompt e catalogo para gerar JSON com
   `visual_id` valido.
-- O JSON importado consegue ligar `exercise_id`/`visual_id` a uma midia local.
+- O JSON importado consegue ligar `visual_id` a uma midia local.
 - Exercicios sem correspondencia continuam usando apenas musculos e dicas.
 - Nenhuma midia usada vem de URL remota em runtime.
 - Os checks de catalogo, testes e build passam.
