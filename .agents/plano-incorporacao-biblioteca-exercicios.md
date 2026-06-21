@@ -221,6 +221,25 @@ sem correspondencia -> musculos + dicas, sem imagem
 
 Objetivo: confirmar se podemos usar as midias e entender o peso real da base.
 
+Status: concluida em 2026-06-21. Resultado registrado em
+`.agents/inventario-exercises-dataset.md`.
+
+Decisao de licenca: usar as midias do `hasaneyldrm/exercises-dataset` somente
+em contexto pessoal, educacional, de pesquisa, demonstracao ou outro uso
+estritamente nao comercial. Se o projeto virar produto comercial, monetizado ou
+oferta publica comercial, nao incorporar essas midias e trocar por fonte com
+licenca permissiva ou autorizacao explicita dos detentores.
+
+Resumo da auditoria:
+
+- commit origem: `f987a7b858d7987c3677e1073ee18b623895f615`;
+- dataset: 1.324 exercicios, 1.324 imagens JPG e 1.324 GIFs;
+- tamanho medido: `data/` 4,81 MiB, `images/` 8,46 MiB, `videos/` 122,78 MiB,
+  total auditado 139,21 MiB sem `.git`;
+- imagens/GIFs referenciados no JSON: 0 ausentes no checkout auditado;
+- `index.html`, `setup.html`, README, `instructions`, `instruction_steps` e
+  `created_at` nao entram no app.
+
 Contexto necessario:
 
 - `AGENTS.md`;
