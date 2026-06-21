@@ -153,6 +153,8 @@ Racional:
 - o catalogo aponta para caminhos locais;
 - o service worker deve cachear sob demanda, sem precachear a biblioteca inteira;
 - evita importar 1.324 GIFs diretamente no bundle inicial.
+- a UI deve carregar midia de forma preguicosa: JPG estatico primeiro, GIF
+  somente quando o usuario abrir o painel `Ver como fazer`.
 
 A direcao aprovada e importar a biblioteca inteira. A E1 ainda deve medir o
 tamanho total para registrar impacto em PWA, Git e deploy. Se a aplicacao ficar
@@ -239,6 +241,13 @@ Resumo da auditoria:
 - imagens/GIFs referenciados no JSON: 0 ausentes no checkout auditado;
 - `index.html`, `setup.html`, README, `instructions`, `instruction_steps` e
   `created_at` nao entram no app.
+
+Decisao de experiencia PWA: o tamanho da biblioteca completa e aceitavel apenas
+se ela nao entrar no bundle inicial nem no precache do service worker. A
+experiencia deve ser lazy: listas e cards usam metadados; o painel `Ver como
+fazer` carrega imagem estatica local primeiro e so carrega GIF local sob demanda.
+Se deploy, Git ou performance real ficarem ruins, reduzir a biblioteca para um
+subconjunto dos exercicios mais comuns em execucao futura.
 
 Contexto necessario:
 
@@ -383,7 +392,8 @@ Entregas:
 - arquivos em `public/exercise-media/images/` e
   `public/exercise-media/videos/`;
 - resolver retornando `imageUrl` e/ou `animationUrl`;
-- UI exibindo GIF quando houver e imagem estatica como fallback;
+- UI exibindo imagem estatica primeiro e GIF somente quando o painel do guia
+  estiver aberto;
 - service worker sem precache massivo da biblioteca inteira.
 - checagem garantindo que o catalogo de midias nao contenha `http://`,
   `https://`, `github.com` ou `raw.githubusercontent.com`.
@@ -404,6 +414,9 @@ Criterios de aceite:
 - exercicios com `visual_id` conhecido aparecem corretamente no painel
   `Ver como fazer`;
 - exercicios sem correspondencia continuam sem imagem;
+- listas, Home e detalhe de rotina nao carregam GIFs;
+- GIFs carregam apenas sob demanda quando o guia do exercicio esta aberto;
+- imagem estatica funciona como preview/fallback antes do GIF;
 - GIFs nao quebram layout mobile;
 - bundle inicial nao cresce por import acidental de todas as midias.
 - nenhuma midia usada no app e carregada de URL remota em runtime;
