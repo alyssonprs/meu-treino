@@ -287,6 +287,24 @@ git diff --check
 
 Objetivo: gerar uma base local limpa com metadados minimos e sem instrucoes.
 
+Status: concluida em 2026-06-21.
+
+Resultado:
+
+- script repetivel criado em `scripts/import-exercise-media-library.mjs`;
+- base derivada criada em `src/config/exercise-media-library.json`;
+- origem fixada no commit `f987a7b858d7987c3677e1073ee18b623895f615`;
+- 1.324 exercicios gerados com `visual_id` no formato `exdb_<source_id>`;
+- 1.324 caminhos locais de imagem e 1.324 caminhos locais de GIF registrados;
+- 0 `visual_id` duplicados, 0 `source_id` duplicados, 0 `movement_pattern`
+  fora do catalogo oficial e 0 assets remotos no catalogo derivado;
+- `instructions`, `instruction_steps`, `created_at`, `gif_url`, URLs remotas e
+  arquivos HTML/README do dataset externo nao entram na base derivada.
+
+Observacao: `movement_pattern` e inferido por heuristica conservadora a partir
+de nome, alvo, parte do corpo e equipamento. Ele serve para classificacao e
+dicas; nao deve escolher imagem sozinho.
+
 Contexto necessario:
 
 - este plano;

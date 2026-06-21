@@ -9,6 +9,7 @@
     "lint": "eslint src vite.config.ts tailwind.config.ts postcss.config.js eslint.config.js",
     "test": "vitest run",
     "visual:check": "playwright test --config playwright.visual.config.ts",
+    "exercise-media:import": "node scripts/import-exercise-media-library.mjs",
     "preview": "vite preview --host 127.0.0.1",
     "android:sync": "tsc -b && vite build && cap sync android",
     "android:apk": "powershell -ExecutionPolicy Bypass -File scripts/build-android-apk.ps1",
