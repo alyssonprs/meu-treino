@@ -214,7 +214,7 @@ Atualize esta tabela quando cada tela for aprovada.
 | UX-04 | Registro por exercicio aprovado | A primeira versao registra carga e repeticoes uma vez por exercicio, sem RIR obrigatorio na UI; RIR pode continuar opcional/nulo no dominio e storage para evolucao futura | 2026-06-19 |
 | UX-04 | Ajuste apos primeiro uso real | Usuario deve conseguir marcar cada serie como concluida para acompanhar descanso entre series; carga e repeticoes continuam sendo informadas apenas no fim do exercicio; remover pausa e cancelar do topo da tela de exercicio | 2026-06-19 |
 | UX-04 | Guia visual do exercicio aprovado | Orientacao fica recolhida por padrao e abre por `Ver como fazer`; quando aberta, prioriza musculo principal, secundarios em cor mais fria, seta de movimento quando houver asset e ate 3 dicas curtas | 2026-06-20 |
-| UX-04 | Evolucao do guia visual | Seguir `.agents/plano-guias-visuais-exercicios.md`: imagem especifica por `visual_id`, fallback por imagem generica de `movement_pattern` e ultimo fallback por musculos/dicas | 2026-06-20 |
+| UX-04 | Evolucao do guia visual | Seguir `.agents/plano-incorporacao-biblioteca-exercicios.md`: imagem aparece somente quando houver asset especifico validado; `movement_pattern` fica restrito a classificacao e dicas, sem imagem generica | 2026-06-21 |
 
 ## Prototipos aprovados
 
@@ -250,4 +250,4 @@ Pontos aprovados:
 - O topo da tela de exercicio nao deve exibir botoes de pausa nem de cancelar com `X`.
 - A lista de exercicios da rotina em progresso deve indicar `Pendente`, `Em progresso` e `Concluido`.
 - A orientacao visual do exercicio deve iniciar recolhida, abrir por `Ver como fazer` e poder ser ocultada sem mudar o estado do treino.
-- Quando houver dados do JSON, mostrar musculo principal com maior destaque, musculos secundarios com tom mais frio e ate 3 dicas curtas de execucao; quando houver `visual_id` mapeado, mostrar tambem o movimento com seta.
+- Quando houver dados do JSON, mostrar musculo principal com maior destaque, musculos secundarios com tom mais frio e ate 3 dicas curtas de execucao; quando houver `visual_id` mapeado para asset validado, mostrar tambem a imagem do exercicio.

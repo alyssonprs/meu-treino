@@ -130,9 +130,9 @@ Contrato inicial validado pelo app:
 - Campos opcionais do exercicio: `exercise_id`, `target_rir`, `rest_seconds`, `tempo`, `advanced_technique`, `primary_muscles`, `secondary_muscles`, `movement_pattern`, `visual_id`, `execution_cues`, `notes` e `media_url`.
 - `primary_muscles`, `secondary_muscles` e `execution_cues` devem ser listas de textos curtos quando informados.
 - `movement_pattern` deve usar somente um identificador suportado pelo app. Lista oficial inicial: `horizontal_push`, `horizontal_pull`, `vertical_push`, `vertical_pull`, `squat`, `hinge`, `lunge`, `hip_thrust`, `leg_extension`, `leg_curl`, `calf_raise`, `shoulder_abduction`, `elbow_flexion`, `elbow_extension`, `core_flexion`, `core_anti_extension` ou `core_rotation`.
-- O app usa `movement_pattern` como principal fallback visual quando nao houver `visual_id` especifico conhecido.
+- O app usa `movement_pattern` para validar o padrao do movimento e sugerir dicas padrao quando nao houver `execution_cues`; ele nao deve renderizar imagem por conta propria.
 - A lista efetivamente validada pelo app vem de `src/config/exercise-guide-catalog.json`, para permitir evolucao do catalogo sem alterar a logica do resolver.
-- `visual_id` deve ser informado somente quando houver asset local ou mapeamento conhecido no app; se nao houver correspondencia, o app usa musculos e dicas como fallback.
+- `visual_id` deve ser informado somente quando houver asset local validado e mapeamento conhecido no app; se nao houver correspondencia, o app usa musculos e dicas como fallback, sem imagem.
 - `estimated_duration_weeks`, `days_per_week`, `order`, `duration_minutes`, `sets` e `rest_seconds` devem ser inteiros positivos.
 - `target_rir` deve ser inteiro maior ou igual a zero quando informado.
 
@@ -234,7 +234,7 @@ A primeira versao deve seguir o modelo de usabilidade **Guiada**:
 - Ao tocar em uma rotina na lista do menu `Treino`, o app deve abrir o detalhe da rotina selecionada antes da execucao.
 - A tela de execucao deve ser focada no uso durante a academia, com registro rapido por exercicio, timer de descanso e poucos elementos concorrendo por atencao.
 - A orientacao visual da tela de execucao deve ficar recolhida por padrao para nao competir com o treino; quando aberta, deve priorizar musculo principal, musculos auxiliares em cor mais fria, movimento do exercicio quando houver asset e ate 3 dicas curtas.
-- A evolucao do guia visual deve seguir `.agents/plano-guias-visuais-exercicios.md`, usando primeiro assets especificos por `visual_id`, depois imagens genericas por `movement_pattern`, e por ultimo musculos/dicas como fallback.
+- A evolucao do guia visual deve seguir `.agents/plano-incorporacao-biblioteca-exercicios.md`: usar somente assets especificos validados por exercicio ou alias confiavel; `movement_pattern` permanece para dicas e classificacao, nao como imagem generica.
 - O detalhamento e aprovacao das telas deve seguir `docs/arquitetura/ux-prototipo-aprovado.md` antes da implementacao visual final.
 
 ## Experiencia mobile

@@ -92,7 +92,7 @@ O app pode mostrar um painel recolhido chamado "Ver como fazer" durante a execu�
 Regras gerais:
 
 - Os campos de orientação visual são opcionais.
-- Mesmo sem `visual_id`, o app usa `movement_pattern` como fallback visual principal e tambem consegue mostrar músculos e dicas usando `primary_muscles`, `secondary_muscles` e `execution_cues`.
+- O app usa `movement_pattern` para validar o padrao do movimento e sugerir dicas quando faltarem `execution_cues`; ele nao deve ser tratado como imagem do exercicio.
 - Portanto, preencha os campos de músculos e dicas sempre que conseguir fazer isso com segurança.
 - Não invente anatomia ou instruções se houver incerteza clínica, lesão importante ou exercício muito específico. Nesse caso, use dicas conservadoras e recomende orientação profissional nas `notes` quando apropriado.
 
@@ -100,8 +100,8 @@ Campos:
 
 - `primary_muscles`: array com 1 a 3 músculos principais realmente trabalhados pelo exercício.
 - `secondary_muscles`: array com músculos auxiliares, estabilizadores ou sinergistas. Pode ser omitido se não houver informação útil.
-- `movement_pattern`: identificador simples e estável do padrão de movimento.
-- `visual_id`: identificador de asset visual local do app.
+- `movement_pattern`: identificador simples e estavel do padrao de movimento.
+- `visual_id`: identificador de asset visual local do app. No momento, omita este campo salvo quando o modelo recebido ja trouxer um ID oficialmente documentado.
 - `execution_cues`: array com até 3 dicas curtas, práticas e seguras para execução.
 
 Valores suportados para `movement_pattern`:
@@ -124,31 +124,19 @@ Valores suportados para `movement_pattern`:
 - `core_anti_extension`: estabilidade contra extensão, como prancha.
 - `core_rotation`: rotação ou anti-rotação do tronco.
 
-Todos os valores acima possuem guia generico offline no app. Use o melhor `movement_pattern` disponivel antes de omitir esse campo.
+Use o melhor `movement_pattern` disponivel quando ele representar bem o exercicio, pois ele ajuda o app a mostrar dicas. Ele nao garante imagem do exercicio.
 
 Não use valores fora dessa lista. Se nenhum valor representar bem o exercício, omita `movement_pattern`.
 
 Regras específicas para `visual_id`:
 
 - `visual_id` NÃO é obrigatório.
-- O campo deve existir somente quando houver correspondência conhecida no modelo ou no app.
+- O campo deve existir somente quando houver correspondencia conhecida no modelo ou no app.
 - Se não souber o `visual_id` correto, omita o campo.
 - Nunca envie `visual_id` como string vazia.
-- Nunca invente `visual_id` para exercícios que não aparecem no modelo.
-- IDs oficiais disponíveis no app:
-  - `barbell_bench_press`: supino reto com barra.
-  - `dumbbell_bench_press`: supino com halteres.
-  - `barbell_row`: remada curvada com barra.
-  - `lat_pulldown`: puxada na polia.
-  - `pull_up`: barra fixa.
-  - `rope_triceps_pushdown`: triceps corda.
-  - `barbell_biceps_curl`: rosca direta com barra.
-  - `lateral_raise`: elevação lateral.
-  - `romanian_deadlift`: terra romeno ou stiff.
-  - `leg_press`: leg press.
-  - `hip_thrust`: hip thrust ou elevação pélvica.
-  - `plank`: prancha.
-- Para todos os outros exercícios, use os campos de músculos, padrão de movimento e dicas como fallback visual.
+- Nunca invente `visual_id` para exercicios que nao aparecem no modelo.
+- Ainda nao ha IDs oficiais ativos no app depois da remocao dos assets locais imprecisos.
+- Para todos os exercicios, use os campos de musculos, padrao de movimento e dicas como orientacao no painel.
 
 Regras para `execution_cues`:
 
@@ -178,7 +166,7 @@ Antes de entregar o JSON:
 4. Verifique se não existem propriedades extras.
 5. Verifique se o JSON é válido.
 6. Verifique se os campos opcionais sem informação útil foram omitidos, e não preenchidos com `""`.
-7. Verifique se `visual_id` só aparece quando houver identificador conhecido.
+7. Verifique se `visual_id` foi omitido, salvo quando houver identificador oficial no modelo recebido.
 8. Verifique se cada exercício tem `exercise_id` estável, curto, sem acentos e sem espaços.
 9. Verifique se cada exercício tem orientação visual suficiente quando possível: músculos principais, músculos auxiliares, padrão de movimento e até 3 dicas.
 10. Verifique se o treino está coerente com os dados fornecidos pelo usuário.

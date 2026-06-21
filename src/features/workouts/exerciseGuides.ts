@@ -2,10 +2,8 @@ import type { MovementPattern } from "@/domain/movementPattern";
 import type { PlannedExerciseRecord } from "@/storage/workoutPlanRepository";
 import {
   defaultCuesByMovementPattern,
-  genericVisualGuidesByMovementPattern,
   visualGuideIdsByExerciseId,
   visualGuidesById,
-  type VisualGuide,
 } from "./exerciseGuideCatalog";
 
 export type ExerciseGuide = {
@@ -55,21 +53,7 @@ function resolveVisualGuide(exercise: PlannedExerciseRecord) {
     }
   }
 
-  const movementPatternGuide = getGenericVisualGuide(exercise.movement_pattern);
-
-  if (movementPatternGuide) {
-    return movementPatternGuide;
-  }
-
   return null;
-}
-
-function getGenericVisualGuide(
-  movementPattern: MovementPattern | undefined,
-): VisualGuide | null {
-  return movementPattern
-    ? genericVisualGuidesByMovementPattern[movementPattern]
-    : null;
 }
 
 function getFallbackCues(movementPattern: MovementPattern | undefined) {

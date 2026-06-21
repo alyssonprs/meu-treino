@@ -1,5 +1,15 @@
 # Plano de guias visuais de exercicios
 
+## Status em 2026-06-21
+
+Este plano foi substituido para a parte de imagens. A estrutura do guia
+recolhivel continua valida, mas a estrategia de imagens genericas por
+`movement_pattern` e os SVGs especificos criados localmente foram removidos por
+nao identificarem os exercicios com precisao suficiente.
+
+O plano vigente para retomar imagens/GIFs especificos esta em
+`.agents/plano-incorporacao-biblioteca-exercicios.md`.
+
 ## Objetivo
 
 Garantir que o usuario consiga reconhecer o exercicio durante o treino mesmo quando nao conhece o nome.

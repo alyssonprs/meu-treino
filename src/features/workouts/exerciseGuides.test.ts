@@ -21,30 +21,11 @@ const baseExercise: PlannedExerciseRecord = {
 };
 
 describe("getExerciseGuide", () => {
-  it("resolves the initial specific exercise catalog", () => {
-    expect(Object.keys(visualGuidesById).sort()).toEqual([
-      "barbell_bench_press",
-      "barbell_biceps_curl",
-      "barbell_row",
-      "dumbbell_bench_press",
-      "hip_thrust",
-      "lat_pulldown",
-      "lateral_raise",
-      "leg_press",
-      "plank",
-      "pull_up",
-      "romanian_deadlift",
-      "rope_triceps_pushdown",
-    ]);
-
-    expect(visualGuidesById.barbell_row.imageUrl).toContain(
-      "data:image/svg+xml",
-    );
-    expect(visualGuidesById.barbell_row.imageAlt).toContain("remada curvada");
-    expect(visualGuidesById.plank.imageAlt).toContain("prancha");
+  it("starts without rolled-back local exercise images", () => {
+    expect(Object.keys(visualGuidesById)).toEqual([]);
   });
 
-  it("uses visual metadata and cues from the workout JSON", () => {
+  it("uses muscles and cues from the workout JSON without requiring an image", () => {
     const guide = getExerciseGuide({
       ...baseExercise,
       primary_muscles: ["Peitoral maior"],
@@ -58,8 +39,8 @@ describe("getExerciseGuide", () => {
       ],
     });
 
-    expect(guide.imageUrl).toContain("data:image/svg+xml");
-    expect(guide.imageAlt).toContain("supino reto");
+    expect(guide.imageUrl).toBeNull();
+    expect(guide.imageAlt).toContain("Supino reto");
     expect(guide.primaryMuscles).toEqual(["Peitoral maior"]);
     expect(guide.secondaryMuscles).toEqual(["Triceps", "Deltoide anterior"]);
     expect(guide.executionCues).toEqual([
@@ -69,7 +50,7 @@ describe("getExerciseGuide", () => {
     ]);
   });
 
-  it("falls back to muscle group and movement cues for older JSON", () => {
+  it("uses movement pattern only for fallback cues", () => {
     const guide = getExerciseGuide({
       ...baseExercise,
       sourceExerciseId: null,
@@ -77,9 +58,9 @@ describe("getExerciseGuide", () => {
       movement_pattern: "horizontal_push",
     });
 
+    expect(guide.imageUrl).toBeNull();
     expect(guide.primaryMuscles).toEqual(["Peitoral"]);
     expect(guide.secondaryMuscles).toEqual([]);
-    expect(guide.imageUrl).toContain("horizontal-push");
     expect(guide.executionCues).toEqual([
       "Pes firmes no chao",
       "Desca com controle",
@@ -87,18 +68,7 @@ describe("getExerciseGuide", () => {
     ]);
   });
 
-  it("prefers known exercise mappings before generic movement guides", () => {
-    const guide = getExerciseGuide({
-      ...baseExercise,
-      visual_id: undefined,
-      movement_pattern: "horizontal_pull",
-    });
-
-    expect(guide.imageUrl).toContain("data:image/svg+xml");
-    expect(guide.imageAlt).toContain("supino reto");
-  });
-
-  it("uses the initial specific catalog by known exercise id", () => {
+  it("does not reuse retired aliases for different exercises", () => {
     const guide = getExerciseGuide({
       ...baseExercise,
       sourceExerciseId: "remada-curvada-barra",
@@ -109,39 +79,16 @@ describe("getExerciseGuide", () => {
       movement_pattern: "horizontal_pull",
     });
 
-    expect(guide.imageUrl).toContain("data:image/svg+xml");
-    expect(guide.imageAlt).toContain("remada curvada");
+    expect(guide.imageUrl).toBeNull();
+    expect(guide.imageAlt).toContain("Remada curvada");
+    expect(guide.executionCues).toEqual([
+      "Tronco firme",
+      "Puxe com os cotovelos",
+      "Controle a volta",
+    ]);
   });
 
-  it("uses generic movement image when no specific visual is available", () => {
-    const guide = getExerciseGuide({
-      ...baseExercise,
-      sourceExerciseId: null,
-      exerciseId: "remada-baixa-cabo",
-      name: "Remada baixa",
-      muscleGroup: "Costas",
-      movement_pattern: "horizontal_pull",
-    });
-
-    expect(guide.imageUrl).toContain("horizontal-pull");
-    expect(guide.imageAlt).toContain("puxar na horizontal");
-  });
-
-  it("uses second-batch generic images for real workout movement patterns", () => {
-    const guide = getExerciseGuide({
-      ...baseExercise,
-      sourceExerciseId: null,
-      exerciseId: "prancha",
-      name: "Prancha",
-      muscleGroup: "Abdomen",
-      movement_pattern: "core_anti_extension",
-    });
-
-    expect(guide.imageUrl).toContain("core-anti-extension");
-    expect(guide.imageAlt).toContain("estabilidade do core");
-  });
-
-  it("keeps muscle and note fallback when no visual metadata is available", () => {
+  it("keeps note fallback when no visual metadata is available", () => {
     const guide = getExerciseGuide({
       ...baseExercise,
       sourceExerciseId: null,
