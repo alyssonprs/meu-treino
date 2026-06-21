@@ -235,6 +235,7 @@ A primeira versao deve seguir o modelo de usabilidade **Guiada**:
 - A tela de execucao deve ser focada no uso durante a academia, com registro rapido por exercicio, timer de descanso e poucos elementos concorrendo por atencao.
 - A orientacao visual da tela de execucao deve ficar recolhida por padrao para nao competir com o treino; quando aberta, deve priorizar musculo principal, musculos auxiliares em cor mais fria, movimento do exercicio quando houver asset e ate 3 dicas curtas.
 - A evolucao do guia visual deve seguir `.agents/plano-incorporacao-biblioteca-exercicios.md`: usar somente assets especificos validados por exercicio ou alias confiavel; `movement_pattern` permanece para dicas e classificacao, nao como imagem generica.
+- Toda midia de exercicio usada a partir de bibliotecas externas deve ser importada para este repositorio e servida como asset local. O app nao deve acessar GitHub, raw.githubusercontent.com, CDN ou qualquer URL remota de midia durante a execucao.
 - O detalhamento e aprovacao das telas deve seguir `docs/arquitetura/ux-prototipo-aprovado.md` antes da implementacao visual final.
 
 ## Experiencia mobile

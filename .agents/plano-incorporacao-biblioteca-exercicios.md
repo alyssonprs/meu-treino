@@ -12,6 +12,8 @@ do guia visual:
 - imagem ou GIF somente quando houver correspondencia especifica validada;
 - funcionamento offline e 100% local;
 - sem backend, login, cloud sync ou busca remota em tempo de uso.
+- nenhuma URL do repositorio externo, GitHub, raw.githubusercontent.com, CDN ou
+  qualquer origem remota pode ser acessada durante a execucao do aplicativo.
 
 O desafio central e garantir o elo:
 
@@ -66,6 +68,24 @@ Essa verificacao e bloqueante para a execucao que copia arquivos de midia.
 - O prompt atual orienta a omitir `visual_id` quando nao houver ID oficial.
 
 ## Direcao de arquitetura
+
+### Regra de midia local
+
+Toda midia do `hasaneyldrm/exercises-dataset` que for usada pelo app deve ser
+importada para dentro deste repositorio.
+
+Regras:
+
+- o app nunca deve renderizar `image`, `gif_url`, `media_url` ou qualquer outro
+  campo apontando para URL remota desse dataset;
+- cachear uma URL remota no service worker nao e suficiente;
+- o catalogo em runtime deve apontar apenas para caminhos locais versionados no
+  nosso repositorio, como `/exercise-media/...`;
+- scripts de importacao podem acessar o repositorio externo durante o
+  desenvolvimento, mas o build gerado e a aplicacao em execucao nao podem
+  depender desse acesso;
+- qualquer midia selecionada para um exercicio precisa estar copiada no
+  repositorio antes do `visual_id` ser considerado ativo.
 
 ### Dados internos
 
@@ -134,6 +154,8 @@ Racional:
 
 Importacao completa dos 1.324 exercicios so deve acontecer depois de medir o
 tamanho total. A primeira execucao deve importar uma leva pequena e validada.
+Mesmo nessa leva pequena, toda midia usada deve ser copiada para o nosso
+repositorio; nao pode haver referencia remota no catalogo final.
 
 ## Fluxo de ligacao prompt -> JSON -> midia
 
@@ -346,6 +368,8 @@ Entregas:
 - resolver retornando `imageUrl` e/ou `animationUrl`;
 - UI exibindo GIF quando houver e imagem estatica como fallback;
 - service worker sem precache massivo da biblioteca inteira.
+- checagem garantindo que o catalogo de midias nao contenha `http://`,
+  `https://`, `github.com` ou `raw.githubusercontent.com`.
 
 Arquivos provaveis:
 
@@ -362,12 +386,15 @@ Criterios de aceite:
 - exercicios sem correspondencia continuam sem imagem;
 - GIFs nao quebram layout mobile;
 - bundle inicial nao cresce por import acidental de todas as midias.
+- nenhuma midia usada no app e carregada de URL remota em runtime;
+- todo asset usado por `image_asset` ou `animation_asset` existe no repositorio.
 
 Checks:
 
 ```powershell
 pnpm test -- exerciseGuides
 pnpm build
+rg -n "https?://|github.com|raw.githubusercontent.com" src/config public/exercise-media
 ```
 
 ### E5 - Atualizar prompt, modelo e downloads auxiliares
@@ -465,6 +492,8 @@ pnpm build
   repositorio externo.
 - Nao importar a biblioteca inteira de GIFs antes de medir peso e impacto no
   PWA.
+- Nao usar URL remota como fonte de imagem/GIF durante a execucao do app.
+- Nao depender do service worker para transformar asset remoto em asset local.
 
 ## Pronto quando
 
@@ -473,4 +502,5 @@ pnpm build
   `visual_id` valido.
 - O JSON importado consegue ligar `exercise_id`/`visual_id` a uma midia local.
 - Exercicios sem correspondencia continuam usando apenas musculos e dicas.
+- Nenhuma midia usada vem de URL remota em runtime.
 - Os checks de catalogo, testes e build passam.
