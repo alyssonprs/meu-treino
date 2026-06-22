@@ -1,19 +1,14 @@
 import {
-  ClipboardList,
   Database,
-  Download,
   FileInput,
-  FileText,
   Info,
   Settings,
   Trash2,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useState } from "react";
-import exerciseCatalogUrl from "@/assets/meu-treino-catalogo-exercicios.json?url";
-import modelJsonUrl from "@/assets/meu-treino-modelo.json?url";
-import promptTemplateUrl from "@/assets/prompt-treino-modelo.md?url";
 import { Button } from "@/components/ui/button";
+import { PromptCopyButton } from "@/features/import-export/PromptCopyButton";
 import type { ActiveWorkoutPlanSnapshot } from "@/storage/workoutPlanRepository";
 import { ThemeSegmentedControl } from "./ThemeSegmentedControl";
 
@@ -66,8 +61,8 @@ export function SettingsScreen({
             title="Plano ativo"
           />
           <p className="mt-4 text-sm leading-6 text-muted-foreground">
-            Substitua o treino atual por outro JSON validado ou baixe o modelo
-            compatível para gerar um novo plano.
+            Substitua o treino atual por outro JSON validado ou copie o prompt
+            pronto para gerar um novo plano com IA.
           </p>
           <div className="mt-4 rounded-md bg-muted p-3">
             <p className="text-sm text-muted-foreground">Plano atual</p>
@@ -82,39 +77,7 @@ export function SettingsScreen({
               <FileInput className="h-5 w-5" aria-hidden="true" />
               Substituir treino atual
             </Button>
-            <Button
-              asChild
-              className="h-12 justify-start gap-3"
-              variant="secondary"
-            >
-              <a download="meu-treino-modelo.json" href={modelJsonUrl}>
-                <Download className="h-5 w-5" aria-hidden="true" />
-                Baixar modelo
-              </a>
-            </Button>
-            <Button
-              asChild
-              className="h-12 justify-start gap-3"
-              variant="secondary"
-            >
-              <a download="prompt-treino-modelo.md" href={promptTemplateUrl}>
-                <FileText className="h-5 w-5" aria-hidden="true" />
-                Baixar prompt
-              </a>
-            </Button>
-            <Button
-              asChild
-              className="h-12 justify-start gap-3"
-              variant="secondary"
-            >
-              <a
-                download="meu-treino-catalogo-exercicios.json"
-                href={exerciseCatalogUrl}
-              >
-                <ClipboardList className="h-5 w-5" aria-hidden="true" />
-                Baixar catalogo
-              </a>
-            </Button>
+            <PromptCopyButton className="h-12 w-full justify-start gap-3" />
           </div>
         </section>
       ) : null}

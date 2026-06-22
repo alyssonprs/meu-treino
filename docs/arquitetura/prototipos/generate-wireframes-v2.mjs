@@ -389,13 +389,13 @@ function screen01(index) {
       "empty-copy",
       x + 60,
       y + 304,
-      "Importe seu treino\nUse um JSON gerado a partir do modelo do app.",
+      "Importe seu treino\nUse um JSON gerado a partir do prompt do app.",
       c,
       { width: 270, size: 19, align: "center", lineHeight: 1.35 },
     ),
   );
   add(button("import-json", x + 48, y + 438, 294, "Importar JSON", c));
-  add(button("download-model", x + 48, y + 508, 294, "Baixar modelo", c, "info"));
+  add(button("copy-prompt", x + 48, y + 508, 294, "Copiar prompt", c, "info"));
   add(rect("local-note", x + 48, y + 598, 294, 104, c));
   add(
     text(
@@ -941,7 +941,7 @@ function screen11(index) {
     ),
   );
   add(button("try-again", x + 32, y + 620, 326, "Escolher outro arquivo", c));
-  add(button("download-template-error", x + 32, y + 690, 326, "Baixar modelo", c, "info"));
+  add(button("copy-prompt-error", x + 32, y + 690, 326, "Copiar prompt", c, "info"));
   add(nav(x, y, c, "Treino"));
 }
 
@@ -990,7 +990,7 @@ function screen13(index) {
     ),
   );
   add(button("settings-replace-plan", x + 56, y + 416, 266, "Substituir treino atual", c, "secondary"));
-  add(button("settings-download-model", x + 56, y + 476, 266, "Baixar modelo", c, "info"));
+  add(button("settings-copy-prompt", x + 56, y + 476, 266, "Copiar prompt", c, "info"));
   add(rect("data-settings", x + 32, y + 552, 326, 112, c));
   add(text("data-title", x + 56, y + 574, "Dados locais", c, { width: 180, size: 18 }));
   add(
@@ -1076,7 +1076,7 @@ function screen15(index) {
     size: 19,
     color: c.info,
   }));
-  add(text("flow-home-empty-copy", x + 56, y + 204, "Home mostra Importar e Baixar modelo.\nAmbas sao acoes diretas.", c, {
+  add(text("flow-home-empty-copy", x + 56, y + 204, "Home mostra Importar e Copiar prompt.\nAmbas sao acoes diretas.", c, {
     width: 260,
     size: 14,
     color: c.muted,

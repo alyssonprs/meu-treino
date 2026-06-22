@@ -3,20 +3,16 @@ import {
   CalendarCheck2,
   ClipboardList,
   Clock3,
-  Download,
   FileInput,
   History,
   Play,
   RefreshCw,
   ShieldCheck,
   TrendingUp,
-  FileText,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import exerciseCatalogUrl from "@/assets/meu-treino-catalogo-exercicios.json?url";
-import modelJsonUrl from "@/assets/meu-treino-modelo.json?url";
-import promptTemplateUrl from "@/assets/prompt-treino-modelo.md?url";
 import { Button } from "@/components/ui/button";
+import { PromptCopyButton } from "@/features/import-export/PromptCopyButton";
 import type {
   CycleProgressSummary,
   ExerciseLoadSummary,
@@ -71,7 +67,7 @@ export function HomeScreen({
             <p className="text-base leading-7 text-muted-foreground">
               {isLoadingActivePlan
                 ? "Buscando os dados salvos neste dispositivo."
-                : "Escolha um JSON de treino. Antes de salvar, o app valida o arquivo e mostra um resumo para confirmação."}
+                : "Escolha um JSON de treino. Para criar um novo plano com IA, copie o prompt pronto e cole no agente de sua preferencia."}
             </p>
           </div>
 
@@ -85,39 +81,7 @@ export function HomeScreen({
               <FileInput className="h-5 w-5" aria-hidden="true" />
               Importar JSON
             </Button>
-            <Button
-              asChild
-              className="h-14 justify-start gap-3 text-base"
-              variant="secondary"
-            >
-              <a download="meu-treino-modelo.json" href={modelJsonUrl}>
-                <Download className="h-5 w-5" aria-hidden="true" />
-                Baixar modelo
-              </a>
-            </Button>
-            <Button
-              asChild
-              className="h-14 justify-start gap-3 text-base"
-              variant="secondary"
-            >
-              <a download="prompt-treino-modelo.md" href={promptTemplateUrl}>
-                <FileText className="h-5 w-5" aria-hidden="true" />
-                Baixar prompt
-              </a>
-            </Button>
-            <Button
-              asChild
-              className="h-14 justify-start gap-3 text-base"
-              variant="secondary"
-            >
-              <a
-                download="meu-treino-catalogo-exercicios.json"
-                href={exerciseCatalogUrl}
-              >
-                <ClipboardList className="h-5 w-5" aria-hidden="true" />
-                Baixar catalogo
-              </a>
-            </Button>
+            <PromptCopyButton className="h-14 w-full justify-start gap-3 text-base" />
           </div>
         </section>
 
@@ -132,8 +96,8 @@ export function HomeScreen({
               title="Funciona offline"
             />
             <BenefitItem
-              description="Baixe o JSON base para gerar um plano compatível."
-              title="Modelo pronto"
+              description="Cole o prompt em uma IA; ele inclui as URLs do modelo e catalogo."
+              title="Prompt pronto"
             />
           </div>
         </section>
@@ -224,7 +188,7 @@ export function HomeScreen({
 
         {cycleProgress?.isComplete ? (
           <p className="mt-4 rounded-md border border-info bg-muted p-3 text-sm leading-6">
-            Ciclo concluído. Baixe o modelo e gere um novo treino.
+            Ciclo concluído. Copie o prompt e gere um novo treino.
           </p>
         ) : null}
       </section>

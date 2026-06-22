@@ -1,0 +1,125 @@
+{
+  "workout_plan": {
+    "plan_id": "modelo-hipertrofia-4-dias",
+    "name": "Hipertrofia 4 dias",
+    "objective": "Ganho de massa muscular com progressao de cargas",
+    "level": "intermediario",
+    "estimated_duration_weeks": 8,
+    "days_per_week": 4,
+    "routines": [
+      {
+        "routine_id": "treino-a",
+        "name": "Treino A - Peito e triceps",
+        "order": 1,
+        "warmup": [
+          {
+            "type": "warmup",
+            "activity": "Esteira leve",
+            "duration_minutes": 8,
+            "notes": "Ritmo confortavel"
+          }
+        ],
+        "exercises": [
+          {
+            "exercise_id": "supino-reto-barra",
+            "name": "Supino reto",
+            "muscle_group": "Peitoral",
+            "equipment": "Barra",
+            "is_unilateral": false,
+            "sets": 4,
+            "target_reps": "8-10",
+            "target_rir": 2,
+            "rest_seconds": 90,
+            "tempo": "2-0-1",
+            "primary_muscles": ["Peitoral maior"],
+            "secondary_muscles": ["Triceps", "Deltoide anterior"],
+            "movement_pattern": "horizontal_push",
+            "visual_id": "exdb_0025",
+            "execution_cues": [
+              "Pes firmes no chao",
+              "Desca com controle",
+              "Empurre sem tirar os ombros do banco"
+            ],
+            "notes": "Controlar a descida"
+          },
+          {
+            "exercise_id": "triceps-corda",
+            "name": "Triceps na corda",
+            "muscle_group": "Triceps",
+            "equipment": "Polia",
+            "is_unilateral": false,
+            "sets": 3,
+            "target_reps": "10-12",
+            "target_rir": 2,
+            "rest_seconds": 75,
+            "primary_muscles": ["Triceps braquial"],
+            "secondary_muscles": ["Antebraco"],
+            "movement_pattern": "elbow_extension",
+            "visual_id": "exdb_0241",
+            "execution_cues": [
+              "Cotovelos perto do tronco",
+              "Estenda ate contrair o triceps",
+              "Volte com controle"
+            ]
+          }
+        ],
+        "cooldown": [
+          {
+            "type": "cooldown",
+            "activity": "Alongamento peitoral",
+            "duration_minutes": 3
+          }
+        ]
+      },
+      {
+        "routine_id": "treino-b",
+        "name": "Treino B - Costas e biceps",
+        "order": 2,
+        "warmup": [],
+        "exercises": [
+          {
+            "exercise_id": "remada-curvada-barra",
+            "name": "Remada curvada",
+            "muscle_group": "Costas",
+            "equipment": "Barra",
+            "is_unilateral": false,
+            "sets": 4,
+            "target_reps": "8-10",
+            "target_rir": 2,
+            "rest_seconds": 90,
+            "primary_muscles": ["Dorsal", "Romboides"],
+            "secondary_muscles": ["Biceps", "Deltoide posterior"],
+            "movement_pattern": "horizontal_pull",
+            "visual_id": "exdb_0027",
+            "execution_cues": [
+              "Tronco firme",
+              "Puxe a barra em direcao ao abdomen",
+              "Controle a descida"
+            ]
+          },
+          {
+            "exercise_id": "rosca-direta-barra",
+            "name": "Rosca direta",
+            "muscle_group": "Biceps",
+            "equipment": "Barra",
+            "is_unilateral": false,
+            "sets": 3,
+            "target_reps": "10-12",
+            "target_rir": 2,
+            "rest_seconds": 75,
+            "primary_muscles": ["Biceps braquial"],
+            "secondary_muscles": ["Braquial", "Antebraco"],
+            "movement_pattern": "elbow_flexion",
+            "visual_id": "exdb_0031",
+            "execution_cues": [
+              "Cotovelos estaveis",
+              "Suba sem balancar o tronco",
+              "Desca com controle"
+            ]
+          }
+        ],
+        "cooldown": []
+      }
+    ]
+  }
+}

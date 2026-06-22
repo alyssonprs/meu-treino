@@ -220,14 +220,14 @@ Atualize esta tabela quando cada tela for aprovada.
 
 ## Prototipos aprovados
 
-Os wireframes finais da primeira versao estao consolidados no arquivo editavel `docs/arquitetura/prototipos/meu-treino-wireframes-v2.excalidraw`. A implementacao visual deve seguir esse arquivo, respeitando os tokens definidos em `docs/arquitetura/identidade-visual-opcoes.md`. No fluxo V2, `UX-09` e `UX-12` nao existem como telas: selecionar JSON e baixar modelo sao acoes diretas a partir de `UX-01` ou `UX-13`.
+Os wireframes finais da primeira versao estao consolidados no arquivo editavel `docs/arquitetura/prototipos/meu-treino-wireframes-v2.excalidraw`. A implementacao visual deve seguir esse arquivo, respeitando os tokens definidos em `docs/arquitetura/identidade-visual-opcoes.md`. No fluxo V2, `UX-09` e `UX-12` nao existem como telas: selecionar JSON e copiar o prompt para IA sao acoes diretas a partir de `UX-01` ou `UX-13`.
 
 ### UX-01 - Inicio sem treino importado
 
 Pontos aprovados:
 
 - A acao principal `Importar JSON` esta clara.
-- A acao secundaria `Baixar modelo` aparece no momento certo.
+- A acao secundaria `Copiar prompt para IA` aparece no momento certo.
 - O estado vazio transmite que os dados ficam locais.
 - Ajuste sugerido: trocar o status `Local Offline` por algo menos ambiguo, como `Dados locais` ou `Offline pronto`.
 

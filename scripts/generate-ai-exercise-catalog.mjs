@@ -2,6 +2,7 @@ import { readFile, writeFile } from "node:fs/promises";
 
 const INPUT_PATH = "src/config/exercise-media-library.json";
 const OUTPUT_PATH = "src/assets/meu-treino-catalogo-exercicios.json";
+const PUBLIC_OUTPUT_PATH = "public/meu-treino-catalogo-exercicios.json";
 
 const library = JSON.parse(await readFile(INPUT_PATH, "utf8"));
 
@@ -43,10 +44,15 @@ const catalog = library.exercises.map((exercise) => {
   };
 });
 
-await writeFile(OUTPUT_PATH, `${JSON.stringify(catalog, null, 2)}\n`);
+const catalogJson = `${JSON.stringify(catalog, null, 2)}\n`;
+
+await Promise.all([
+  writeFile(OUTPUT_PATH, catalogJson),
+  writeFile(PUBLIC_OUTPUT_PATH, catalogJson),
+]);
 
 console.log(
-  `Generated ${OUTPUT_PATH} with ${catalog.length} exercise catalog items.`,
+  `Generated ${OUTPUT_PATH} and ${PUBLIC_OUTPUT_PATH} with ${catalog.length} exercise catalog items.`,
 );
 
 function normalizeRequiredString(value, fieldName) {

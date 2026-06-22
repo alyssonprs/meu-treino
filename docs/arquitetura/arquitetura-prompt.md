@@ -6,7 +6,7 @@ Voce e um engenheiro de software senior especializado em aplicativos mobile web 
 
 Criar um app para o aluno importar um plano de treino em JSON, executar os treinos, registrar progresso por exercicio, acompanhar cargas usadas em cada exercicio e saber quando ja completou treinos suficientes para pedir um novo plano.
 
-O app tambem deve disponibilizar para download um JSON de modelo, um prompt recomendado e um catalogo resumido de exercicios com `visual_id` e metadados de escolha, para que o aluno ou professor possa enviar esses arquivos a uma IA e pedir a geracao de um novo treino compativel com o aplicativo.
+O app tambem deve disponibilizar um prompt recomendado copiavel, com instrucao para a IA buscar por GET o JSON de modelo e o catalogo resumido de exercicios com `visual_id` e metadados de escolha. Assim, o aluno ou professor pode colar um unico prompt em uma IA e pedir a geracao de um novo treino compativel com o aplicativo.
 
 ## Decisoes arquiteturais
 
@@ -74,7 +74,7 @@ Organizar o projeto em camadas simples:
 
 - `src/app`: bootstrap da aplicacao, rotas, providers e configuracao do Capacitor.
 - `src/features/workouts`: telas e componentes de treino, rotinas, exercicios e sessao ativa.
-- `src/features/import-export`: importacao do JSON, validacao, preview, substituicao do plano ativo e download do modelo.
+- `src/features/import-export`: importacao do JSON, validacao, preview, substituicao do plano ativo e copia do prompt recomendado para gerar novo treino.
 - `src/features/progress`: historico de cargas, resumo de progresso e aviso de ciclo concluido.
 - `src/features/settings`: configuracoes locais, incluindo escolha de tema claro/escuro.
 - `src/components`: componentes visuais reutilizaveis.
@@ -84,7 +84,8 @@ Organizar o projeto em camadas simples:
 - `src/storage`: repositorios e adaptadores SQLite/IndexedDB.
 - `src/platform`: adaptadores para recursos especificos de PWA ou Android, como download, compartilhamento, arquivos e armazenamento.
 - `src/theme`: tokens visuais, variaveis CSS e configuracao de tema claro/escuro.
-- `src/assets`: arquivos `meu-treino-modelo.json`, `prompt-treino-modelo.md` e `meu-treino-catalogo-exercicios.json` usados no download do modelo, do prompt recomendado e do catalogo publico de `visual_id`.
+- `src/assets`: arquivos fonte `meu-treino-modelo.json`, `prompt-treino-modelo.md` e `meu-treino-catalogo-exercicios.json` usados para copiar o prompt recomendado e manter os contratos auxiliares.
+- `public`: deve expor `meu-treino-modelo.json` e `meu-treino-catalogo-exercicios.json` em URLs estaveis para GET pela IA. No dominio de producao atual, as URLs sao `https://meu-treino-8gq.pages.dev/meu-treino-modelo.json` e `https://meu-treino-8gq.pages.dev/meu-treino-catalogo-exercicios.json`.
 - O catalogo publico de exercicios deve ser gerado a partir de `src/config/exercise-media-library.json`, mas deve expor somente dados seguros para a IA escolher o exercicio: `visual_id`, `name`, `equipment`, `body_part`, `target`, `secondary_muscles` e `movement_pattern`. Ele nao deve expor `image_asset`, `animation_asset`, paths internos, URLs de midia ou metadados de origem/licenca.
 
 ### Backend local
@@ -95,7 +96,7 @@ Tratar o "backend" como uma camada local de servicos TypeScript dentro do aplica
 - `WorkoutSessionService`: inicia, atualiza e finaliza uma sessao de treino, registrando carga e repeticoes uma vez por exercicio na primeira versao.
 - `RoutineRecommendationService`: identifica a proxima rotina recomendada com base na ultima rotina finalizada no plano ativo.
 - `ProgressService`: calcula treinos completos, cargas anteriores e evolucao por exercicio.
-- `TemplateExportService`: fornece o JSON de modelo, o prompt recomendado e o catalogo resumido de exercicios para download ou compartilhamento.
+- `TemplateExportService`: fornece o prompt recomendado para copia/compartilhamento e mantem o JSON de modelo e o catalogo resumido de exercicios acessiveis por GET publico.
 - `ExerciseMatchService`: reaproveita cargas antigas quando o novo plano contem exercicios ja realizados.
 
 Essa camada nao deve depender diretamente da UI. A UI chama servicos e repositorios por interfaces.
@@ -221,7 +222,7 @@ Regra simples para aviso de novo treino:
 - Execucao de exercicio: marcar series concluidas durante o exercicio para disparar descanso entre series; registrar carga e repeticoes apenas no fim do exercicio; mostrar orientacao visual opcional em painel recolhido por padrao, abrindo por `Ver como fazer`; RIR nao aparece como campo obrigatorio na primeira versao e fica reservado para melhoria futura.
 - Historico: treinos concluidos e evolucao de carga por exercicio.
 - Importar treino: acao contextual na Home sem treino ou em Configuracoes com treino ativo; selecionar JSON, validar, mostrar preview e substituir plano atual.
-- Baixar arquivos auxiliares: acao contextual na Home sem treino ou em Configuracoes com treino ativo; executa download direto de `meu-treino-modelo.json` e deve aparecer junto das acoes para baixar `prompt-treino-modelo.md` e `meu-treino-catalogo-exercicios.json`.
+- Criar treino com IA: acao contextual na Home sem treino ou em Configuracoes com treino ativo; copia o conteudo de `prompt-treino-modelo.md`. O prompt deve instruir a IA a buscar por GET `meu-treino-modelo.json` e `meu-treino-catalogo-exercicios.json` nas URLs publicas do app.
 - Configuracoes: exportar backup local, apagar dados locais e informacoes da versao.
 
 ### Direcao de usabilidade aprovada
@@ -274,7 +275,7 @@ Regras:
 - Importar um novo JSON de treino.
 - Validar estrutura antes de salvar.
 - Substituir o treino ativo atual.
-- Baixar o JSON de modelo, o prompt recomendado e o catalogo resumido de exercicios.
+- Copiar o prompt recomendado para IA, com URLs GET do JSON de modelo e do catalogo resumido de exercicios.
 - Visualizar plano ativo e rotinas.
 - Recomendar automaticamente a proxima rotina com base na ultima rotina finalizada.
 - Escolher entre tema claro e tema escuro.
@@ -315,7 +316,7 @@ Regras:
 
 ## Criterios de aceite da primeira versao
 
-- O usuario consegue baixar o JSON de modelo, o prompt recomendado e o catalogo resumido de exercicios pelo app.
+- O usuario consegue copiar o prompt recomendado pelo app, e esse prompt contem as URLs GET do JSON de modelo e do catalogo resumido de exercicios.
 - O usuario consegue importar um JSON valido seguindo o modelo.
 - O app exibe o plano importado com rotinas e exercicios.
 - O app recomenda a primeira rotina quando nenhum treino foi finalizado no plano ativo.

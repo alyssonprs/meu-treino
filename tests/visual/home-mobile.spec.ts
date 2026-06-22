@@ -52,9 +52,9 @@ test("mobile visual regression covers first use, import, active home, settings a
     page.getByRole("heading", { name: "Importe seu treino para começar" }),
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "Importar JSON" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Baixar modelo" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Baixar prompt" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Baixar catalogo" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Copiar prompt para IA" }),
+  ).toBeVisible();
   await expect(page.getByRole("button", { name: "Início" })).toHaveAttribute(
     "aria-current",
     "page",
@@ -82,9 +82,9 @@ test("mobile visual regression covers first use, import, active home, settings a
   await expect(page.getByRole("button", { name: "Importar JSON" })).toHaveCount(
     0,
   );
-  await expect(page.getByRole("link", { name: "Baixar modelo" })).toHaveCount(0);
-  await expect(page.getByRole("link", { name: "Baixar prompt" })).toHaveCount(0);
-  await expect(page.getByRole("link", { name: "Baixar catalogo" })).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Copiar prompt para IA" }),
+  ).toHaveCount(0);
   await assertMobileUsability(page);
 
   await screenshot(page, "07-home-ativa-sem-json.png");
@@ -96,27 +96,10 @@ test("mobile visual regression covers first use, import, active home, settings a
   await expect(
     page.getByRole("button", { name: "Substituir treino atual" }),
   ).toBeVisible();
-  await expect(page.getByRole("link", { name: "Baixar modelo" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Baixar prompt" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Baixar catalogo" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Copiar prompt para IA" }),
+  ).toBeVisible();
   await expect(page.getByText("0.1.0")).toBeVisible();
-
-  const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("link", { name: "Baixar modelo" }).click();
-  const download = await downloadPromise;
-  expect(download.suggestedFilename()).toBe("meu-treino-modelo.json");
-
-  const promptDownloadPromise = page.waitForEvent("download");
-  await page.getByRole("link", { name: "Baixar prompt" }).click();
-  const promptDownload = await promptDownloadPromise;
-  expect(promptDownload.suggestedFilename()).toBe("prompt-treino-modelo.md");
-
-  const catalogDownloadPromise = page.waitForEvent("download");
-  await page.getByRole("link", { name: "Baixar catalogo" }).click();
-  const catalogDownload = await catalogDownloadPromise;
-  expect(catalogDownload.suggestedFilename()).toBe(
-    "meu-treino-catalogo-exercicios.json",
-  );
 
   await page.getByRole("radio", { name: "Claro" }).click();
   await expect
@@ -140,7 +123,9 @@ test("mobile visual regression covers first use, import, active home, settings a
   await expect(page.getByText(/Exerc.cios da rotina/)).toBeVisible();
   await expect(page.getByRole("button", { name: /Abrir/ })).toHaveCount(0);
   await expect(page.getByText("Supino reto").first()).toBeVisible();
-  await expect(page.getByRole("heading", { name: /S.rie 1 de 4/ })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /Concluir s.rie 1/ }),
+  ).toBeVisible();
   await assertMobileUsability(page);
 
   await screenshot(page, "09-ux-03-detalhe-treino.png");
@@ -162,9 +147,7 @@ test("mobile visual regression covers first use, import, active home, settings a
   await page
     .getByRole("button", { name: /Treino B - Costas e biceps/ })
     .click();
-  await expect(
-    page.getByRole("heading", { name: "Treino B - Costas e biceps" }),
-  ).toBeVisible();
+  await expect(page.getByText("Treino B - Costas e biceps")).toBeVisible();
   await expect(page.getByText("Remada curvada").first()).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Treino em andamento" }),
@@ -186,7 +169,9 @@ test("active workout keeps bottom nav hidden and shows integrated rest, finish a
   await expect(
     page.getByRole("heading", { name: "Treino em andamento" }),
   ).toBeVisible();
-  await expect(page.getByRole("heading", { name: /S.rie 1 de 2/ })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /Concluir s.rie 1/ }),
+  ).toBeVisible();
   await expect(page.getByLabel("Aumentar RIR")).toHaveCount(0);
   await expect(page.getByRole("navigation")).toHaveCount(0);
   await expect(page.getByRole("button", { name: /Ver como fazer/ })).toBeVisible();
@@ -199,18 +184,19 @@ test("active workout keeps bottom nav hidden and shows integrated rest, finish a
 
   await page.getByRole("button", { name: "Ocultar" }).click();
 
-  await page.getByRole("button", { name: /S.rie conclu.da/ }).click();
+  await page.getByRole("button", { name: /Concluir s.rie 1/ }).click();
 
   await expect(page.getByText(/Descanso ap.s s.rie/)).toBeVisible();
   await expect(page.getByRole("button", { name: "+30s" })).toBeVisible();
-  await expect(page.getByRole("button", { name: /Pr.xima s.rie/ })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /^Concluir s.rie$/ }),
+  ).toBeVisible();
   await expect(page.getByRole("navigation")).toHaveCount(0);
   await assertNoHorizontalOverflow(page);
 
   await screenshot(page, "13-ux-04-descanso-integrado.png");
 
-  await page.getByRole("button", { name: /Pr.xima s.rie/ }).click();
-  await page.getByRole("button", { name: /S.rie conclu.da/ }).click();
+  await page.getByRole("button", { name: /^Concluir s.rie$/ }).click();
   await expect(
     page.getByRole("heading", { name: "Registrar resultado" }),
   ).toBeVisible();
@@ -268,9 +254,9 @@ test("invalid import shows the dedicated recovery screen", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: "Escolher outro arquivo" }),
   ).toBeVisible();
-  await expect(page.getByRole("link", { name: "Baixar modelo" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Baixar prompt" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Baixar catalogo" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Copiar prompt para IA" }),
+  ).toBeVisible();
   await assertMobileUsability(page);
 
   await screenshot(page, "08-ux-11-erro-importacao.png");

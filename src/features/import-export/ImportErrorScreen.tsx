@@ -1,14 +1,9 @@
 import {
   AlertCircle,
-  ClipboardList,
-  Download,
-  FileText,
   RotateCcw,
 } from "lucide-react";
-import exerciseCatalogUrl from "@/assets/meu-treino-catalogo-exercicios.json?url";
-import modelJsonUrl from "@/assets/meu-treino-modelo.json?url";
-import promptTemplateUrl from "@/assets/prompt-treino-modelo.md?url";
 import { Button } from "@/components/ui/button";
+import { PromptCopyButton } from "./PromptCopyButton";
 import type { ImportStatus } from "./importStatus";
 
 type ImportErrorStatus = Extract<ImportStatus, { state: "error" }>;
@@ -38,7 +33,8 @@ export function ImportErrorScreen({
 
       <p className="mt-4 text-sm leading-6 text-muted-foreground">
         O arquivo não segue o modelo esperado pelo app. Confira o detalhe
-        técnico abaixo ou tente importar outro JSON.
+        técnico abaixo, tente importar outro JSON ou copie o prompt para gerar
+        um plano compatível.
       </p>
 
       <ul className="mt-4 space-y-2 rounded-md bg-muted p-3">
@@ -62,27 +58,7 @@ export function ImportErrorScreen({
           <RotateCcw className="h-5 w-5" aria-hidden="true" />
           Escolher outro arquivo
         </Button>
-        <Button asChild className="h-12 w-full gap-2" variant="secondary">
-          <a download="meu-treino-modelo.json" href={modelJsonUrl}>
-            <Download className="h-5 w-5" aria-hidden="true" />
-            Baixar modelo
-          </a>
-        </Button>
-        <Button asChild className="h-12 w-full gap-2" variant="secondary">
-          <a download="prompt-treino-modelo.md" href={promptTemplateUrl}>
-            <FileText className="h-5 w-5" aria-hidden="true" />
-            Baixar prompt
-          </a>
-        </Button>
-        <Button asChild className="h-12 w-full gap-2" variant="secondary">
-          <a
-            download="meu-treino-catalogo-exercicios.json"
-            href={exerciseCatalogUrl}
-          >
-            <ClipboardList className="h-5 w-5" aria-hidden="true" />
-            Baixar catalogo
-          </a>
-        </Button>
+        <PromptCopyButton className="h-12 w-full gap-2" />
       </div>
     </section>
   );
