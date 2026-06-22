@@ -3,7 +3,6 @@ import type { LucideIcon } from "lucide-react";
 export type AppScreen =
   | "home"
   | "workout"
-  | "routine-detail"
   | "history"
   | "settings"
   | "import-preview"

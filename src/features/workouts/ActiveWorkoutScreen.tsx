@@ -380,7 +380,11 @@ export function ActiveWorkoutScreen({
         </p>
       ) : null}
 
-      <ExerciseStatusList draft={draft} onSelectExercise={onSelectExercise} />
+      <ExerciseStatusList
+        draft={draft}
+        loadHistoryByExerciseId={loadHistoryByExerciseId}
+        onSelectExercise={onSelectExercise}
+      />
 
       <div className="grid grid-cols-2 gap-3 pb-2">
         <Button
@@ -690,9 +694,11 @@ function SetProgress({
 
 function ExerciseStatusList({
   draft,
+  loadHistoryByExerciseId,
   onSelectExercise,
 }: {
   draft: WorkoutSessionDraft;
+  loadHistoryByExerciseId: Map<string, ExerciseLoadHistoryRecord>;
   onSelectExercise: (exerciseIndex: number) => void;
 }) {
   return (
@@ -701,10 +707,17 @@ function ExerciseStatusList({
         Exercícios da rotina
       </p>
       <div className="mt-3 space-y-2">
+        <RoutineStepList
+          label="Aquecimento"
+          steps={draft.routine.warmup}
+          variant="warmup"
+        />
+
         {draft.routine.exercises.map((exercise, index) => {
           const exerciseDraft = draft.exercises[index];
           const status = getExerciseStatus(draft, index);
           const statusMeta = getExerciseStatusMeta(status);
+          const loadHistory = loadHistoryByExerciseId.get(exercise.exerciseId);
           const completedSetsCount = exerciseDraft.completedSets.filter(
             (set) => set.completedAt !== null,
           ).length;
@@ -716,6 +729,7 @@ function ExerciseStatusList({
               exerciseIndex={index}
               isCurrent={draft.currentExerciseIndex === index}
               key={exercise.id}
+              loadHistory={loadHistory}
               onSelectExercise={onSelectExercise}
               status={status}
               statusMeta={statusMeta}
@@ -723,7 +737,58 @@ function ExerciseStatusList({
             />
           );
         })}
+
+        <RoutineStepList
+          label="Cooldown"
+          steps={draft.routine.cooldown}
+          variant="cooldown"
+        />
       </div>
+    </div>
+  );
+}
+
+function RoutineStepList({
+  label,
+  steps,
+  variant,
+}: {
+  label: string;
+  steps: WorkoutSessionDraft["routine"]["warmup"];
+  variant: "warmup" | "cooldown";
+}) {
+  if (steps.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="space-y-2">
+      <p className="px-1 text-xs font-semibold uppercase tracking-wide text-info">
+        {label}
+      </p>
+      {steps.map((step) => (
+        <div
+          className={cn(
+            "rounded-md border p-3 text-sm",
+            variant === "warmup"
+              ? "border-warning/40 bg-warning/10"
+              : "border-info/40 bg-info/10",
+          )}
+          key={step.id}
+        >
+          <div className="flex items-start justify-between gap-3">
+            <p className="font-semibold">{step.activity}</p>
+            <span className="shrink-0 rounded-md bg-background px-2 py-1 text-xs font-medium text-muted-foreground">
+              {step.duration_minutes} min
+            </span>
+          </div>
+          {step.notes ? (
+            <p className="mt-2 text-xs leading-5 text-muted-foreground">
+              {step.notes}
+            </p>
+          ) : null}
+        </div>
+      ))}
     </div>
   );
 }
@@ -736,6 +801,7 @@ function ExerciseStatusButton({
   statusMeta,
   totalSets,
   isCurrent,
+  loadHistory,
   onSelectExercise,
 }: {
   completedSetsCount: number;
@@ -745,6 +811,7 @@ function ExerciseStatusButton({
   statusMeta: ReturnType<typeof getExerciseStatusMeta>;
   totalSets: number;
   isCurrent: boolean;
+  loadHistory: ExerciseLoadHistoryRecord | undefined;
   onSelectExercise: (exerciseIndex: number) => void;
 }) {
   return (
@@ -778,7 +845,17 @@ function ExerciseStatusButton({
         </span>
       </span>
       <span className="mt-3 block rounded-md bg-background/70 p-3 text-xs leading-5 text-muted-foreground">
-        {statusMeta.description} · {completedSetsCount}/{totalSets} séries
+        {statusMeta.description} · {exercise.sets}x {exercise.target_reps}
+        {typeof exercise.target_rir === "number"
+          ? ` · RIR alvo ${exercise.target_rir}`
+          : ""}
+        {" · "}
+        {exercise.rest_seconds ?? 90}s descanso · {completedSetsCount}/
+        {totalSets} séries
+        <br />
+        {loadHistory
+          ? `Última carga: ${formatLoad(loadHistory.lastLoadKg)} kg x ${loadHistory.lastReps}`
+          : "Sem carga anterior"}
       </span>
     </button>
   );

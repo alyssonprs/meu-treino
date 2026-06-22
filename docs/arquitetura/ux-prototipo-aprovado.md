@@ -78,8 +78,8 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 | UX-01 | Inicio sem treino importado | Explicar estado vazio e levar para importar JSON ou baixar modelo | Aprovada |
 | UX-02 | Inicio com treino ativo | Mostrar plano ativo, proximo treino recomendado, progresso do ciclo e botao iniciar | Aprovada |
 | Treino | Lista de rotinas do plano | Listar todas as rotinas pelo menu Treino e destacar a rotina recomendada | Aprovada |
-| UX-03 | Detalhe da rotina selecionada | Mostrar aquecimento, exercicios, cargas sugeridas e abrir execucao ao tocar em um exercicio | Aprovada |
-| UX-04 | Execucao do treino | Marcar series concluidas, ver descanso entre series e registrar carga/reps apenas ao final do exercicio | Aprovada com ajustes |
+| UX-03 | Detalhe da rotina selecionada | Removida; conteudo absorvido pela lista `Exercicios da rotina` dentro da UX-04 | Substituida pela UX-04 |
+| UX-04 | Execucao do treino | Mostrar lista da rotina com aquecimento, exercicios e cooldown; marcar series concluidas, ver descanso entre series e registrar carga/reps apenas ao final do exercicio | Aprovada com ajustes |
 | UX-05 | Descanso integrado na UX-04 | Nao criar tela separada; controlar descanso entre series dentro da UX-04 | Substituida pela UX-04 |
 | UX-06 | Finalizacao do treino | Confirmar treino concluido, salvar ultima rotina e mostrar proxima recomendacao | Aprovada |
 | UX-07 | Historico | Listar treinos concluidos e evolucao basica de carga | Aprovada |
@@ -106,9 +106,9 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 1. Usuario abre o app.
 2. App mostra proximo treino recomendado.
 3. Usuario toca em `Iniciar treino`.
-4. App abre a `UX-03` da rotina recomendada.
-5. Usuario toca no exercicio que vai fazer.
-6. App abre a `UX-04` diretamente naquele exercicio.
+4. App abre a `UX-04` da rotina recomendada com a lista `Exercicios da rotina`.
+5. A lista mostra aquecimento, exercicios e cooldown com separacao por tipo.
+6. Usuario toca no exercicio que vai fazer, quando quiser iniciar por outro exercicio.
 7. Usuario inicia o exercicio sem preencher carga e reps.
 8. Entre as series, usuario marca a serie como concluida e ve o descanso integrado.
 9. Ao terminar as series do exercicio, usuario registra carga e reps uma vez.
@@ -123,9 +123,8 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 2. App lista todas as rotinas do plano ativo.
 3. App destaca a rotina recomendada, sem bloquear as outras rotinas.
 4. Usuario toca na rotina que quer executar no dia.
-5. App abre a `UX-03` da rotina selecionada.
-6. Usuario toca no exercicio que vai fazer.
-7. App abre a `UX-04` diretamente naquele exercicio.
+5. App abre a `UX-04` da rotina selecionada.
+6. Usuario usa a lista `Exercicios da rotina` para ver aquecimento, exercicios, cooldown e escolher o exercicio inicial.
 
 ### Troca de treino
 
@@ -152,7 +151,7 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 - Botao primario grande para iniciar treino.
 - Lista de rotinas do plano acessivel pelo item `Treino` da navegacao inferior.
 - Selo visual para a rotina recomendada dentro da lista de rotinas.
-- Lista compacta de exercicios.
+- Lista compacta de exercicios dentro da execucao, com separacao para aquecimento, exercicios e cooldown.
 - Controle de series concluidas durante o exercicio.
 - Guia visual recolhivel durante o exercicio, aberto por `Ver como fazer`, com musculo principal, musculos auxiliares e dicas curtas.
 - Registro de exercicio com carga e reps no fim do exercicio, uma vez por exercicio na primeira versao.
@@ -210,11 +209,12 @@ Atualize esta tabela quando cada tela for aprovada.
 | --- | --- | --- | --- |
 | UX-00 | Modelo Guiada escolhido como base | Combinar tela inicial do modelo 1 com execucao focada inspirada no modelo 3 | 2026-06-15 |
 | UX-01..UX-14 | Prototipo V2 final aprovado, com UX-09 e UX-12 removidas como telas independentes | Usar `docs/arquitetura/prototipos/meu-treino-wireframes-v2.excalidraw` como unico guia editavel vigente | 2026-06-17 |
-| Treino e UX-03 | Fluxo de escolha manual de rotina aprovado | O menu `Treino` lista todas as rotinas do plano, destaca a recomendada e abre a `UX-03` da rotina escolhida; a Home continua abrindo a `UX-03` da recomendada | 2026-06-19 |
+| Treino e UX-04 | Fluxo de escolha manual de rotina atualizado | O menu `Treino` lista todas as rotinas do plano, destaca a recomendada e abre a `UX-04` da rotina escolhida; a Home tambem abre a `UX-04` da recomendada | 2026-06-19 |
 | UX-04 | Registro por exercicio aprovado | A primeira versao registra carga e repeticoes uma vez por exercicio, sem RIR obrigatorio na UI; RIR pode continuar opcional/nulo no dominio e storage para evolucao futura | 2026-06-19 |
 | UX-04 | Ajuste apos primeiro uso real | Usuario deve conseguir marcar cada serie como concluida para acompanhar descanso entre series; carga e repeticoes continuam sendo informadas apenas no fim do exercicio; remover pausa e cancelar do topo da tela de exercicio | 2026-06-19 |
 | UX-04 | Guia visual do exercicio aprovado | Orientacao fica recolhida por padrao e abre por `Ver como fazer`; quando aberta, prioriza musculo principal, secundarios em cor mais fria, seta de movimento quando houver asset e ate 3 dicas curtas | 2026-06-20 |
 | UX-04 | Evolucao do guia visual | Seguir `.agents/plano-incorporacao-biblioteca-exercicios.md`: imagem aparece somente quando houver asset especifico validado; `movement_pattern` fica restrito a classificacao e dicas, sem imagem generica | 2026-06-21 |
+| UX-03 e UX-04 | UX-03 removida | A lista `Exercicios da rotina` da UX-04 absorve aquecimento e cooldown com separacao por tipo, lista completa de exercicios, selecao do exercicio inicial, resumo planejado e carga sugerida/ultima carga por exercicio | 2026-06-22 |
 
 ## Prototipos aprovados
 
@@ -242,6 +242,10 @@ Pontos aprovados:
 
 Pontos aprovados:
 
+- A `UX-03` nao existe mais como tela independente; a `UX-04` recebe a rotina diretamente a partir da Home ou do menu `Treino`.
+- A lista `Exercicios da rotina` deve mostrar aquecimento e cooldown com separacao de tipo, alem da lista completa de exercicios.
+- A lista `Exercicios da rotina` permite selecionar o exercicio inicial ou alternar para outro exercicio da rotina.
+- O resumo do exercicio na lista deve incluir series planejadas, repeticoes, RIR alvo quando existir, descanso, progresso de series e carga sugerida/ultima carga por exercicio.
 - O card de descanso deve aparecer entre series depois de marcar uma serie como concluida.
 - O exercicio atual tem destaque suficiente.
 - Os controles de carga e reps parecem confortaveis para uso com uma mao.

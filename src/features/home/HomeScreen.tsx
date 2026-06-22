@@ -34,7 +34,8 @@ type HomeScreenProps = {
   workoutMessage: string | null;
   onChooseImportFile: () => void;
   onGoToHistory: () => void;
-  onOpenWorkoutDetail: () => void;
+  onOpenWorkoutList: () => void;
+  onStartRecommendedWorkout: () => void;
 };
 
 export function HomeScreen({
@@ -46,7 +47,8 @@ export function HomeScreen({
   workoutMessage,
   onChooseImportFile,
   onGoToHistory,
-  onOpenWorkoutDetail,
+  onOpenWorkoutList,
+  onStartRecommendedWorkout,
 }: HomeScreenProps) {
   if (!activePlan) {
     return (
@@ -255,7 +257,7 @@ export function HomeScreen({
 
           <Button
             className="mt-5 h-14 w-full gap-3 text-base"
-            onClick={onOpenWorkoutDetail}
+            onClick={onStartRecommendedWorkout}
             type="button"
           >
             <Play className="h-5 w-5" aria-hidden="true" />
@@ -292,7 +294,7 @@ export function HomeScreen({
         <ShortcutButton
           icon={ClipboardList}
           label="Ver plano"
-          onClick={onOpenWorkoutDetail}
+          onClick={onOpenWorkoutList}
         />
         <ShortcutButton icon={History} label="Histórico" onClick={onGoToHistory} />
       </div>

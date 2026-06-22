@@ -366,7 +366,7 @@ function routineCard(prefix, x, y, colors, title, meta, status, opts = {}) {
       align: "right",
       color: opts.recommended ? colors.primary : colors.info,
     }),
-    text(`${prefix}-action`, x + 218, y + 52, "Abrir UX-03 >", colors, {
+    text(`${prefix}-action`, x + 218, y + 52, "Abrir UX-04 >", colors, {
       width: 90,
       size: 12,
       align: "right",
@@ -452,7 +452,7 @@ function screen02(index) {
   );
   add(button("start-workout", x + 56, y + 500, 278, "Iniciar treino", c));
   add(
-    text("start-note", x + 78, y + 564, "Ao tocar, abre UX-03 antes da execucao.", c, {
+    text("start-note", x + 78, y + 564, "Ao tocar, abre a UX-04 da rotina recomendada.", c, {
       width: 234,
       size: 12,
       align: "center",
@@ -535,91 +535,11 @@ function screen03(index) {
     "45 min | 6 exercicios | 60-90s",
     "Disponivel",
   ));
-  add(text("routine-list-note", x + 52, y + 720, "Tocar em uma rotina abre a UX-03 com o detalhe dela.", c, {
+  add(text("routine-list-note", x + 52, y + 720, "Tocar em uma rotina abre a UX-04 com a lista da rotina.", c, {
     width: 286,
     size: 14,
     align: "center",
     color: c.weak,
-  }));
-  add(nav(x, y, c, "Treino"));
-}
-
-function screen03Detail(index) {
-  const [x, y] = pos(index);
-  const c = dark;
-  add(phoneFrame(x, y, "UX-03 Detalhe da rotina selecionada", c));
-  add(text("back-title", x + 24, y + 74, "< Treino B - Superiores", c, {
-    width: 270,
-    size: 18,
-  }));
-  add(rect("summary-card", x + 32, y + 124, 326, 122, c));
-  add(text("summary-title", x + 56, y + 148, "Lista de exercicios", c, {
-    width: 210,
-    size: 21,
-  }));
-  add(
-    text(
-      "summary-meta",
-      x + 56,
-      y + 184,
-      "Aberta pela Home recomendada ou pela lista de rotinas. Toque no exercicio que vai fazer agora.",
-      c,
-      { width: 270, size: 14, color: c.muted, lineHeight: 1.35 },
-    ),
-  );
-  add(text("tap-hint", x + 56, y + 216, "Cada item abre UX-04 diretamente.", c, {
-    width: 250,
-    size: 14,
-    color: c.info,
-  }));
-  add(text("section-warmup", x + 32, y + 270, "Aquecimento", c, {
-    width: 180,
-    size: 16,
-    color: c.info,
-  }));
-  add(rect("warmup-row", x + 32, y + 300, 326, 54, c));
-  add(text("warmup-text", x + 52, y + 316, "Mobilidade + 5 min esteira", c, {
-    width: 250,
-    size: 15,
-    color: c.muted,
-  }));
-  add(text("section-exercises", x + 32, y + 378, "Exercicios do treino", c, {
-    width: 180,
-    size: 16,
-    color: c.info,
-  }));
-  add(exerciseRow("ex1", x + 32, y + 406, c, "Supino reto", "3x 8-10 | RIR alvo 2", "50 kg"));
-  add(text("ex1-action", x + 244, y + 440, "Abrir >", c, {
-    width: 76,
-    size: 13,
-    align: "right",
-    color: c.primary,
-  }));
-  add(exerciseRow("ex2", x + 32, y + 492, c, "Remada baixa", "3x 10-12 | RIR alvo 2", "45 kg"));
-  add(text("ex2-action", x + 244, y + 526, "Abrir >", c, {
-    width: 76,
-    size: 13,
-    align: "right",
-    color: c.primary,
-  }));
-  add(exerciseRow("ex3", x + 32, y + 578, c, "Desenvolvimento", "3x 8-10 | RIR alvo 2", "22 kg"));
-  add(text("ex3-action", x + 244, y + 612, "Abrir >", c, {
-    width: 76,
-    size: 13,
-    align: "right",
-    color: c.primary,
-  }));
-  add(text("more-exercises", x + 52, y + 666, "+ 3 exercicios e cooldown", c, {
-    width: 240,
-    size: 15,
-    color: c.weak,
-  }));
-  add(rect("detail-rule", x + 48, y + 704, 294, 48, c, { stroke: c.info }));
-  add(text("detail-rule-copy", x + 66, y + 718, "Sem botao global: toque em um exercicio.", c, {
-    width: 258,
-    size: 14,
-    align: "center",
-    color: c.info,
   }));
   add(nav(x, y, c, "Treino"));
 }
@@ -633,52 +553,89 @@ function screen04(index) {
       "active-head",
       x + 24,
       y + 74,
-      "< Lista de exercicios        Pausar   Parar\nRemada baixa | exercicio 2 de 6",
+      "< Treino B - Superiores\nExecucao com lista da rotina",
       c,
       { width: 342, size: 16, lineHeight: 1.35 },
     ),
   );
   add(progressBar("routine-progress", x + 32, y + 124, 326, 0.33, c, { h: 8 }));
-  add(rect("timer-compact", x + 32, y + 150, 326, 142, c, { stroke: c.info }));
-  add(text("timer-compact-copy", x + 56, y + 160, "Descanso apos serie salva", c, {
+  add(rect("routine-steps", x + 32, y + 150, 326, 222, c));
+  add(text("routine-steps-title", x + 56, y + 168, "Exercicios da rotina", c, {
+    width: 220,
+    size: 18,
+    color: c.info,
+  }));
+  add(text("routine-warmup-label", x + 56, y + 202, "Aquecimento", c, {
+    width: 120,
+    size: 12,
+    color: c.warning,
+  }));
+  add(text("routine-warmup-row", x + 56, y + 224, "Mobilidade + 5 min esteira", c, {
+    width: 250,
+    size: 13,
+    color: c.muted,
+  }));
+  add(text("routine-ex-label", x + 56, y + 252, "Exercicios", c, {
+    width: 120,
+    size: 12,
+    color: c.info,
+  }));
+  add(text("routine-ex-row", x + 56, y + 274, "Supino reto | Pendente | 3x 8-10 | Ultima: 50 kg\nRemada baixa | Em progresso | 3x 10-12 | Ultima: 45 kg", c, {
+    width: 270,
+    size: 12,
+    color: c.muted,
+    lineHeight: 1.4,
+  }));
+  add(text("routine-cooldown-label", x + 56, y + 328, "Cooldown", c, {
+    width: 120,
+    size: 12,
+    color: c.info,
+  }));
+  add(text("routine-cooldown-row", x + 56, y + 348, "Alongamento leve | 5 min", c, {
+    width: 250,
+    size: 13,
+    color: c.muted,
+  }));
+  add(rect("timer-compact", x + 32, y + 392, 326, 126, c, { stroke: c.info }));
+  add(text("timer-compact-copy", x + 56, y + 402, "Descanso apos serie salva", c, {
     width: 210,
     size: 15,
     color: c.info,
   }));
-  add(text("timer-compact-time", x + 56, y + 184, "01:20", c, {
+  add(text("timer-compact-time", x + 56, y + 426, "01:20", c, {
     width: 130,
     size: 31,
     color: c.info,
   }));
-  add(text("timer-next-copy", x + 198, y + 174, "Proxima serie\n45 kg sugerido", c, {
+  add(text("timer-next-copy", x + 198, y + 416, "Proxima serie\n45 kg sugerido", c, {
     width: 128,
     size: 13,
     color: c.muted,
     lineHeight: 1.35,
     align: "right",
   }));
-  add(button("add-rest", x + 52, y + 230, 86, "+30s", c, "secondary"));
-  add(button("skip-rest", x + 148, y + 230, 78, "Pular", c, "info"));
-  add(button("start-next-set", x + 236, y + 230, 98, "Prox. serie", c));
-  add(rect("active-exercise", x + 32, y + 318, 326, 102, c));
-  add(text("active-ex-title", x + 56, y + 338, "Remada baixa", c, { width: 220, size: 22 }));
+  add(button("add-rest", x + 52, y + 470, 86, "+30s", c, "secondary"));
+  add(button("skip-rest", x + 148, y + 470, 78, "Pular", c, "info"));
+  add(button("start-next-set", x + 236, y + 470, 98, "Prox. serie", c));
+  add(rect("active-exercise", x + 32, y + 538, 326, 106, c));
+  add(text("active-ex-title", x + 56, y + 558, "Remada baixa", c, { width: 220, size: 22 }));
   add(
     text(
       "active-ex-meta",
       x + 56,
-      y + 374,
-      "3 series | 10-12 reps | RIR alvo 2\nUltima carga: 45 kg",
+      y + 594,
+      "Exercicio aberto ou com serie marcada\n3 series | 10-12 reps | RIR alvo 2 | 90s\nCarga sugerida/ultima carga: 45 kg",
       c,
-      { width: 260, size: 14, color: c.muted, lineHeight: 1.35 },
+      { width: 270, size: 13, color: c.muted, lineHeight: 1.3 },
     ),
   );
-  add(rect("set-card", x + 32, y + 446, 326, 206, c));
-  add(text("set-title", x + 56, y + 464, "Entrada do exercicio", c, {
+  add(rect("set-card", x + 32, y + 664, 326, 92, c));
+  add(text("set-title", x + 56, y + 682, "Entrada do exercicio", c, {
     width: 190,
     size: 18,
     color: c.primary,
   }));
-  add(text("set-helper", x + 56, y + 492, "Carga, reps e RIR pertencem ao exercicio atual.", c, {
+  add(text("set-helper", x + 56, y + 710, "Carga e reps entram so no fim do exercicio.", c, {
     width: 255,
     size: 12,
     color: c.weak,
@@ -686,46 +643,25 @@ function screen04(index) {
   [
     ["Carga", "45"],
     ["Reps", "10"],
-    ["RIR", "2"],
   ].forEach(([label, value], idx) => {
     const bx = x + 56 + idx * 96;
-    add(text(`set-label-${idx}`, bx, y + 516, label, c, {
+    add(text(`set-label-${idx}`, bx, y + 732, label, c, {
       width: 76,
       size: 13,
       color: c.muted,
       align: "center",
     }));
-    add(rect(`set-value-${idx}`, bx, y + 540, 76, 48, c, {
+    add(rect(`set-value-${idx}`, bx, y + 756, 76, 40, c, {
       fill: c.elevated,
       stroke: c.border,
     }));
-    add(text(`set-value-text-${idx}`, bx + 4, y + 552, value, c, {
+    add(text(`set-value-text-${idx}`, bx + 4, y + 765, value, c, {
       width: 68,
-      size: 22,
+      size: 20,
       align: "center",
-    }));
-    add(rect(`minus-${idx}`, bx, y + 598, 34, 30, c, { fill: "transparent" }));
-    add(text(`minus-text-${idx}`, bx + 9, y + 602, "-", c, {
-      width: 16,
-      size: 18,
-      align: "center",
-      color: c.muted,
-    }));
-    add(rect(`plus-${idx}`, bx + 42, y + 598, 34, 30, c, { fill: "transparent" }));
-    add(text(`plus-text-${idx}`, bx + 50, y + 602, "+", c, {
-      width: 18,
-      size: 18,
-      align: "center",
-      color: c.primary,
     }));
   });
-  add(text("set-row-1", x + 56, y + 630, "Serie 1 concluida   45 kg   10   RIR 2", c, {
-    width: 270,
-    size: 13,
-    color: c.weak,
-  }));
-  add(button("save-set", x + 32, y + 684, 326, "Salvar serie", c));
-  add(button("next-exercise", x + 32, y + 752, 326, "Voltar a lista", c, "secondary"));
+  add(button("save-set", x + 232, y + 748, 104, "Salvar", c));
 }
 
 function screen06(index) {
@@ -1174,7 +1110,7 @@ function screen15(index) {
       "flow-workout-start-copy",
       x + 56,
       y + 486,
-      "Home: UX-02 -> UX-03 da recomendada.\nMenu Treino: lista rotinas -> UX-03 escolhida.",
+      "Home: UX-02 -> UX-04 da recomendada.\nMenu Treino: lista rotinas -> UX-04 escolhida.",
       c,
       { width: 260, size: 14, color: c.muted, lineHeight: 1.35 },
     ),
@@ -1202,7 +1138,6 @@ function screen15(index) {
   screen01,
   screen02,
   screen03,
-  screen03Detail,
   screen04,
   screen06,
   screen07,

@@ -19,7 +19,6 @@ import {
   type WorkoutCompletionSummary,
 } from "@/features/workouts/WorkoutFinishedScreen";
 import { RoutineListScreen } from "@/features/workouts/RoutineListScreen";
-import { WorkoutScreen } from "@/features/workouts/WorkoutScreen";
 import {
   createLoadHistoryMap,
   getExerciseHistoryDetails,
@@ -50,6 +49,7 @@ import { pwaWorkoutPlanRepository } from "@/storage/pwa/dexieWorkoutPlanReposito
 import type {
   ActiveWorkoutPlanSnapshot,
   ExerciseLoadHistoryRecord,
+  RoutineWithDetails,
 } from "@/storage/workoutPlanRepository";
 
 const appVersion = "0.1.0";
@@ -63,9 +63,6 @@ export function App() {
   const [isLoadingActivePlan, setIsLoadingActivePlan] = useState(true);
   const [activeWorkout, setActiveWorkout] =
     useState<WorkoutSessionDraft | null>(null);
-  const [selectedRoutineId, setSelectedRoutineId] = useState<string | null>(
-    null,
-  );
   const [workoutLoadHistory, setWorkoutLoadHistory] = useState<
     Map<string, ExerciseLoadHistoryRecord>
   >(new Map());
@@ -164,24 +161,6 @@ export function App() {
     setWorkoutCompletion(null);
   }
 
-  function getSelectedRoutine() {
-    if (!activePlan) {
-      return null;
-    }
-
-    const recommendedRoutine = nextRecommendation
-      ? activePlan.routines.find(
-          (routine) => routine.id === nextRecommendation.routineId,
-        )
-      : null;
-
-    return (
-      activePlan.routines.find((routine) => routine.id === selectedRoutineId) ??
-      recommendedRoutine ??
-      null
-    );
-  }
-
   async function handleImportFile(file: File) {
     const fileName = file.name;
 
@@ -249,7 +228,6 @@ export function App() {
       });
       const savedPlan = await pwaWorkoutPlanRepository.getActivePlan();
       setActivePlan(savedPlan);
-      setSelectedRoutineId(null);
       setImportStatus(idleImportStatus);
       setActiveScreen("home");
     } catch {
@@ -267,30 +245,25 @@ export function App() {
     }
   }
 
-  function handleOpenRecommendedWorkoutDetail() {
+  function handleStartRecommendedWorkout() {
     if (!activePlan || !nextRecommendation) {
       return;
     }
 
-    setSelectedRoutineId(nextRecommendation.routineId);
-    setWorkoutMessage(null);
-    setActiveScreen("routine-detail");
-  }
+    const routine = activePlan.routines.find(
+      (currentRoutine) => currentRoutine.id === nextRecommendation.routineId,
+    );
 
-  function handleOpenRoutineDetail(routineId: string) {
-    setSelectedRoutineId(routineId);
-    setWorkoutMessage(null);
-    setActiveScreen("routine-detail");
-  }
-
-  async function handleStartRoutineExercise(exerciseIndex = 0) {
-    if (!activePlan) {
-      return;
+    if (routine) {
+      void handleStartRoutineExercise(routine);
     }
+  }
 
-    const routine = getSelectedRoutine();
-
-    if (!routine) {
+  async function handleStartRoutineExercise(
+    routine: RoutineWithDetails,
+    exerciseIndex = 0,
+  ) {
+    if (!activePlan) {
       return;
     }
 
@@ -360,7 +333,6 @@ export function App() {
       await pwaWorkoutPlanRepository.clearAllWorkoutData();
       setActivePlan(null);
       setActiveWorkout(null);
-      setSelectedRoutineId(null);
       setWorkoutLoadHistory(new Map());
       setLoadSummaries([]);
       setRecentSessions([]);
@@ -481,7 +453,6 @@ export function App() {
       history: historyInterfaceCode,
       "import-error": "UX-11",
       "import-preview": "UX-10",
-      "routine-detail": "UX-03",
       settings: "UX-13",
       workout: "Treino",
       "workout-finished": "UX-06",
@@ -499,7 +470,7 @@ export function App() {
           message={workoutMessage}
           onBackToDetail={() => {
             setWorkoutMessage(null);
-            setActiveScreen("routine-detail");
+            setActiveScreen("workout");
           }}
           onFinish={() => {
             void handleFinishWorkout();
@@ -542,28 +513,16 @@ export function App() {
         <RoutineListScreen
           activePlan={activePlan}
           nextRecommendation={nextRecommendation}
-          onOpenRoutine={handleOpenRoutineDetail}
+          onOpenRoutine={(routineId) => {
+            const routine = activePlan?.routines.find(
+              (currentRoutine) => currentRoutine.id === routineId,
+            );
+
+            if (routine) {
+              void handleStartRoutineExercise(routine);
+            }
+          }}
           routineExecutionSummaries={routineExecutionSummaries}
-        />
-      );
-    }
-
-    if (activeScreen === "routine-detail") {
-      const selectedRoutine = getSelectedRoutine();
-
-      return (
-        <WorkoutScreen
-          activePlan={activePlan}
-          loadSummaries={loadSummaries}
-          nextRecommendation={nextRecommendation}
-          routine={selectedRoutine}
-          onBack={() => {
-            setWorkoutMessage(null);
-            setActiveScreen("workout");
-          }}
-          onStartExercise={(exerciseIndex) => {
-            void handleStartRoutineExercise(exerciseIndex);
-          }}
         />
       );
     }
@@ -629,7 +588,8 @@ export function App() {
         workoutMessage={workoutMessage}
         onChooseImportFile={() => fileInputRef.current?.click()}
         onGoToHistory={() => navigateToMainTab("history")}
-        onOpenWorkoutDetail={handleOpenRecommendedWorkoutDetail}
+        onOpenWorkoutList={() => navigateToMainTab("workout")}
+        onStartRecommendedWorkout={handleStartRecommendedWorkout}
       />
     );
   }

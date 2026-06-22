@@ -53,11 +53,7 @@ export function AppShell({
           <div className="mx-auto grid h-16 max-w-md grid-cols-4 px-2">
             {mainNavItems.map((item) => (
               <NavItem
-                active={
-                  activeScreen === item.screen ||
-                  (activeScreen === "routine-detail" &&
-                    item.screen === "workout")
-                }
+                active={activeScreen === item.screen}
                 icon={item.icon}
                 key={item.screen}
                 label={item.label}

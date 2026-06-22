@@ -217,7 +217,7 @@ Regra simples para aviso de novo treino:
 
 - Inicio: plano ativo, proximo treino sugerido, progresso do ciclo e botao para iniciar o treino recomendado.
 - Treino: lista todas as rotinas do plano ativo para o usuario escolher qual rotina quer executar no dia, com a rotina recomendada destacada.
-- Detalhe da rotina selecionada: lista de aquecimento, exercicios, series planejadas, carga sugerida, repeticoes, RIR alvo quando existir no plano e descanso, abrindo a execucao ao tocar em um exercicio.
+- Execucao de treino: mostrar a lista completa da rotina dentro da propria execucao, com separacao visual para aquecimento, exercicios e cooldown; permitir escolher o exercicio inicial ou alternar exercicios pela lista; em cada exercicio da lista, mostrar series planejadas, repeticoes, RIR alvo quando existir, descanso, progresso de series e carga sugerida/ultima carga quando houver.
 - Execucao de exercicio: marcar series concluidas durante o exercicio para disparar descanso entre series; registrar carga e repeticoes apenas no fim do exercicio; mostrar orientacao visual opcional em painel recolhido por padrao, abrindo por `Ver como fazer`; RIR nao aparece como campo obrigatorio na primeira versao e fica reservado para melhoria futura.
 - Historico: treinos concluidos e evolucao de carga por exercicio.
 - Importar treino: acao contextual na Home sem treino ou em Configuracoes com treino ativo; selecionar JSON, validar, mostrar preview e substituir plano atual.
@@ -232,7 +232,7 @@ A primeira versao deve seguir o modelo de usabilidade **Guiada**:
 - O botao principal deve ser iniciar o treino recomendado.
 - O plano completo deve existir, mas nao deve competir com a acao principal da tela inicial.
 - O item `Treino` da navegacao inferior deve listar todas as rotinas do plano ativo, permitindo escolher uma rotina diferente da recomendada quando fizer sentido para o usuario.
-- Ao tocar em uma rotina na lista do menu `Treino`, o app deve abrir o detalhe da rotina selecionada antes da execucao.
+- Ao tocar em uma rotina na lista do menu `Treino`, o app deve abrir a execucao da rotina com a lista completa de exercicios visivel na propria `UX-04`.
 - A tela de execucao deve ser focada no uso durante a academia, com registro rapido por exercicio, timer de descanso e poucos elementos concorrendo por atencao.
 - A orientacao visual da tela de execucao deve ficar recolhida por padrao para nao competir com o treino; quando aberta, deve priorizar musculo principal, musculos auxiliares em cor mais fria, movimento do exercicio quando houver asset e ate 3 dicas curtas.
 - A evolucao do guia visual deve seguir `.agents/plano-incorporacao-biblioteca-exercicios.md`: usar somente assets especificos validados por exercicio ou alias confiavel; `movement_pattern` permanece para dicas e classificacao, nao como imagem generica.
