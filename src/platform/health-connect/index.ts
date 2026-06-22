@@ -1,3 +1,8 @@
+import { Capacitor } from "@capacitor/core";
+
+import { androidHealthConnectAdapter } from "./androidHealthConnectAdapter";
+import { webHealthConnectAdapter } from "./webHealthConnectAdapter";
+
 export type {
   HealthConnectAdapter,
   HealthConnectExportResult,
@@ -5,4 +10,10 @@ export type {
   HealthConnectWorkoutExport,
   HealthConnectWorkoutSegment,
 } from "./healthConnectAdapter";
+export { androidHealthConnectAdapter } from "./androidHealthConnectAdapter";
 export { webHealthConnectAdapter } from "./webHealthConnectAdapter";
+
+export const healthConnectAdapter =
+  Capacitor.getPlatform() === "android"
+    ? androidHealthConnectAdapter
+    : webHealthConnectAdapter;

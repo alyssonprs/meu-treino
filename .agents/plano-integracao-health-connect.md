@@ -2,7 +2,7 @@
 
 Data: 2026-06-22
 
-Status: planejado
+Status: E3 implementada parcialmente; aguardando validacao nativa com JDK/dispositivo Android
 
 ## Objetivo
 
@@ -291,6 +291,16 @@ Checks:
 - `pnpm android:sync`
 - `cd android && .\gradlew.bat :app:assembleDebug`
 - teste manual em Galaxy S24 Plus
+
+Registro de execucao em 2026-06-22:
+
+- Versao AndroidX confirmada nos docs oficiais em 2026-06-22: `androidx.health.connect:connect-client:1.1.0` e a versao estavel atual; existe `1.2.0-alpha04`, mas o corte E3 usa a versao estavel para reduzir risco no APK.
+- Kotlin foi adicionado ao modulo Android porque o SDK Health Connect expoe operacoes suspensas e contracts de permissao pensados para Kotlin/coroutines; isso evita uma ponte Java manual mais fragil.
+- Implementado plugin Capacitor nativo `HealthConnect` com `getStatus`, `requestPermissions`, `openSettings` e `exportWorkoutSession`.
+- Declarada apenas a permissao `android.permission.health.WRITE_EXERCISE`, alem de `<queries>` para `com.google.android.apps.healthdata` e activity/alias de rationale exigidos pelo Health Connect.
+- `pnpm android:sync` passou usando o runtime Node gerenciado pelo Codex.
+- `pnpm lint` passou.
+- `cd android && .\gradlew.bat :app:assembleDebug` nao iniciou nesta maquina porque `JAVA_HOME` nao esta configurado e nao ha `java.exe` no PATH; validar assim que um JDK/JBR estiver disponivel.
 
 ### E4 - UI de Configuracoes
 
