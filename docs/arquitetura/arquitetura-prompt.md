@@ -212,7 +212,7 @@ Regra simples para aviso de novo treino:
 
 - Calcular `treinos_planejados = estimated_duration_weeks * days_per_week`.
 - Calcular `treinos_concluidos` do plano ativo.
-- Quando `treinos_concluidos >= treinos_planejados`, exibir aviso: "Ciclo concluido. Baixe o modelo e gere um novo treino."
+- Quando `treinos_concluidos >= treinos_planejados`, exibir aviso: "Ciclo concluido. Copie o prompt e gere um novo treino."
 
 ## Telas principais
 
@@ -222,7 +222,7 @@ Regra simples para aviso de novo treino:
 - Execucao de exercicio: marcar series concluidas durante o exercicio para disparar descanso entre series; registrar carga e repeticoes apenas no fim do exercicio; mostrar orientacao visual opcional em painel recolhido por padrao, abrindo por `Ver como fazer`; RIR nao aparece como campo obrigatorio na primeira versao e fica reservado para melhoria futura.
 - Historico: treinos concluidos e evolucao de carga por exercicio.
 - Importar treino: acao contextual na Home sem treino ou em Configuracoes com treino ativo; selecionar JSON, validar, mostrar preview e substituir plano atual.
-- Criar treino com IA: acao contextual na Home sem treino ou em Configuracoes com treino ativo; copia o conteudo de `prompt-treino-modelo.md`. O prompt deve instruir a IA a buscar por GET `meu-treino-modelo.json` e `meu-treino-catalogo-exercicios.json` nas URLs publicas do app.
+- Criar treino com IA: acao contextual na Home sem treino ou em Configuracoes com treino ativo; copia o conteudo de `prompt-treino-modelo.md`. O prompt deve instruir a IA a buscar por GET `meu-treino-modelo.json` e `meu-treino-catalogo-exercicios.json` nas URLs publicas do app. Se o GET de qualquer um desses arquivos falhar, a IA deve interromper a geracao do treino e pedir ao usuario para corrigir o acesso aos arquivos auxiliares antes de continuar.
 - Configuracoes: exportar backup local, apagar dados locais e informacoes da versao.
 
 ### Direcao de usabilidade aprovada
@@ -275,7 +275,7 @@ Regras:
 - Importar um novo JSON de treino.
 - Validar estrutura antes de salvar.
 - Substituir o treino ativo atual.
-- Copiar o prompt recomendado para IA, com URLs GET do JSON de modelo e do catalogo resumido de exercicios.
+- Copiar o prompt recomendado para IA, com URLs GET do JSON de modelo e do catalogo resumido de exercicios, bloqueando a geracao quando qualquer GET falhar.
 - Visualizar plano ativo e rotinas.
 - Recomendar automaticamente a proxima rotina com base na ultima rotina finalizada.
 - Escolher entre tema claro e tema escuro.
@@ -316,7 +316,7 @@ Regras:
 
 ## Criterios de aceite da primeira versao
 
-- O usuario consegue copiar o prompt recomendado pelo app, e esse prompt contem as URLs GET do JSON de modelo e do catalogo resumido de exercicios.
+- O usuario consegue copiar o prompt recomendado pelo app, e esse prompt contem as URLs GET do JSON de modelo e do catalogo resumido de exercicios, com instrucao para interromper a geracao se qualquer GET falhar.
 - O usuario consegue importar um JSON valido seguindo o modelo.
 - O app exibe o plano importado com rotinas e exercicios.
 - O app recomenda a primeira rotina quando nenhum treino foi finalizado no plano ativo.

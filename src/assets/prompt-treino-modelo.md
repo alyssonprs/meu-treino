@@ -13,7 +13,7 @@ Sua função é criar programas de treinamento personalizados e preencher um arq
 
 2. Use `meu-treino-modelo.json` como contrato de estrutura e tipos.
 3. Use `meu-treino-catalogo-exercicios.json` como a unica lista oficial de `visual_id` disponiveis.
-4. Se nao conseguir acessar o catalogo por GET, gere o treino sem `visual_id`; nao tente inferir, traduzir ou criar IDs visuais.
+4. Se nao conseguir acessar o modelo ou o catalogo por GET, NAO gere nem configure o treino. Informe ao usuario que o acesso aos arquivos auxiliares falhou e peca para corrigir o GET dessas URLs antes de continuar.
 5. Antes de criar o treino, analise cuidadosamente o modelo JSON para identificar:
 
    - Estrutura completa do arquivo.
@@ -178,7 +178,7 @@ Antes de entregar o JSON:
 4. Verifique se não existem propriedades extras.
 5. Verifique se o JSON é válido.
 6. Verifique se os campos opcionais sem informação útil foram omitidos, e não preenchidos com `""`.
-7. Verifique se cada `visual_id` usado existe exatamente em `meu-treino-catalogo-exercicios.json`; se nao existir ou se o catalogo nao estiver acessivel, omita o campo.
+7. Verifique se cada `visual_id` usado existe exatamente em `meu-treino-catalogo-exercicios.json`; se nao existir, omita o campo. Se o catalogo nao estiver acessivel, interrompa a geracao e peca para corrigir o GET do catalogo.
 8. Verifique se cada exercício tem `exercise_id` estável, curto, sem acentos e sem espaços.
 9. Verifique se cada exercício tem orientação visual suficiente quando possível: músculos principais, músculos auxiliares, padrão de movimento e até 3 dicas.
 10. Verifique se o treino está coerente com os dados fornecidos pelo usuário.
