@@ -35,6 +35,16 @@ O app tambem deve disponibilizar um prompt recomendado copiavel, com instrucao p
 - Quando houver diferenca entre PWA e Android, isolar a diferenca em adaptadores de plataforma.
 - Hospedagem PWA escolhida: Cloudflare Pages conectado ao repositorio GitHub, com deploy automatico por push e previews para pull requests.
 
+### Integracao Android com Health Connect
+
+- No APK Android, o app pode oferecer uma integracao opcional com Health Connect para gravar a sessao de treino finalizada como exercicio de musculacao.
+- A primeira etapa da integracao deve escrever somente dados gerados pelo `meu-treino`, depois que o treino local ja estiver salvo.
+- O app deve pedir apenas permissoes minimas do Health Connect para o escopo implementado, inicialmente escrita de exercicio.
+- A integracao nao muda o principio offline-first: o banco local continua sendo a fonte da verdade e nao ha backend remoto.
+- O PWA deve continuar funcionando sem Health Connect; a diferenca deve ficar isolada em adaptadores de `src/platform`.
+- Frequencia cardiaca, calorias e dados ao vivo do Galaxy Watch ficam fora desta primeira integracao e devem ser tratados em etapa futura com Health Connect/Samsung Health ou Wear OS Health Services.
+- Plano operacional: `.agents/plano-integracao-health-connect.md`.
+
 Fluxo de build previsto para Android:
 
 ```bash
