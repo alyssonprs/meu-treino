@@ -217,6 +217,7 @@ Atualize esta tabela quando cada tela for aprovada.
 | UX-03 e UX-04 | UX-03 removida | A lista `Exercicios da rotina` da UX-04 absorve aquecimento e cooldown com separacao por tipo, lista completa de exercicios, selecao do exercicio inicial, resumo planejado e carga sugerida/ultima carga por exercicio | 2026-06-22 |
 | UX-04 | Lista expansivel aprovada | Exercicios nao selecionados ficam compactos, sem series, progresso, descanso ou RIR alvo; o exercicio selecionado expande no proprio card da lista com os detalhes de execucao, series, descanso e registro final de carga/reps | 2026-06-22 |
 | UX-04 | Descanso com conclusao direta da proxima serie | O card de descanso troca `Proxima serie` por `Concluir serie`; ao concluir, a proxima serie e marcada e um novo descanso inicia no mesmo bloco quando ainda houver series pendentes. Remover o card separado de `Serie atual`/`Serie concluida`. | 2026-06-22 |
+| UX-04 | Avanco automatico apos registrar exercicio | Ao salvar carga e repeticoes de um exercicio com todas as series concluidas, nao exibir card de confirmacao; marcar o exercicio como concluido e abrir o proximo exercicio disponivel. | 2026-06-22 |
 
 ## Prototipos aprovados
 

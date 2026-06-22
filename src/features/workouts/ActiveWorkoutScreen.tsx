@@ -2,7 +2,6 @@ import { useEffect, useState, type ReactNode } from "react";
 import {
   ArrowLeft,
   Check,
-  ChevronRight,
   Circle,
   CircleDot,
   Eye,
@@ -225,12 +224,10 @@ export function ActiveWorkoutScreen({
         rir: "",
       },
     });
-  }
 
-  function startNextStep() {
     setRestState(null);
 
-    if (isCurrentExerciseRegistered && nextExerciseIndex !== null) {
+    if (nextExerciseIndex !== null) {
       onSelectExercise(nextExerciseIndex);
     }
   }
@@ -272,12 +269,14 @@ export function ActiveWorkoutScreen({
             }
             onCompleteNextSet={() => markSetCompleted(restState.nextSetIndex)}
           />
-        ) : isCurrentExerciseRegistered ? (
-          <ExerciseDoneCard
-            hasNextExercise={nextExerciseIndex !== null}
-            onFinish={onFinish}
-            onNextExercise={startNextStep}
-          />
+        ) : isCurrentExerciseRegistered && nextExerciseIndex === null ? (
+          <Button
+            className="mt-4 h-14 w-full text-base"
+            onClick={onFinish}
+            type="button"
+          >
+            Finalizar rotina
+          </Button>
         ) : areAllSetsCompleted ? (
           <ExerciseResultForm
             canSaveResult={canSaveResult}
@@ -591,33 +590,6 @@ function RestCard({
           Concluir série
         </Button>
       </div>
-    </div>
-  );
-}
-
-function ExerciseDoneCard({
-  hasNextExercise,
-  onFinish,
-  onNextExercise,
-}: {
-  hasNextExercise: boolean;
-  onFinish: () => void;
-  onNextExercise: () => void;
-}) {
-  return (
-    <div className="mt-4 rounded-lg border border-primary bg-card p-4">
-      <p className="text-sm font-medium text-primary">Exercício concluído</p>
-      <h3 className="mt-1 text-xl font-semibold">
-        Carga e repetições foram registradas.
-      </h3>
-      <Button
-        className="mt-4 h-14 w-full gap-2 text-base"
-        onClick={hasNextExercise ? onNextExercise : onFinish}
-        type="button"
-      >
-        {hasNextExercise ? "Próximo exercício" : "Finalizar rotina"}
-        <ChevronRight className="h-5 w-5" aria-hidden="true" />
-      </Button>
     </div>
   );
 }
