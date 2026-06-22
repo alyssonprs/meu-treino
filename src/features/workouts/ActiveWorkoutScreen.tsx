@@ -54,6 +54,7 @@ type ActiveWorkoutScreenProps = {
 
 type RestState = {
   remainingSeconds: number;
+  nextSetIndex: number;
   nextSetNumber: number;
 };
 
@@ -176,24 +177,40 @@ export function ActiveWorkoutScreen({
     updateResultValue(field, formattedValue);
   }
 
-  function markCurrentSetCompleted() {
-    if (currentSetIndex === null) {
+  function markSetCompleted(setIndex: number) {
+    if (
+      setIndex < 0 ||
+      setIndex >= currentExerciseDraft.completedSets.length ||
+      currentExerciseDraft.completedSets[setIndex]?.completedAt !== null
+    ) {
       return;
     }
 
     onMarkSetCompleted({
       exerciseIndex: currentExerciseIndex,
-      setIndex: currentSetIndex,
+      setIndex,
     });
 
-    const nextSetIndex = currentSetIndex + 1;
+    const nextSetIndex = setIndex + 1;
 
     if (nextSetIndex < currentExerciseDraft.completedSets.length) {
       setRestState({
         remainingSeconds: currentExercise.rest_seconds ?? 90,
+        nextSetIndex,
         nextSetNumber: nextSetIndex + 1,
       });
+      return;
     }
+
+    setRestState(null);
+  }
+
+  function markCurrentSetCompleted() {
+    if (currentSetIndex === null) {
+      return;
+    }
+
+    markSetCompleted(currentSetIndex);
   }
 
   function saveCurrentExerciseResult() {
@@ -253,7 +270,7 @@ export function ActiveWorkoutScreen({
                   : current,
               )
             }
-            onSkip={() => setRestState(null)}
+            onCompleteNextSet={() => markSetCompleted(restState.nextSetIndex)}
           />
         ) : isCurrentExerciseRegistered ? (
           <ExerciseDoneCard
@@ -274,9 +291,8 @@ export function ActiveWorkoutScreen({
             onUpdateResultValue={updateResultValue}
           />
         ) : (
-          <CurrentSetAction
+          <SetCompletionAction
             currentSetNumber={(currentSetIndex ?? 0) + 1}
-            totalSets={currentExerciseDraft.completedSets.length}
             onMarkCurrentSetCompleted={markCurrentSetCompleted}
           />
         )}
@@ -538,12 +554,12 @@ function RestCard({
   exerciseName,
   restState,
   onAddThirtySeconds,
-  onSkip,
+  onCompleteNextSet,
 }: {
   exerciseName: string;
   restState: RestState;
   onAddThirtySeconds: () => void;
-  onSkip: () => void;
+  onCompleteNextSet: () => void;
 }) {
   return (
     <div className="mt-4 rounded-lg border border-info bg-card p-4">
@@ -570,8 +586,9 @@ function RestCard({
         >
           +30s
         </Button>
-        <Button className="h-12" onClick={onSkip} type="button">
-          Próxima série
+        <Button className="h-12 gap-2" onClick={onCompleteNextSet} type="button">
+          <Check className="h-4 w-4" aria-hidden="true" />
+          Concluir série
         </Button>
       </div>
     </div>
@@ -639,33 +656,26 @@ function SetProgress({
   );
 }
 
-function CurrentSetAction({
+function SetCompletionAction({
   currentSetNumber,
-  totalSets,
   onMarkCurrentSetCompleted,
 }: {
   currentSetNumber: number;
-  totalSets: number;
   onMarkCurrentSetCompleted: () => void;
 }) {
   return (
-    <div className="mt-4 rounded-lg border border-border bg-background p-3">
-      <p className="text-sm font-medium text-info">Série atual</p>
-      <h3 className="mt-1 text-xl font-semibold">
-        Série {currentSetNumber} de {totalSets}
-      </h3>
-      <p className="mt-2 text-sm leading-6 text-muted-foreground">
-        Marque quando terminar a série. A carga e reps entram no fim do
-        exercício.
-      </p>
+    <div className="mt-4">
       <Button
-        className="mt-4 h-14 w-full gap-3 text-base"
+        className="h-14 w-full gap-3 text-base"
         onClick={onMarkCurrentSetCompleted}
         type="button"
       >
         <Check className="h-5 w-5" aria-hidden="true" />
-        Série concluída
+        Concluir série {currentSetNumber}
       </Button>
+      <p className="mt-2 text-center text-xs text-muted-foreground">
+        Carga e reps entram no fim do exercício.
+      </p>
     </div>
   );
 }

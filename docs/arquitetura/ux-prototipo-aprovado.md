@@ -216,6 +216,7 @@ Atualize esta tabela quando cada tela for aprovada.
 | UX-04 | Evolucao do guia visual | Seguir `.agents/plano-incorporacao-biblioteca-exercicios.md`: imagem aparece somente quando houver asset especifico validado; `movement_pattern` fica restrito a classificacao e dicas, sem imagem generica | 2026-06-21 |
 | UX-03 e UX-04 | UX-03 removida | A lista `Exercicios da rotina` da UX-04 absorve aquecimento e cooldown com separacao por tipo, lista completa de exercicios, selecao do exercicio inicial, resumo planejado e carga sugerida/ultima carga por exercicio | 2026-06-22 |
 | UX-04 | Lista expansivel aprovada | Exercicios nao selecionados ficam compactos, sem series, progresso, descanso ou RIR alvo; o exercicio selecionado expande no proprio card da lista com os detalhes de execucao, series, descanso e registro final de carga/reps | 2026-06-22 |
+| UX-04 | Descanso com conclusao direta da proxima serie | O card de descanso troca `Proxima serie` por `Concluir serie`; ao concluir, a proxima serie e marcada e um novo descanso inicia no mesmo bloco quando ainda houver series pendentes. Remover o card separado de `Serie atual`/`Serie concluida`. | 2026-06-22 |
 
 ## Prototipos aprovados
 
@@ -248,8 +249,9 @@ Pontos aprovados:
 - A lista `Exercicios da rotina` permite selecionar o exercicio inicial ou alternar para outro exercicio da rotina.
 - Exercicios nao selecionados na lista devem ficar compactos, mostrando apenas identificacao, status e carga anterior quando houver, sem series, progresso, descanso ou RIR alvo.
 - O exercicio selecionado deve expandir no proprio card da lista com os detalhes antes exibidos no bloco de exercicio em progresso: meta, guia visual recolhivel, progresso de series, descanso entre series, registro final de carga/reps e cargas historicas quando houver.
-- A acao `Serie concluida`, o descanso e o registro final de carga/reps devem ficar junto do bloco de series dentro do card expandido do exercicio selecionado; nao deve haver um bloco separado de `Serie atual` fora da lista.
+- A acao `Concluir serie`, o descanso e o registro final de carga/reps devem ficar junto do bloco de series dentro do card expandido do exercicio selecionado; nao deve haver um bloco separado de `Serie atual` fora da lista.
 - O card de descanso deve aparecer entre series depois de marcar uma serie como concluida.
+- Durante o descanso, a acao principal deve ser `Concluir serie`, marcando a proxima serie e reiniciando o descanso no mesmo bloco quando ainda houver series pendentes; nao deve haver uma etapa intermediaria de `Proxima serie` seguida por outro card de `Serie atual`.
 - O exercicio atual tem destaque suficiente.
 - Os controles de carga e reps parecem confortaveis para uso com uma mao.
 - A navegacao inferior some durante o treino para reduzir distracao.

@@ -607,16 +607,15 @@ function screen04(index) {
     size: 31,
     color: c.info,
   }));
-  add(text("timer-next-copy", x + 198, y + 416, "Proxima serie\n45 kg sugerido", c, {
+  add(text("timer-next-copy", x + 198, y + 416, "Concluir serie\n45 kg sugerido", c, {
     width: 128,
     size: 13,
     color: c.muted,
     lineHeight: 1.35,
     align: "right",
   }));
-  add(button("add-rest", x + 52, y + 470, 86, "+30s", c, "secondary"));
-  add(button("skip-rest", x + 148, y + 470, 78, "Pular", c, "info"));
-  add(button("start-next-set", x + 236, y + 470, 98, "Prox. serie", c));
+  add(button("add-rest", x + 52, y + 470, 134, "+30s", c, "secondary"));
+  add(button("start-next-set", x + 198, y + 470, 136, "Concluir", c));
   add(rect("active-exercise", x + 32, y + 538, 326, 106, c));
   add(text("active-ex-title", x + 56, y + 558, "Remada baixa", c, { width: 220, size: 22 }));
   add(
