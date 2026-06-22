@@ -111,6 +111,13 @@ export type ExerciseLoadHistoryRecord = {
   updatedAt: string;
 };
 
+export type AppSettingsRecord = {
+  id: "app";
+  schemaVersion: number;
+  healthConnectAutoExportEnabled: boolean;
+  updatedAt: string;
+};
+
 export type CompletedWorkoutSessionSummaryRecord = WorkoutSessionRecord & {
   exercisesCount: number;
   setsCount: number;
@@ -217,5 +224,7 @@ export interface WorkoutPlanRepository {
     exerciseId: string,
     limit?: number,
   ): Promise<ExerciseSetHistoryRecord[]>;
+  getHealthConnectAutoExportEnabled(): Promise<boolean>;
+  setHealthConnectAutoExportEnabled(enabled: boolean): Promise<void>;
   clearAllWorkoutData(): Promise<void>;
 }

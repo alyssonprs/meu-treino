@@ -1,6 +1,7 @@
 import Dexie, { type EntityTable } from "dexie";
 
 import type {
+  AppSettingsRecord,
   ExerciseRecord,
   ExerciseLoadHistoryRecord,
   ExerciseLogRecord,
@@ -24,6 +25,7 @@ export class MeuTreinoDatabase extends Dexie {
   exerciseLogs!: EntityTable<ExerciseLogRecord, "id">;
   setLogs!: EntityTable<SetLogRecord, "id">;
   exerciseLoadHistory!: EntityTable<ExerciseLoadHistoryRecord, "exerciseId">;
+  appSettings!: EntityTable<AppSettingsRecord, "id">;
 
   constructor(databaseName = "meu-treino") {
     super(databaseName);
@@ -48,6 +50,20 @@ export class MeuTreinoDatabase extends Dexie {
       exerciseLogs: "id, sessionId, planId, routineId, exerciseId, order",
       setLogs: "id, sessionId, exerciseLogId, exerciseId, completedAt",
       exerciseLoadHistory: "exerciseId, sourceExerciseId, updatedAt",
+    });
+
+    this.version(3).stores({
+      workoutPlans: "id, importedAt, sourcePlanId",
+      routines: "id, planId, order, sourceRoutineId",
+      routineSteps: "id, planId, routineId, kind, order",
+      exercises: "id, sourceExerciseId, canonicalKey",
+      plannedExercises: "id, planId, routineId, exerciseId, order",
+      workoutPlanProgress: "planId",
+      workoutSessions: "id, planId, routineId, completedAt",
+      exerciseLogs: "id, sessionId, planId, routineId, exerciseId, order",
+      setLogs: "id, sessionId, exerciseLogId, exerciseId, completedAt",
+      exerciseLoadHistory: "exerciseId, sourceExerciseId, updatedAt",
+      appSettings: "id",
     });
   }
 }

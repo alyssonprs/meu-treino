@@ -1,5 +1,6 @@
 import "fake-indexeddb/auto";
 
+import Dexie from "dexie";
 import { afterEach, describe, expect, it } from "vitest";
 
 import type { WorkoutPlan } from "@/domain/workoutPlan";
@@ -117,6 +118,10 @@ describe("DexieWorkoutPlanRepository", () => {
     const database = new MeuTreinoDatabase(`meu-treino-test-${crypto.randomUUID()}`);
     databases.push(database);
 
+    return createRepositoryFromDatabase(database);
+  }
+
+  function createRepositoryFromDatabase(database: MeuTreinoDatabase) {
     let nextId = 0;
 
     return new DexieWorkoutPlanRepository({
@@ -571,6 +576,62 @@ describe("DexieWorkoutPlanRepository", () => {
         reps: 8,
       },
     ]);
+  });
+
+  it("persists the Health Connect auto-export preference across repository instances", async () => {
+    const databaseName = `meu-treino-test-${crypto.randomUUID()}`;
+    const database = new MeuTreinoDatabase(databaseName);
+    databases.push(database);
+    const repository = createRepositoryFromDatabase(database);
+
+    await expect(
+      repository.getHealthConnectAutoExportEnabled(),
+    ).resolves.toBe(false);
+
+    await repository.setHealthConnectAutoExportEnabled(true);
+
+    const reloadedDatabase = new MeuTreinoDatabase(databaseName);
+    databases.push(reloadedDatabase);
+    const reloadedRepository = createRepositoryFromDatabase(reloadedDatabase);
+
+    await expect(
+      reloadedRepository.getHealthConnectAutoExportEnabled(),
+    ).resolves.toBe(true);
+  });
+
+  it("opens a pre-settings database and initializes Health Connect auto-export as disabled", async () => {
+    const databaseName = `meu-treino-test-${crypto.randomUUID()}`;
+    const legacyDatabase = new Dexie(databaseName);
+
+    legacyDatabase.version(2).stores({
+      workoutPlans: "id, importedAt, sourcePlanId",
+      routines: "id, planId, order, sourceRoutineId",
+      routineSteps: "id, planId, routineId, kind, order",
+      exercises: "id, sourceExerciseId, canonicalKey",
+      plannedExercises: "id, planId, routineId, exerciseId, order",
+      workoutPlanProgress: "planId",
+      workoutSessions: "id, planId, routineId, completedAt",
+      exerciseLogs: "id, sessionId, planId, routineId, exerciseId, order",
+      setLogs: "id, sessionId, exerciseLogId, exerciseId, completedAt",
+      exerciseLoadHistory: "exerciseId, sourceExerciseId, updatedAt",
+    });
+
+    await legacyDatabase.open();
+    legacyDatabase.close();
+
+    const migratedDatabase = new MeuTreinoDatabase(databaseName);
+    databases.push(migratedDatabase);
+    const repository = createRepositoryFromDatabase(migratedDatabase);
+
+    await expect(
+      repository.getHealthConnectAutoExportEnabled(),
+    ).resolves.toBe(false);
+
+    await repository.setHealthConnectAutoExportEnabled(true);
+
+    await expect(
+      repository.getHealthConnectAutoExportEnabled(),
+    ).resolves.toBe(true);
   });
 
   it("clears plans, progress, sessions and load history", async () => {

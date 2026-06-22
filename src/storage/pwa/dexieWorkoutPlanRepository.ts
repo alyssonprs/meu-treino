@@ -3,6 +3,7 @@ import { createExerciseCanonicalKey } from "@/domain/exerciseKey";
 import { MeuTreinoDatabase, workoutDatabase } from "./workoutDatabase";
 import type {
   ActiveWorkoutPlanSnapshot,
+  AppSettingsRecord,
   CompletedWorkoutSessionSummaryRecord,
   ExerciseLoadHistoryRecord,
   ExerciseLogRecord,
@@ -32,6 +33,8 @@ type DexieWorkoutPlanRepositoryOptions = {
 
 const defaultCreateId = () => crypto.randomUUID();
 const defaultNow = () => new Date().toISOString();
+const appSettingsId: AppSettingsRecord["id"] = "app";
+const appSettingsSchemaVersion = 1;
 
 export class DexieWorkoutPlanRepository implements WorkoutPlanRepository {
   private readonly database: MeuTreinoDatabase;
@@ -356,6 +359,23 @@ export class DexieWorkoutPlanRepository implements WorkoutPlanRepository {
         };
       }),
     );
+  }
+
+  async getHealthConnectAutoExportEnabled(): Promise<boolean> {
+    const settings = await this.database.appSettings.get(appSettingsId);
+
+    return settings?.healthConnectAutoExportEnabled ?? false;
+  }
+
+  async setHealthConnectAutoExportEnabled(enabled: boolean): Promise<void> {
+    const currentSettings = await this.database.appSettings.get(appSettingsId);
+
+    await this.database.appSettings.put({
+      id: appSettingsId,
+      schemaVersion: currentSettings?.schemaVersion ?? appSettingsSchemaVersion,
+      healthConnectAutoExportEnabled: enabled,
+      updatedAt: this.now(),
+    });
   }
 
   async clearAllWorkoutData(): Promise<void> {
