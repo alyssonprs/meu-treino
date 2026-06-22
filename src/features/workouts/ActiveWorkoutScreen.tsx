@@ -750,17 +750,15 @@ function ExerciseStatusList({
   onSelectExercise: (exerciseIndex: number) => void;
 }) {
   return (
-    <div className="rounded-lg border border-border bg-card p-4">
-      <p className="text-sm font-medium text-muted-foreground">
-        Exercícios da rotina
-      </p>
-      <div className="mt-3 space-y-2">
-        <RoutineStepList
-          label="Aquecimento"
-          steps={draft.routine.warmup}
-          variant="warmup"
-        />
+    <div className="space-y-4">
+      <RoutineStepList
+        label="Aquecimento"
+        steps={draft.routine.warmup}
+        variant="warmup"
+      />
 
+      <div className="space-y-2">
+        <RoutineSectionLabel>Exercícios da rotina</RoutineSectionLabel>
         {draft.routine.exercises.map((exercise, index) => {
           const exerciseDraft = draft.exercises[index];
           const status = getExerciseStatus(draft, index);
@@ -786,14 +784,22 @@ function ExerciseStatusList({
             />
           );
         })}
-
-        <RoutineStepList
-          label="Cooldown"
-          steps={draft.routine.cooldown}
-          variant="cooldown"
-        />
       </div>
+
+      <RoutineStepList
+        label="Cooldown"
+        steps={draft.routine.cooldown}
+        variant="cooldown"
+      />
     </div>
+  );
+}
+
+function RoutineSectionLabel({ children }: { children: ReactNode }) {
+  return (
+    <p className="px-1 text-xs font-semibold uppercase tracking-wide text-info">
+      {children}
+    </p>
   );
 }
 
@@ -812,9 +818,7 @@ function RoutineStepList({
 
   return (
     <div className="space-y-2">
-      <p className="px-1 text-xs font-semibold uppercase tracking-wide text-info">
-        {label}
-      </p>
+      <RoutineSectionLabel>{label}</RoutineSectionLabel>
       {steps.map((step) => (
         <div
           className={cn(
