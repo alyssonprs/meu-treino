@@ -14,6 +14,17 @@ const seenVisualIds = new Set();
 const catalog = library.exercises.map((exercise) => {
   const visualId = normalizeRequiredString(exercise.visual_id, "visual_id");
   const name = normalizeRequiredString(exercise.source_name, "source_name");
+  const equipment = normalizeRequiredString(exercise.equipment, "equipment");
+  const bodyPart = normalizeRequiredString(exercise.body_part, "body_part");
+  const target = normalizeRequiredString(exercise.target, "target");
+  const secondaryMuscles = normalizeStringArray(
+    exercise.secondary_muscles,
+    "secondary_muscles",
+  );
+  const movementPattern = normalizeRequiredString(
+    exercise.movement_pattern,
+    "movement_pattern",
+  );
 
   if (seenVisualIds.has(visualId)) {
     throw new Error(`Duplicate visual_id in ${INPUT_PATH}: ${visualId}`);
@@ -24,6 +35,11 @@ const catalog = library.exercises.map((exercise) => {
   return {
     visual_id: visualId,
     name,
+    equipment,
+    body_part: bodyPart,
+    target,
+    secondary_muscles: secondaryMuscles,
+    movement_pattern: movementPattern,
   };
 });
 
@@ -45,4 +61,14 @@ function normalizeRequiredString(value, fieldName) {
   }
 
   return normalized;
+}
+
+function normalizeStringArray(value, fieldName) {
+  if (!Array.isArray(value)) {
+    throw new Error(`Expected ${fieldName} to be an array.`);
+  }
+
+  return value
+    .map((item) => normalizeRequiredString(item, fieldName))
+    .filter((item, index, items) => items.indexOf(item) === index);
 }

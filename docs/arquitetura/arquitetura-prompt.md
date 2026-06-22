@@ -6,7 +6,7 @@ Voce e um engenheiro de software senior especializado em aplicativos mobile web 
 
 Criar um app para o aluno importar um plano de treino em JSON, executar os treinos, registrar progresso por exercicio, acompanhar cargas usadas em cada exercicio e saber quando ja completou treinos suficientes para pedir um novo plano.
 
-O app tambem deve disponibilizar para download um JSON de modelo, um prompt recomendado e um catalogo resumido de exercicios com `visual_id`, para que o aluno ou professor possa enviar esses arquivos a uma IA e pedir a geracao de um novo treino compativel com o aplicativo.
+O app tambem deve disponibilizar para download um JSON de modelo, um prompt recomendado e um catalogo resumido de exercicios com `visual_id` e metadados de escolha, para que o aluno ou professor possa enviar esses arquivos a uma IA e pedir a geracao de um novo treino compativel com o aplicativo.
 
 ## Decisoes arquiteturais
 
@@ -84,7 +84,8 @@ Organizar o projeto em camadas simples:
 - `src/storage`: repositorios e adaptadores SQLite/IndexedDB.
 - `src/platform`: adaptadores para recursos especificos de PWA ou Android, como download, compartilhamento, arquivos e armazenamento.
 - `src/theme`: tokens visuais, variaveis CSS e configuracao de tema claro/escuro.
-- `src/assets`: arquivos `meu-treino-modelo.json`, `prompt-treino-modelo.md` e `meu-treino-catalogo-exercicios.json` usados no download do modelo, do prompt recomendado e do catalogo de `visual_id`.
+- `src/assets`: arquivos `meu-treino-modelo.json`, `prompt-treino-modelo.md` e `meu-treino-catalogo-exercicios.json` usados no download do modelo, do prompt recomendado e do catalogo publico de `visual_id`.
+- O catalogo publico de exercicios deve ser gerado a partir de `src/config/exercise-media-library.json`, mas deve expor somente dados seguros para a IA escolher o exercicio: `visual_id`, `name`, `equipment`, `body_part`, `target`, `secondary_muscles` e `movement_pattern`. Ele nao deve expor `image_asset`, `animation_asset`, paths internos, URLs de midia ou metadados de origem/licenca.
 
 ### Backend local
 

@@ -135,7 +135,8 @@ Regras específicas para `visual_id`:
 
 - `visual_id` NÃO é obrigatório.
 - O campo deve existir somente quando houver correspondencia exata no arquivo `meu-treino-catalogo-exercicios.json`.
-- O catalogo resumido possui somente itens com `visual_id` e `name`; use o `name` para escolher o exercicio equivalente e copie o `visual_id` exatamente como esta no catalogo.
+- O catalogo resumido possui itens com `visual_id`, `name`, `equipment`, `body_part`, `target`, `secondary_muscles` e `movement_pattern`; use esses campos para escolher o exercicio equivalente e copie o `visual_id` exatamente como esta no catalogo.
+- Use `equipment`, `body_part`, `target`, `secondary_muscles` e `movement_pattern` para diferenciar variantes parecidas, como barra, halteres, maquina, polia, smith, inclinacao, pegada e grupo muscular principal.
 - Prefira nomes de exercicios em portugues no treino final, mas preserve o `visual_id` em ingles/ID tecnico exatamente como consta no catalogo.
 - Se não souber o `visual_id` correto, omita o campo.
 - Se houver duvida entre variantes parecidas, omita `visual_id` e mantenha `primary_muscles`, `secondary_muscles`, `movement_pattern` e `execution_cues`.

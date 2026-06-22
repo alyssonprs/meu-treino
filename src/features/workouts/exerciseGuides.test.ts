@@ -141,10 +141,23 @@ describe("AI exercise catalog", () => {
     expect(aiExerciseCatalog).toHaveLength(exerciseMediaLibrary.exercises.length);
 
     for (const item of aiExerciseCatalog) {
-      expect(Object.keys(item).sort()).toEqual(["name", "visual_id"]);
+      expect(Object.keys(item).sort()).toEqual([
+        "body_part",
+        "equipment",
+        "movement_pattern",
+        "name",
+        "secondary_muscles",
+        "target",
+        "visual_id",
+      ]);
       expect(libraryVisualIds.has(item.visual_id)).toBe(true);
       expect(item.visual_id).toMatch(/^exdb_\d+$/);
       expect(item.name.trim().length).toBeGreaterThan(0);
+      expect(item.equipment.trim().length).toBeGreaterThan(0);
+      expect(item.body_part.trim().length).toBeGreaterThan(0);
+      expect(item.target.trim().length).toBeGreaterThan(0);
+      expect(item.movement_pattern.trim().length).toBeGreaterThan(0);
+      expect(Array.isArray(item.secondary_muscles)).toBe(true);
       expect(JSON.stringify(item)).not.toMatch(
         /https?:\/\/|github\.com|raw\.githubusercontent\.com|exercise-media\/|\.gif|\.jpg/i,
       );
