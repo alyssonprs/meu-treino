@@ -76,6 +76,7 @@ export function App() {
   const [routineExecutionSummaries, setRoutineExecutionSummaries] = useState<
     RoutineExecutionSummary[]
   >([]);
+  const [historyInterfaceCode, setHistoryInterfaceCode] = useState("UX-07");
   const [workoutMessage, setWorkoutMessage] = useState<string | null>(null);
   const [workoutCompletion, setWorkoutCompletion] =
     useState<WorkoutCompletionSummary | null>(null);
@@ -448,7 +449,11 @@ export function App() {
   }
 
   return (
-    <AppShell activeScreen={activeScreen} onNavigate={navigateToMainTab}>
+    <AppShell
+      activeScreen={activeScreen}
+      interfaceCode={getActiveInterfaceCode()}
+      onNavigate={navigateToMainTab}
+    >
       {renderCurrentScreen()}
       <input
         accept="application/json,.json"
@@ -465,6 +470,25 @@ export function App() {
       />
     </AppShell>
   );
+
+  function getActiveInterfaceCode() {
+    if (activeScreen === "home") {
+      return activePlan ? "UX-02" : "UX-01";
+    }
+
+    const interfaceCodes: Record<Exclude<AppScreen, "home">, string> = {
+      "active-workout": "UX-04",
+      history: historyInterfaceCode,
+      "import-error": "UX-11",
+      "import-preview": "UX-10",
+      "routine-detail": "UX-03",
+      settings: "UX-13",
+      workout: "Treino",
+      "workout-finished": "UX-06",
+    };
+
+    return interfaceCodes[activeScreen];
+  }
 
   function renderCurrentScreen() {
     if (activeScreen === "active-workout" && activeWorkout) {
@@ -551,6 +575,7 @@ export function App() {
           cycleProgress={cycleProgress}
           loadSummaries={loadSummaries}
           recentSessions={recentSessions}
+          onInterfaceCodeChange={setHistoryInterfaceCode}
           onLoadExerciseHistory={(exerciseId) =>
             loadExerciseHistoryDetails(exerciseId)
           }

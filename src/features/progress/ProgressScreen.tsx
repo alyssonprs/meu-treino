@@ -27,6 +27,7 @@ type ProgressScreenProps = {
   cycleProgress: CycleProgressSummary | null;
   loadSummaries: ExerciseLoadSummary[];
   recentSessions: CompletedWorkoutSessionSummary[];
+  onInterfaceCodeChange: (code: string) => void;
   onLoadExerciseHistory: (
     exerciseId: string,
   ) => Promise<ExerciseHistoryDetails | null>;
@@ -37,6 +38,7 @@ export function ProgressScreen({
   cycleProgress,
   loadSummaries,
   recentSessions,
+  onInterfaceCodeChange,
   onLoadExerciseHistory,
 }: ProgressScreenProps) {
   const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(
@@ -45,6 +47,10 @@ export function ProgressScreen({
   const [exerciseDetails, setExerciseDetails] =
     useState<ExerciseHistoryDetails | null>(null);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
+
+  useEffect(() => {
+    onInterfaceCodeChange(selectedExerciseId ? "UX-08" : "UX-07");
+  }, [onInterfaceCodeChange, selectedExerciseId]);
 
   useEffect(() => {
     let isMounted = true;
