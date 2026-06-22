@@ -819,21 +819,26 @@ function ExerciseStatusButton({
       aria-current={status === "Em progresso" && isCurrent ? "step" : undefined}
       aria-label={`${exercise.name}: ${status}, ${completedSetsCount} de ${totalSets} series concluidas`}
       className={cn(
-        "w-full rounded-md border p-3 text-left transition-colors",
+        "w-full rounded-lg border p-3 text-left shadow-sm transition-colors",
         statusMeta.itemClassName,
       )}
       onClick={() => onSelectExercise(exerciseIndex)}
       type="button"
     >
-      <span className="flex items-center gap-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-background">
+      <span className="flex items-start gap-3">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-background/80 ring-1 ring-border/70">
           <statusMeta.Icon
             className={cn("h-4 w-4", statusMeta.iconClassName)}
             aria-hidden="true"
           />
         </span>
-        <span className="min-w-0 flex-1 truncate text-sm font-semibold">
-          {exercise.name}
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-sm font-semibold text-foreground">
+            {exercise.name}
+          </span>
+          <span className="mt-1 block text-xs text-muted-foreground">
+            {statusMeta.description}
+          </span>
         </span>
         <span
           className={cn(
@@ -844,20 +849,64 @@ function ExerciseStatusButton({
           {status}
         </span>
       </span>
-      <span className="mt-3 block rounded-md bg-background/70 p-3 text-xs leading-5 text-muted-foreground">
-        {statusMeta.description} · {exercise.sets}x {exercise.target_reps}
-        {typeof exercise.target_rir === "number"
-          ? ` · RIR alvo ${exercise.target_rir}`
-          : ""}
-        {" · "}
-        {exercise.rest_seconds ?? 90}s descanso · {completedSetsCount}/
-        {totalSets} séries
-        <br />
-        {loadHistory
-          ? `Última carga: ${formatLoad(loadHistory.lastLoadKg)} kg x ${loadHistory.lastReps}`
-          : "Sem carga anterior"}
+      <span className="mt-3 grid grid-cols-2 gap-2">
+        <ExerciseMetricChip
+          label="Séries"
+          value={`${exercise.sets}x ${exercise.target_reps}`}
+        />
+        <ExerciseMetricChip
+          label="Progresso"
+          value={`${completedSetsCount}/${totalSets}`}
+          tone={completedSetsCount > 0 ? "info" : "default"}
+        />
+        <ExerciseMetricChip
+          label="Descanso"
+          value={`${exercise.rest_seconds ?? 90}s`}
+        />
+        {typeof exercise.target_rir === "number" ? (
+          <ExerciseMetricChip
+            label="RIR alvo"
+            value={String(exercise.target_rir)}
+          />
+        ) : null}
+      </span>
+      <span className="mt-3 flex items-center justify-between gap-3 rounded-md border border-border/70 bg-background/70 px-3 py-2 text-xs">
+        <span className="font-medium text-muted-foreground">Carga anterior</span>
+        <span className="min-w-0 truncate font-semibold text-foreground">
+          {loadHistory
+            ? `${formatLoad(loadHistory.lastLoadKg)} kg x ${loadHistory.lastReps}`
+            : "Sem carga anterior"}
+        </span>
       </span>
     </button>
+  );
+}
+
+function ExerciseMetricChip({
+  label,
+  value,
+  tone = "default",
+}: {
+  label: string;
+  value: string;
+  tone?: "default" | "info";
+}) {
+  return (
+    <span
+      className={cn(
+        "rounded-md border px-3 py-2",
+        tone === "info"
+          ? "border-info/40 bg-info/10"
+          : "border-border/70 bg-background/60",
+      )}
+    >
+      <span className="block text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">
+        {label}
+      </span>
+      <span className="mt-0.5 block text-xs font-semibold text-foreground">
+        {value}
+      </span>
+    </span>
   );
 }
 

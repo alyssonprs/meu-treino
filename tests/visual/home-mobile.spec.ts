@@ -137,14 +137,16 @@ test("mobile visual regression covers first use, import, active home, settings a
     page.getByText("Sem botão global: toque no exercício que você vai fazer agora."),
   ).toHaveCount(0);
   await expect(page.getByText("Aquecimento")).toBeVisible();
-  await expect(page.getByText(/Exerc.cios do treino/)).toBeVisible();
+  await expect(page.getByText(/Exerc.cios da rotina/)).toBeVisible();
   await expect(page.getByRole("button", { name: /Abrir/ })).toHaveCount(0);
   await expect(page.getByRole("button", { name: /Supino reto/ })).toBeVisible();
   await assertMobileUsability(page);
 
   await screenshot(page, "09-ux-03-detalhe-treino.png");
 
-  await page.getByRole("button", { name: "Treino" }).click();
+  await page
+    .getByRole("button", { name: "Voltar para lista de exercícios" })
+    .click();
   await expect(
     page.getByRole("heading", { name: "Escolha uma rotina" }),
   ).toBeVisible();
