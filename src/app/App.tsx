@@ -45,6 +45,7 @@ import {
   type WorkoutSessionDraft,
   type WorkoutSetDraft,
 } from "@/services/workoutSessionService";
+import { healthConnectAdapter } from "@/platform/health-connect";
 import { pwaWorkoutPlanRepository } from "@/storage/pwa/dexieWorkoutPlanRepository";
 import type {
   ActiveWorkoutPlanSnapshot,
@@ -547,9 +548,16 @@ export function App() {
         <SettingsScreen
           activePlan={activePlan}
           appVersion={appVersion}
+          healthConnectAdapter={healthConnectAdapter}
           isClearingLocalData={isClearingLocalData}
+          getHealthConnectAutoExportEnabled={() =>
+            pwaWorkoutPlanRepository.getHealthConnectAutoExportEnabled()
+          }
           onChooseImportFile={() => fileInputRef.current?.click()}
           onClearLocalData={handleClearLocalData}
+          setHealthConnectAutoExportEnabled={(enabled) =>
+            pwaWorkoutPlanRepository.setHealthConnectAutoExportEnabled(enabled)
+          }
         />
       );
     }

@@ -9,23 +9,31 @@ import type { LucideIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PromptCopyButton } from "@/features/import-export/PromptCopyButton";
+import type { HealthConnectAdapter } from "@/platform/health-connect";
 import type { ActiveWorkoutPlanSnapshot } from "@/storage/workoutPlanRepository";
+import { HealthConnectSettingsCard } from "./HealthConnectSettingsCard";
 import { ThemeSegmentedControl } from "./ThemeSegmentedControl";
 
 type SettingsScreenProps = {
   activePlan: ActiveWorkoutPlanSnapshot | null;
   appVersion: string;
+  healthConnectAdapter: HealthConnectAdapter;
   isClearingLocalData: boolean;
+  getHealthConnectAutoExportEnabled: () => Promise<boolean>;
   onChooseImportFile: () => void;
   onClearLocalData: () => Promise<void>;
+  setHealthConnectAutoExportEnabled: (enabled: boolean) => Promise<void>;
 };
 
 export function SettingsScreen({
   activePlan,
   appVersion,
+  healthConnectAdapter,
   isClearingLocalData,
+  getHealthConnectAutoExportEnabled,
   onChooseImportFile,
   onClearLocalData,
+  setHealthConnectAutoExportEnabled,
 }: SettingsScreenProps) {
   const [showClearConfirmation, setShowClearConfirmation] = useState(false);
 
@@ -52,6 +60,12 @@ export function SettingsScreen({
           </div>
         </div>
       </section>
+
+      <HealthConnectSettingsCard
+        adapter={healthConnectAdapter}
+        getAutoExportEnabled={getHealthConnectAutoExportEnabled}
+        setAutoExportEnabled={setHealthConnectAutoExportEnabled}
+      />
 
       {activePlan ? (
         <section className="mt-5 rounded-lg border border-border bg-card p-5">
