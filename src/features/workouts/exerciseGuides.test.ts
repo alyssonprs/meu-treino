@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import aiExerciseCatalog from "@/assets/meu-treino-catalogo-exercicios.json";
+import exerciseMediaLibrary from "@/config/exercise-media-library.json";
 import type { PlannedExerciseRecord } from "@/storage/workoutPlanRepository";
 
 import { visualGuidesById } from "./exerciseGuideCatalog";
@@ -102,5 +104,25 @@ describe("getExerciseGuide", () => {
     expect(guide.executionCues).toEqual([
       "Use carga leve e controle o movimento",
     ]);
+  });
+});
+
+describe("AI exercise catalog", () => {
+  it("summarizes every media-library exercise without leaking asset paths", () => {
+    const libraryVisualIds = new Set(
+      exerciseMediaLibrary.exercises.map((exercise) => exercise.visual_id),
+    );
+
+    expect(aiExerciseCatalog).toHaveLength(exerciseMediaLibrary.exercises.length);
+
+    for (const item of aiExerciseCatalog) {
+      expect(Object.keys(item).sort()).toEqual(["name", "visual_id"]);
+      expect(libraryVisualIds.has(item.visual_id)).toBe(true);
+      expect(item.visual_id).toMatch(/^exdb_\d+$/);
+      expect(item.name.trim().length).toBeGreaterThan(0);
+      expect(JSON.stringify(item)).not.toMatch(
+        /https?:\/\/|github\.com|raw\.githubusercontent\.com|exercise-media\/|\.gif|\.jpg/i,
+      );
+    }
   });
 });

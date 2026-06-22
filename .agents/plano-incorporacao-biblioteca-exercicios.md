@@ -343,6 +343,18 @@ pnpm build
 Objetivo: permitir que a IA escolha exercicios disponiveis na biblioteca sem
 precisar receber metadados longos nem caminhos de midia.
 
+Status: concluida em 2026-06-21.
+
+Resultado:
+
+- script repetivel criado em `scripts/generate-ai-exercise-catalog.mjs`;
+- comando `pnpm exercise-media:catalog` adicionado;
+- `src/assets/meu-treino-catalogo-exercicios.json` gerado com 1.324 itens;
+- cada item contem apenas `visual_id` e `name`;
+- o catalogo resumido nao contem URL, caminho de midia, `.jpg` nem `.gif`;
+- o prompt foi atualizado para orientar a IA a usar somente `visual_id`
+  presente no catalogo resumido e omitir o campo em caso de duvida.
+
 Contexto necessario:
 
 - este plano;
