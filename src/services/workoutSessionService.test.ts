@@ -126,6 +126,32 @@ describe("workoutSessionService", () => {
       routineName: "Treino A",
       completedExercisesCount: 1,
       completedRecordsCount: 1,
+      completedSession: {
+        planId: "plan-1",
+        routineId: "routine-a",
+        routineName: "Treino A",
+        routineOrder: 1,
+        startedAt: "2026-06-15T12:00:00.000Z",
+        completedAt: "2026-06-15T13:00:00.000Z",
+        exercises: [
+          {
+            plannedExerciseId: "planned-1",
+            exerciseId: "supino-reto",
+            sourceExerciseId: "supino-reto",
+            exerciseName: "Supino reto",
+            order: 1,
+            sets: [
+              {
+                setNumber: 1,
+                loadKg: 60,
+                reps: 8,
+                rir: null,
+                notes: "Boa execucao",
+              },
+            ],
+          },
+        ],
+      },
     });
     expect(repository.saveCompletedWorkoutSession).toHaveBeenCalledWith({
       planId: "plan-1",

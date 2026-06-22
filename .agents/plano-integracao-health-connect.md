@@ -381,6 +381,16 @@ Checks:
 - `pnpm lint`
 - teste manual no Galaxy S24 Plus
 
+Registro de execucao em 2026-06-22:
+
+- `finishWorkoutSession` continua salvando a sessao local primeiro e agora retorna o input validado da sessao concluida para permitir exportacao posterior.
+- Criado orquestrador `autoExportCompletedWorkoutToHealthConnect`, que verifica preferencia local, checa status do Health Connect e chama `exportWorkoutSession` somente quando o status e `ready`.
+- A tela `UX-06` mostra feedback discreto de Health Connect: verificando, exportado, desativado, sem permissao/nao conectado, indisponivel ou falha nao bloqueante.
+- A exportacao e disparada depois que a tela de finalizacao ja recebeu o resumo do treino, evitando bloquear o feedback principal.
+- Testes direcionados de servico passaram: `pnpm test src/services/healthConnectExportService.test.ts src/services/workoutSessionService.test.ts`.
+- `pnpm lint` e `pnpm build` passaram; o build manteve apenas o aviso existente de chunk acima de 500 kB.
+- Validacao manual em aparelho Android/Health Connect real ainda fica para E6.
+
 ### E6 - Validacao manual no Samsung/Android
 
 Objetivo:

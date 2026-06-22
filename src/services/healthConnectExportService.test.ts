@@ -1,9 +1,12 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { webHealthConnectAdapter } from "@/platform/health-connect";
 import type { SaveCompletedWorkoutSessionInput } from "@/storage/workoutPlanRepository";
 
-import { buildHealthConnectWorkoutExport } from "./healthConnectExportService";
+import {
+  autoExportCompletedWorkoutToHealthConnect,
+  buildHealthConnectWorkoutExport,
+} from "./healthConnectExportService";
 
 describe("healthConnectExportService", () => {
   it("maps a completed workout session to a Health Connect export payload", () => {
@@ -95,6 +98,95 @@ describe("healthConnectExportService", () => {
     ).resolves.toEqual({
       success: false,
       message: "Health Connect esta disponivel apenas no app Android.",
+    });
+  });
+
+  it("does not call Health Connect when auto-export is disabled", async () => {
+    const adapter = {
+      getStatus: vi.fn().mockResolvedValue("ready"),
+      exportWorkoutSession: vi.fn(),
+    };
+
+    await expect(
+      autoExportCompletedWorkoutToHealthConnect({
+        sessionId: "session-1",
+        session: createCompletedSession(),
+        adapter,
+        getAutoExportEnabled: vi.fn().mockResolvedValue(false),
+      }),
+    ).resolves.toEqual({
+      status: "disabled",
+      message: "Exportacao automatica para Health Connect desativada.",
+    });
+    expect(adapter.getStatus).not.toHaveBeenCalled();
+    expect(adapter.exportWorkoutSession).not.toHaveBeenCalled();
+  });
+
+  it("exports when auto-export is enabled and Health Connect is ready", async () => {
+    const adapter = {
+      getStatus: vi.fn().mockResolvedValue("ready"),
+      exportWorkoutSession: vi.fn().mockResolvedValue({ success: true }),
+    };
+
+    await expect(
+      autoExportCompletedWorkoutToHealthConnect({
+        sessionId: "session-1",
+        session: createCompletedSession(),
+        adapter,
+        getAutoExportEnabled: vi.fn().mockResolvedValue(true),
+      }),
+    ).resolves.toEqual({
+      status: "exported",
+      message: "Treino enviado ao Health Connect.",
+    });
+    expect(adapter.exportWorkoutSession).toHaveBeenCalledWith(
+      buildHealthConnectWorkoutExport({
+        sessionId: "session-1",
+        session: createCompletedSession(),
+      }),
+    );
+  });
+
+  it("reports missing permission without exporting", async () => {
+    const adapter = {
+      getStatus: vi.fn().mockResolvedValue("permission-missing"),
+      exportWorkoutSession: vi.fn(),
+    };
+
+    await expect(
+      autoExportCompletedWorkoutToHealthConnect({
+        sessionId: "session-1",
+        session: createCompletedSession(),
+        adapter,
+        getAutoExportEnabled: vi.fn().mockResolvedValue(true),
+      }),
+    ).resolves.toEqual({
+      status: "permission-missing",
+      message:
+        "Treino salvo localmente. Conecte o Health Connect nas Configuracoes para exportar os proximos treinos.",
+    });
+    expect(adapter.exportWorkoutSession).not.toHaveBeenCalled();
+  });
+
+  it("turns adapter failures into non-blocking export feedback", async () => {
+    const adapter = {
+      getStatus: vi.fn().mockResolvedValue("ready"),
+      exportWorkoutSession: vi.fn().mockResolvedValue({
+        success: false,
+        message: "Permissao revogada.",
+      }),
+    };
+
+    await expect(
+      autoExportCompletedWorkoutToHealthConnect({
+        sessionId: "session-1",
+        session: createCompletedSession(),
+        adapter,
+        getAutoExportEnabled: vi.fn().mockResolvedValue(true),
+      }),
+    ).resolves.toEqual({
+      status: "failed",
+      message: "Permissao revogada.",
     });
   });
 });

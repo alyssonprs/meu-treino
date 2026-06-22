@@ -4,11 +4,20 @@ import {
   Dumbbell,
   History,
   Home,
+  Link2,
   Repeat2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import type { HealthConnectAutoExportResult } from "@/services/healthConnectExportService";
 import type { CycleProgressSummary } from "@/services/progressService";
 import type { NextRoutineRecommendation } from "@/services/workoutRecommendationService";
+
+type WorkoutHealthConnectExport =
+  | HealthConnectAutoExportResult
+  | {
+      status: "pending";
+      message: string;
+    };
 
 export type WorkoutCompletionSummary = {
   sessionId: string;
@@ -16,6 +25,7 @@ export type WorkoutCompletionSummary = {
   routineName: string;
   completedExercisesCount: number;
   completedRecordsCount: number;
+  healthConnectExport?: WorkoutHealthConnectExport;
 };
 
 type WorkoutFinishedScreenProps = {
@@ -66,6 +76,22 @@ export function WorkoutFinishedScreen({
           value={String(completion.completedRecordsCount)}
         />
       </div>
+
+      {completion.healthConnectExport ? (
+        <div
+          className={`rounded-lg border bg-card p-4 ${getHealthConnectExportTone(
+            completion.healthConnectExport.status,
+          )}`}
+        >
+          <p className="flex items-center gap-2 text-sm font-medium">
+            <Link2 className="h-4 w-4" aria-hidden="true" />
+            Health Connect
+          </p>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            {completion.healthConnectExport.message}
+          </p>
+        </div>
+      ) : null}
 
       <div className="rounded-lg border border-border bg-card p-4">
         <div className="flex items-center justify-between gap-3">
@@ -131,6 +157,20 @@ export function WorkoutFinishedScreen({
       </div>
     </section>
   );
+}
+
+function getHealthConnectExportTone(
+  status: WorkoutHealthConnectExport["status"],
+) {
+  if (status === "exported") {
+    return "border-primary text-primary";
+  }
+
+  if (status === "failed" || status === "permission-missing") {
+    return "border-warning text-warning";
+  }
+
+  return "border-border text-info";
 }
 
 function SummaryMetric({

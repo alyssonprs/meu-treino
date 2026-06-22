@@ -41,6 +41,7 @@ export type FinishWorkoutSessionResult =
       routineName: string;
       completedExercisesCount: number;
       completedRecordsCount: number;
+      completedSession: SaveCompletedWorkoutSessionInput;
     }
   | {
       success: false;
@@ -224,6 +225,7 @@ export async function finishWorkoutSession({
       (total, exercise) => total + exercise.sets.length,
       0,
     ),
+    completedSession: input,
   };
 }
 

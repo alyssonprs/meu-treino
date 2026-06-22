@@ -32,6 +32,9 @@ import {
   type RoutineExecutionSummary,
 } from "@/services/progressService";
 import {
+  autoExportCompletedWorkoutToHealthConnect,
+} from "@/services/healthConnectExportService";
+import {
   activateImportedWorkoutPlan,
   parseWorkoutPlanImport,
 } from "@/services/workoutImportService";
@@ -51,6 +54,7 @@ import type {
   ActiveWorkoutPlanSnapshot,
   ExerciseLoadHistoryRecord,
   RoutineWithDetails,
+  SaveCompletedWorkoutSessionInput,
 } from "@/storage/workoutPlanRepository";
 
 const appVersion = "0.1.0";
@@ -323,8 +327,42 @@ export function App() {
       routineName: result.routineName,
       completedExercisesCount: result.completedExercisesCount,
       completedRecordsCount: result.completedRecordsCount,
+      healthConnectExport: {
+        status: "pending",
+        message: "Verificando exportacao para Health Connect.",
+      },
     });
     setActiveScreen("workout-finished");
+
+    void exportCompletedWorkoutToHealthConnect({
+      sessionId: result.sessionId,
+      completedSession: result.completedSession,
+    });
+  }
+
+  async function exportCompletedWorkoutToHealthConnect({
+    sessionId,
+    completedSession,
+  }: {
+    sessionId: string;
+    completedSession: SaveCompletedWorkoutSessionInput;
+  }) {
+    const exportResult = await autoExportCompletedWorkoutToHealthConnect({
+      sessionId,
+      session: completedSession,
+      adapter: healthConnectAdapter,
+      getAutoExportEnabled: () =>
+        pwaWorkoutPlanRepository.getHealthConnectAutoExportEnabled(),
+    });
+
+    setWorkoutCompletion((current) =>
+      current?.sessionId === sessionId
+        ? {
+            ...current,
+            healthConnectExport: exportResult,
+          }
+        : current,
+    );
   }
 
   async function handleClearLocalData() {

@@ -1,4 +1,6 @@
 import type {
+  HealthConnectAdapter,
+  HealthConnectStatus,
   HealthConnectWorkoutExport,
   HealthConnectWorkoutSegment,
 } from "@/platform/health-connect";
@@ -7,6 +9,25 @@ import type { SaveCompletedWorkoutSessionInput } from "@/storage/workoutPlanRepo
 export type BuildHealthConnectWorkoutExportInput = {
   sessionId: string;
   session: SaveCompletedWorkoutSessionInput;
+};
+
+export type HealthConnectAutoExportStatus =
+  | "disabled"
+  | "exported"
+  | "permission-missing"
+  | "unavailable"
+  | "failed";
+
+export type HealthConnectAutoExportResult = {
+  status: HealthConnectAutoExportStatus;
+  message: string;
+};
+
+export type AutoExportCompletedWorkoutInput = {
+  sessionId: string;
+  session: SaveCompletedWorkoutSessionInput;
+  adapter: Pick<HealthConnectAdapter, "getStatus" | "exportWorkoutSession">;
+  getAutoExportEnabled: () => Promise<boolean>;
 };
 
 export function buildHealthConnectWorkoutExport({
@@ -31,8 +52,73 @@ export function buildHealthConnectWorkoutExport({
   };
 }
 
+export async function autoExportCompletedWorkoutToHealthConnect({
+  sessionId,
+  session,
+  adapter,
+  getAutoExportEnabled,
+}: AutoExportCompletedWorkoutInput): Promise<HealthConnectAutoExportResult> {
+  try {
+    const autoExportEnabled = await getAutoExportEnabled();
+
+    if (!autoExportEnabled) {
+      return {
+        status: "disabled",
+        message: "Exportacao automatica para Health Connect desativada.",
+      };
+    }
+
+    const status = await adapter.getStatus();
+
+    if (status !== "ready") {
+      return toUnavailableExportResult(status);
+    }
+
+    const result = await adapter.exportWorkoutSession(
+      buildHealthConnectWorkoutExport({ sessionId, session }),
+    );
+
+    if (!result.success) {
+      return {
+        status: "failed",
+        message:
+          result.message ??
+          "Treino salvo localmente, mas nao foi possivel enviar ao Health Connect.",
+      };
+    }
+
+    return {
+      status: "exported",
+      message: "Treino enviado ao Health Connect.",
+    };
+  } catch {
+    return {
+      status: "failed",
+      message:
+        "Treino salvo localmente, mas nao foi possivel enviar ao Health Connect.",
+    };
+  }
+}
+
 function buildWorkoutSegments(): HealthConnectWorkoutSegment[] {
   return [];
+}
+
+function toUnavailableExportResult(
+  status: HealthConnectStatus,
+): HealthConnectAutoExportResult {
+  if (status === "permission-missing" || status === "available") {
+    return {
+      status: "permission-missing",
+      message:
+        "Treino salvo localmente. Conecte o Health Connect nas Configuracoes para exportar os proximos treinos.",
+    };
+  }
+
+  return {
+    status: "unavailable",
+    message: "Treino salvo localmente. Health Connect indisponivel neste app.",
+  };
 }
 
 function buildWorkoutSummaryNotes(
