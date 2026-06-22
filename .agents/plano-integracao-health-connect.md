@@ -397,6 +397,8 @@ Objetivo:
 
 - Confirmar o comportamento real em aparelho fisico.
 
+Registro de execucao: `.agents/execucao-6-validacao-manual-samsung-android.md`.
+
 Roteiro:
 
 1. Instalar APK debug/release no Galaxy S24 Plus.
@@ -416,6 +418,13 @@ Pronto quando:
 - Existe evidencia do treino no Health Connect.
 - O comportamento do Samsung Health fica anotado: aparece, demora, ou nao aparece para esse tipo de dado.
 - Qualquer diferenca entre Health Connect e Samsung Health fica documentada para o usuario.
+
+Registro de execucao em 2026-06-22:
+
+- Roteiro manual e campos de evidencia criados em `.agents/execucao-6-validacao-manual-samsung-android.md`.
+- `pnpm android:apk` foi tentado pelo runtime Node gerenciado pelo Codex, mas falhou porque o JDK local esperado em `.codex-android-tools/jdk21` nao existe.
+- Nao foram detectados `java.exe`, Android SDK local nem Android Studio nesta maquina.
+- Validacao em Galaxy/Health Connect/Samsung Health continua pendente ate haver APK gerado e aparelho fisico disponivel.
 
 ### E7 - Preparacao para distribuicao futura
 
