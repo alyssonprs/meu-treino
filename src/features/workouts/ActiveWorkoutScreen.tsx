@@ -412,6 +412,26 @@ function ExerciseGuideDisclosure({
 }) {
   const primaryLabel = guide.primaryMuscles.join(", ");
   const secondaryLabel = guide.secondaryMuscles.join(", ");
+  const [shouldLoadAnimation, setShouldLoadAnimation] = useState(false);
+
+  useEffect(() => {
+    setShouldLoadAnimation(false);
+
+    if (!isOpen || !guide.animationUrl) {
+      return;
+    }
+
+    const frameId = window.requestAnimationFrame(() => {
+      setShouldLoadAnimation(true);
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [guide.animationUrl, guide.imageUrl, isOpen]);
+
+  const mediaUrl =
+    isOpen && shouldLoadAnimation && guide.animationUrl
+      ? guide.animationUrl
+      : guide.imageUrl;
 
   return (
     <div className="mt-4 rounded-md border border-border bg-muted p-3">
@@ -444,13 +464,13 @@ function ExerciseGuideDisclosure({
 
       {isOpen ? (
         <div className="mt-3 space-y-3">
-          {guide.imageUrl ? (
+          {mediaUrl ? (
             <div className="overflow-hidden rounded-md border border-border bg-background">
               <img
                 alt={guide.imageAlt}
-                className="aspect-[16/9] w-full object-cover"
+                className="aspect-[16/9] w-full object-contain"
                 loading="lazy"
-                src={guide.imageUrl}
+                src={mediaUrl}
               />
             </div>
           ) : null}

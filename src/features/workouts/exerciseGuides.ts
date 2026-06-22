@@ -8,6 +8,7 @@ import {
 
 export type ExerciseGuide = {
   imageUrl: string | null;
+  animationUrl: string | null;
   imageAlt: string;
   primaryMuscles: string[];
   secondaryMuscles: string[];
@@ -25,6 +26,7 @@ export function getExerciseGuide(
 
   return {
     imageUrl: visualGuide?.imageUrl ?? null,
+    animationUrl: visualGuide?.animationUrl ?? null,
     imageAlt:
       visualGuide?.imageAlt ??
       `Guia do exercicio ${exercise.name} com foco em ${exercise.muscleGroup}.`,

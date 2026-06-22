@@ -11,6 +11,8 @@
     "visual:check": "playwright test --config playwright.visual.config.ts",
     "exercise-media:import": "node scripts/import-exercise-media-library.mjs",
     "exercise-media:catalog": "node scripts/generate-ai-exercise-catalog.mjs",
+    "exercise-media:sync-assets": "node scripts/sync-exercise-media-assets.mjs",
+    "exercise-media:check": "node scripts/check-exercise-media-assets.mjs",
     "preview": "vite preview --host 127.0.0.1",
     "android:sync": "tsc -b && vite build && cap sync android",
     "android:apk": "powershell -ExecutionPolicy Bypass -File scripts/build-android-apk.ps1",

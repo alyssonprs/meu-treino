@@ -1,8 +1,10 @@
 import exerciseGuideCatalog from "@/config/exercise-guide-catalog.json";
+import exerciseMediaLibrary from "@/config/exercise-media-library.json";
 import type { MovementPattern } from "@/domain/movementPattern";
 
 export type VisualGuide = {
   imageUrl: string;
+  animationUrl: string | null;
   imageAlt: string;
 };
 
@@ -22,36 +24,56 @@ type MovementPatternGuideConfig = {
   default_cues: string[];
 };
 
+type ExerciseMediaConfig = {
+  visual_id: string;
+  source_id: string;
+  source_name: string;
+  image_asset: string;
+  animation_asset: string;
+};
+
 const catalog = exerciseGuideCatalog as {
   visual_guides: VisualGuideConfig[];
   exercise_visual_aliases: ExerciseVisualAliasConfig[];
   movement_patterns: MovementPatternGuideConfig[];
 };
 
-const exerciseGuideAssets = import.meta.glob<string>(
-  "../../assets/exercise-guides/**/*",
-  {
-    eager: true,
-    import: "default",
-    query: "?url",
-  },
-);
+const mediaLibrary = exerciseMediaLibrary as {
+  exercises: ExerciseMediaConfig[];
+};
 
 export const visualGuidesById = Object.fromEntries(
-  catalog.visual_guides.map((guide) => [
-    guide.id,
-    {
-      imageUrl: resolveExerciseGuideAsset(guide.image_asset),
-      imageAlt: guide.image_alt,
-    },
-  ]),
+  [
+    ...mediaLibrary.exercises.map((exercise) => [
+      exercise.visual_id,
+      {
+        imageUrl: toPublicAssetUrl(exercise.image_asset),
+        animationUrl: toPublicAssetUrl(exercise.animation_asset),
+        imageAlt: `Demonstracao do exercicio ${exercise.source_name}.`,
+      },
+    ]),
+    ...catalog.visual_guides.map((guide) => [
+      guide.id,
+      {
+        imageUrl: toPublicAssetUrl(guide.image_asset),
+        animationUrl: null,
+        imageAlt: guide.image_alt,
+      },
+    ]),
+  ],
 ) as Record<string, VisualGuide>;
 
 export const visualGuideIdsByExerciseId = Object.fromEntries(
-  catalog.exercise_visual_aliases.map((alias) => [
-    alias.exercise_id,
-    alias.visual_id,
-  ]),
+  [
+    ...mediaLibrary.exercises.map((exercise) => [
+      exercise.source_id,
+      exercise.visual_id,
+    ]),
+    ...catalog.exercise_visual_aliases.map((alias) => [
+      alias.exercise_id,
+      alias.visual_id,
+    ]),
+  ],
 ) as Record<string, string>;
 
 export const movementPatternGuidesById = Object.fromEntries(
@@ -68,13 +90,18 @@ export const defaultCuesByMovementPattern = Object.fromEntries(
   ]),
 ) as Record<MovementPattern, string[]>;
 
-function resolveExerciseGuideAsset(fileName: string) {
-  const assetPath = `../../assets/exercise-guides/${fileName}`;
-  const assetUrl = exerciseGuideAssets[assetPath];
+function toPublicAssetUrl(assetPath: string) {
+  const normalizedPath = assetPath.trim().replace(/^\/+/, "");
 
-  if (!assetUrl) {
-    throw new Error(`Exercise guide asset not found: ${fileName}`);
+  if (
+    normalizedPath.length === 0 ||
+    normalizedPath.includes("://") ||
+    normalizedPath.includes("..")
+  ) {
+    throw new Error(`Invalid exercise media asset path: ${assetPath}`);
   }
 
-  return assetUrl;
+  const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+  return `${baseUrl}/${normalizedPath}`;
 }
