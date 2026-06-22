@@ -67,7 +67,41 @@ describe("workoutImportService", () => {
       daysPerWeek: 4,
       routineCount: 2,
       exerciseCount: 3,
+      warnings: [],
     });
+  });
+
+  it("accepts a known visual_id without import warnings", () => {
+    const result = parseWorkoutPlanImport(
+      createImportJsonWithVisualId("exdb_0001"),
+    );
+
+    expect(result.success).toBe(true);
+    expect(result.preview?.warnings).toEqual([]);
+  });
+
+  it("keeps import valid and warns when visual_id has no local media", () => {
+    const result = parseWorkoutPlanImport(
+      createImportJsonWithVisualId("visual_inventado"),
+    );
+
+    expect(result.success).toBe(true);
+    expect(result.preview?.warnings).toEqual([
+      {
+        code: "unknown_visual_id",
+        message:
+          "1 visual_id nao tem midia local no app. A importacao pode continuar, mas esse exercicio usara o guia sem imagem.",
+        visualIds: ["visual_inventado"],
+        exerciseNames: ["Supino reto"],
+      },
+    ]);
+  });
+
+  it("does not warn when visual_id is absent", () => {
+    const result = parseWorkoutPlanImport(validImportJson);
+
+    expect(result.success).toBe(true);
+    expect(result.preview?.warnings).toEqual([]);
   });
 
   it("returns a readable error when the file is not JSON", () => {
@@ -112,3 +146,19 @@ describe("workoutImportService", () => {
     });
   });
 });
+
+function createImportJsonWithVisualId(visualId: string) {
+  const importData = JSON.parse(validImportJson) as {
+    workout_plan: {
+      routines: {
+        exercises: {
+          visual_id?: string;
+        }[];
+      }[];
+    };
+  };
+
+  importData.workout_plan.routines[0].exercises[0].visual_id = visualId;
+
+  return JSON.stringify(importData);
+}

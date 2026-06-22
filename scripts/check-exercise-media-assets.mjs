@@ -21,6 +21,8 @@ if (!Array.isArray(library.exercises)) {
   throw new Error(`${INPUT_PATH} must contain an exercises array.`);
 }
 
+validateCatalogConsistency(library);
+
 const assets = collectAssets(library.exercises);
 const missingAssets = [];
 
@@ -52,6 +54,36 @@ if (missingAssets.length > 0) {
 }
 
 console.log(`Checked ${assets.length} exercise media assets.`);
+
+function validateCatalogConsistency(library) {
+  const visualIds = new Set();
+
+  for (const [index, exercise] of library.exercises.entries()) {
+    if (typeof exercise.visual_id !== "string" || exercise.visual_id.trim() === "") {
+      throw new Error(`Exercise at index ${index} has an invalid visual_id.`);
+    }
+
+    if (visualIds.has(exercise.visual_id)) {
+      throw new Error(`Duplicate visual_id in ${INPUT_PATH}: ${exercise.visual_id}`);
+    }
+
+    visualIds.add(exercise.visual_id);
+  }
+
+  if (library.stats) {
+    assertStat(library.stats.exercises, library.exercises.length, "exercises");
+    assertStat(library.stats.images, library.exercises.length, "images");
+    assertStat(library.stats.animations, library.exercises.length, "animations");
+  }
+}
+
+function assertStat(actual, expected, label) {
+  if (actual !== expected) {
+    throw new Error(
+      `${INPUT_PATH} stats.${label} is ${actual}, expected ${expected}.`,
+    );
+  }
+}
 
 function collectAssets(exercises) {
   const assets = new Set();

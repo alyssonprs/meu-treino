@@ -1,4 +1,9 @@
-import { CheckCircle2, FileInput, RotateCcw } from "lucide-react";
+import {
+  AlertTriangle,
+  CheckCircle2,
+  FileInput,
+  RotateCcw,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { ImportStatus } from "./importStatus";
 
@@ -57,6 +62,32 @@ export function ImportPreviewScreen({
           Ao confirmar, o progresso da sequência atual é reiniciado. Históricos
           de carga já salvos permanecem no dispositivo.
         </p>
+        {preview.warnings.length > 0 ? (
+          <div className="mt-4 rounded-md border border-warning/60 bg-warning/10 p-3 text-sm">
+            <div className="flex items-start gap-2">
+              <AlertTriangle
+                className="mt-0.5 h-4 w-4 shrink-0 text-warning"
+                aria-hidden="true"
+              />
+              <div className="min-w-0">
+                <p className="font-semibold text-foreground">
+                  Avisos de qualidade
+                </p>
+                <ul className="mt-2 grid gap-2 text-muted-foreground">
+                  {preview.warnings.map((warning) => (
+                    <li key={warning.code}>
+                      <p>{warning.message}</p>
+                      <p className="mt-1 break-words text-xs">
+                        IDs: {warning.visualIds.slice(0, 4).join(", ")}
+                        {warning.visualIds.length > 4 ? "..." : ""}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
 
       <div className="mt-5 grid gap-2">
