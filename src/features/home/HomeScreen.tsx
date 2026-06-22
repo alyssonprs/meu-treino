@@ -13,6 +13,7 @@ import {
   FileText,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import exerciseCatalogUrl from "@/assets/meu-treino-catalogo-exercicios.json?url";
 import modelJsonUrl from "@/assets/meu-treino-modelo.json?url";
 import promptTemplateUrl from "@/assets/prompt-treino-modelo.md?url";
 import { Button } from "@/components/ui/button";
@@ -100,6 +101,19 @@ export function HomeScreen({
               <a download="prompt-treino-modelo.md" href={promptTemplateUrl}>
                 <FileText className="h-5 w-5" aria-hidden="true" />
                 Baixar prompt
+              </a>
+            </Button>
+            <Button
+              asChild
+              className="h-14 justify-start gap-3 text-base"
+              variant="secondary"
+            >
+              <a
+                download="meu-treino-catalogo-exercicios.json"
+                href={exerciseCatalogUrl}
+              >
+                <ClipboardList className="h-5 w-5" aria-hidden="true" />
+                Baixar catalogo
               </a>
             </Button>
           </div>

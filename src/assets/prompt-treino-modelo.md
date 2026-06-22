@@ -6,9 +6,11 @@ Sua função é criar programas de treinamento personalizados e preencher um arq
 
 ## REGRAS IMPORTANTES:
 
-1. O usuário enviará um arquivo JSON modelo.
-2. Quando o usuario tambem enviar `meu-treino-catalogo-exercicios.json`, use esse catalogo como a unica lista oficial de `visual_id` disponiveis.
-3. Antes de criar o treino, analise cuidadosamente o JSON para identificar:
+1. O usuario deve enviar tres arquivos auxiliares: `meu-treino-modelo.json`, `prompt-treino-modelo.md` e `meu-treino-catalogo-exercicios.json`.
+2. Use `meu-treino-modelo.json` como contrato de estrutura e tipos.
+3. Use `meu-treino-catalogo-exercicios.json` como a unica lista oficial de `visual_id` disponiveis.
+4. Se o catalogo nao for enviado, gere o treino sem `visual_id`; nao tente inferir, traduzir ou criar IDs visuais.
+5. Antes de criar o treino, analise cuidadosamente o JSON para identificar:
 
    - Estrutura completa do arquivo.
    - Campos obrigatórios.
@@ -16,16 +18,16 @@ Sua função é criar programas de treinamento personalizados e preencher um arq
    - Organização das rotinas.
    - Formato dos exercícios.
    - Campos opcionais e obrigatórios.
-4. O JSON gerado deve respeitar rigorosamente a estrutura do modelo.
-5. Nunca invente novos campos.
-6. Nunca remova campos obrigatórios.
-7. Nunca altere nomes de propriedades existentes.
-8. Preserve o formato de arrays, objetos e tipos de dados.
-9. O resultado deve ser compatível para importação no sistema que utiliza o JSON.
-10. Use sempre a raiz `workout_plan`, exatamente como no modelo.
-11. Não use comentários, markdown, texto antes do JSON ou texto depois do JSON na entrega final.
-12. Campos opcionais podem ser omitidos quando a informação não for conhecida ou não fizer sentido para o exercício.
-13. Nunca preencha campos opcionais com string vazia (`""`), array vazio sem necessidade ou valor genérico apenas para "ter o campo".
+6. O JSON gerado deve respeitar rigorosamente a estrutura do modelo.
+7. Nunca invente novos campos.
+8. Nunca remova campos obrigatórios.
+9. Nunca altere nomes de propriedades existentes.
+10. Preserve o formato de arrays, objetos e tipos de dados.
+11. O resultado deve ser compatível para importação no sistema que utiliza o JSON.
+12. Use sempre a raiz `workout_plan`, exatamente como no modelo.
+13. Não use comentários, markdown, texto antes do JSON ou texto depois do JSON na entrega final.
+14. Campos opcionais podem ser omitidos quando a informação não for conhecida ou não fizer sentido para o exercício.
+15. Nunca preencha campos opcionais com string vazia (`""`), array vazio sem necessidade ou valor genérico apenas para "ter o campo".
 
 ## CONTRATO DO JSON:
 
@@ -133,7 +135,7 @@ Regras específicas para `visual_id`:
 
 - `visual_id` NÃO é obrigatório.
 - O campo deve existir somente quando houver correspondencia exata no arquivo `meu-treino-catalogo-exercicios.json`.
-- O catalogo resumido possui itens com `visual_id` e `name`; use o `name` para escolher o exercicio equivalente e copie o `visual_id` exatamente como esta no catalogo.
+- O catalogo resumido possui somente itens com `visual_id` e `name`; use o `name` para escolher o exercicio equivalente e copie o `visual_id` exatamente como esta no catalogo.
 - Prefira nomes de exercicios em portugues no treino final, mas preserve o `visual_id` em ingles/ID tecnico exatamente como consta no catalogo.
 - Se não souber o `visual_id` correto, omita o campo.
 - Se houver duvida entre variantes parecidas, omita `visual_id` e mantenha `primary_muscles`, `secondary_muscles`, `movement_pattern` e `execution_cues`.

@@ -6,7 +6,7 @@ Voce e um engenheiro de software senior especializado em aplicativos mobile web 
 
 Criar um app para o aluno importar um plano de treino em JSON, executar os treinos, registrar progresso por exercicio, acompanhar cargas usadas em cada exercicio e saber quando ja completou treinos suficientes para pedir um novo plano.
 
-O app tambem deve disponibilizar para download um JSON de modelo e um prompt recomendado, para que o aluno ou professor possa enviar esses arquivos a uma IA e pedir a geracao de um novo treino compativel com o aplicativo.
+O app tambem deve disponibilizar para download um JSON de modelo, um prompt recomendado e um catalogo resumido de exercicios com `visual_id`, para que o aluno ou professor possa enviar esses arquivos a uma IA e pedir a geracao de um novo treino compativel com o aplicativo.
 
 ## Decisoes arquiteturais
 
@@ -84,7 +84,7 @@ Organizar o projeto em camadas simples:
 - `src/storage`: repositorios e adaptadores SQLite/IndexedDB.
 - `src/platform`: adaptadores para recursos especificos de PWA ou Android, como download, compartilhamento, arquivos e armazenamento.
 - `src/theme`: tokens visuais, variaveis CSS e configuracao de tema claro/escuro.
-- `src/assets`: arquivos `meu-treino-modelo.json` e `prompt-treino-modelo.md` usados no download do modelo e do prompt recomendado.
+- `src/assets`: arquivos `meu-treino-modelo.json`, `prompt-treino-modelo.md` e `meu-treino-catalogo-exercicios.json` usados no download do modelo, do prompt recomendado e do catalogo de `visual_id`.
 
 ### Backend local
 
@@ -94,7 +94,7 @@ Tratar o "backend" como uma camada local de servicos TypeScript dentro do aplica
 - `WorkoutSessionService`: inicia, atualiza e finaliza uma sessao de treino, registrando carga e repeticoes uma vez por exercicio na primeira versao.
 - `RoutineRecommendationService`: identifica a proxima rotina recomendada com base na ultima rotina finalizada no plano ativo.
 - `ProgressService`: calcula treinos completos, cargas anteriores e evolucao por exercicio.
-- `TemplateExportService`: fornece o JSON de modelo e o prompt recomendado para download ou compartilhamento.
+- `TemplateExportService`: fornece o JSON de modelo, o prompt recomendado e o catalogo resumido de exercicios para download ou compartilhamento.
 - `ExerciseMatchService`: reaproveita cargas antigas quando o novo plano contem exercicios ja realizados.
 
 Essa camada nao deve depender diretamente da UI. A UI chama servicos e repositorios por interfaces.
@@ -220,7 +220,7 @@ Regra simples para aviso de novo treino:
 - Execucao de exercicio: marcar series concluidas durante o exercicio para disparar descanso entre series; registrar carga e repeticoes apenas no fim do exercicio; mostrar orientacao visual opcional em painel recolhido por padrao, abrindo por `Ver como fazer`; RIR nao aparece como campo obrigatorio na primeira versao e fica reservado para melhoria futura.
 - Historico: treinos concluidos e evolucao de carga por exercicio.
 - Importar treino: acao contextual na Home sem treino ou em Configuracoes com treino ativo; selecionar JSON, validar, mostrar preview e substituir plano atual.
-- Baixar modelo: acao contextual na Home sem treino ou em Configuracoes com treino ativo; executa download direto de `meu-treino-modelo.json` e deve aparecer junto da acao para baixar `prompt-treino-modelo.md`.
+- Baixar arquivos auxiliares: acao contextual na Home sem treino ou em Configuracoes com treino ativo; executa download direto de `meu-treino-modelo.json` e deve aparecer junto das acoes para baixar `prompt-treino-modelo.md` e `meu-treino-catalogo-exercicios.json`.
 - Configuracoes: exportar backup local, apagar dados locais e informacoes da versao.
 
 ### Direcao de usabilidade aprovada
@@ -273,7 +273,7 @@ Regras:
 - Importar um novo JSON de treino.
 - Validar estrutura antes de salvar.
 - Substituir o treino ativo atual.
-- Baixar o JSON de modelo e o prompt recomendado.
+- Baixar o JSON de modelo, o prompt recomendado e o catalogo resumido de exercicios.
 - Visualizar plano ativo e rotinas.
 - Recomendar automaticamente a proxima rotina com base na ultima rotina finalizada.
 - Escolher entre tema claro e tema escuro.
@@ -314,7 +314,7 @@ Regras:
 
 ## Criterios de aceite da primeira versao
 
-- O usuario consegue baixar o JSON de modelo e o prompt recomendado pelo app.
+- O usuario consegue baixar o JSON de modelo, o prompt recomendado e o catalogo resumido de exercicios pelo app.
 - O usuario consegue importar um JSON valido seguindo o modelo.
 - O app exibe o plano importado com rotinas e exercicios.
 - O app recomenda a primeira rotina quando nenhum treino foi finalizado no plano ativo.

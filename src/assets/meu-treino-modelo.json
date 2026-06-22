@@ -34,6 +34,7 @@
             "primary_muscles": ["Peitoral maior"],
             "secondary_muscles": ["Triceps", "Deltoide anterior"],
             "movement_pattern": "horizontal_push",
+            "visual_id": "exdb_0025",
             "execution_cues": [
               "Pes firmes no chao",
               "Desca com controle",
@@ -54,6 +55,7 @@
             "primary_muscles": ["Triceps braquial"],
             "secondary_muscles": ["Antebraco"],
             "movement_pattern": "elbow_extension",
+            "visual_id": "exdb_0241",
             "execution_cues": [
               "Cotovelos perto do tronco",
               "Estenda ate contrair o triceps",
@@ -88,6 +90,7 @@
             "primary_muscles": ["Dorsal", "Romboides"],
             "secondary_muscles": ["Biceps", "Deltoide posterior"],
             "movement_pattern": "horizontal_pull",
+            "visual_id": "exdb_0027",
             "execution_cues": [
               "Tronco firme",
               "Puxe a barra em direcao ao abdomen",
@@ -107,6 +110,7 @@
             "primary_muscles": ["Biceps braquial"],
             "secondary_muscles": ["Braquial", "Antebraco"],
             "movement_pattern": "elbow_flexion",
+            "visual_id": "exdb_0031",
             "execution_cues": [
               "Cotovelos estaveis",
               "Suba sem balancar o tronco",

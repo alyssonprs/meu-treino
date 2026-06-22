@@ -465,6 +465,12 @@ rg -n "https?://|github.com|raw.githubusercontent.com" src/config public/exercis
 Objetivo: garantir que a IA consiga gerar um JSON final com `visual_id` que liga ao
 catalogo de midias.
 
+Status em 2026-06-21: concluida. O app baixa modelo, prompt e catalogo; o
+prompt orienta anexar os tres arquivos e usar somente `visual_id` do catalogo;
+o modelo JSON usa exemplos reais da biblioteca importada. Checks executados:
+`pnpm build`, `pnpm test -- exerciseGuides`, `pnpm lint` e
+`pnpm visual:check tests/visual/home-mobile.spec.ts`.
+
 Contexto necessario:
 
 - este plano;
