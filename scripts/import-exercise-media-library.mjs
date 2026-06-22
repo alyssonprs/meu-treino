@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -7,21 +7,29 @@ const SOURCE_COMMIT = "f987a7b858d7987c3677e1073ee18b623895f615";
 const SOURCE_DATA_URL = `https://raw.githubusercontent.com/${SOURCE_REPO}/${SOURCE_COMMIT}/data/exercises.json`;
 const OUTPUT_PATH = "src/config/exercise-media-library.json";
 const LICENSE_NOTE = "educational and non-commercial only";
+const SUPPORTED_MOVEMENT_PATTERNS = new Set([
+  "horizontal_push",
+  "horizontal_pull",
+  "vertical_push",
+  "vertical_pull",
+  "squat",
+  "hinge",
+  "lunge",
+  "hip_thrust",
+  "leg_extension",
+  "leg_curl",
+  "calf_raise",
+  "shoulder_abduction",
+  "elbow_flexion",
+  "elbow_extension",
+  "core_flexion",
+  "core_anti_extension",
+  "core_rotation",
+]);
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(scriptDir, "..");
 const outputPath = path.join(projectRoot, OUTPUT_PATH);
-const exerciseGuideCatalogPath = path.join(
-  projectRoot,
-  "src/config/exercise-guide-catalog.json",
-);
-
-const exerciseGuideCatalog = JSON.parse(
-  await readFile(exerciseGuideCatalogPath, "utf8"),
-);
-const supportedMovementPatterns = new Set(
-  exerciseGuideCatalog.movement_patterns.map((pattern) => pattern.id),
-);
 
 const requiredStringFields = [
   "id",
@@ -81,7 +89,7 @@ function mapExercise(exercise, index) {
 
   const movementPattern = inferMovementPattern(exercise);
 
-  if (!supportedMovementPatterns.has(movementPattern)) {
+  if (!SUPPORTED_MOVEMENT_PATTERNS.has(movementPattern)) {
     throw new Error(
       `Unsupported movement pattern "${movementPattern}" for exercise ${exercise.id}`,
     );

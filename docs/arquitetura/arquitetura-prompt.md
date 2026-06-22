@@ -130,10 +130,10 @@ Contrato inicial validado pelo app:
 - Cada exercicio planejado deve conter `name`, `muscle_group`, `equipment`, `is_unilateral`, `sets` e `target_reps`.
 - Campos opcionais do exercicio: `exercise_id`, `target_rir`, `rest_seconds`, `tempo`, `advanced_technique`, `primary_muscles`, `secondary_muscles`, `movement_pattern`, `visual_id`, `execution_cues`, `notes` e `media_url`.
 - `primary_muscles`, `secondary_muscles` e `execution_cues` devem ser listas de textos curtos quando informados.
-- `movement_pattern` deve usar somente um identificador suportado pelo app. Lista oficial inicial: `horizontal_push`, `horizontal_pull`, `vertical_push`, `vertical_pull`, `squat`, `hinge`, `lunge`, `hip_thrust`, `leg_extension`, `leg_curl`, `calf_raise`, `shoulder_abduction`, `elbow_flexion`, `elbow_extension`, `core_flexion`, `core_anti_extension` ou `core_rotation`.
-- O app usa `movement_pattern` para validar o padrao do movimento e sugerir dicas padrao quando nao houver `execution_cues`; ele nao deve renderizar imagem por conta propria.
-- A lista efetivamente validada pelo app vem de `src/config/exercise-guide-catalog.json`, para permitir evolucao do catalogo sem alterar a logica do resolver.
-- `visual_id` deve ser informado somente quando houver asset local validado e mapeamento conhecido no app; se nao houver correspondencia, o app usa musculos e dicas como fallback, sem imagem.
+- `movement_pattern` deve usar somente um identificador presente nos exercicios de `src/config/exercise-media-library.json`.
+- O app usa `movement_pattern` para validar o padrao do movimento; ele nao deve renderizar imagem por conta propria nem substituir `execution_cues`.
+- A lista efetivamente validada pelo app vem de `src/config/exercise-media-library.json`, que e a fonte unica de exercicios aceitos, `visual_id` conhecidos e padroes de movimento suportados.
+- `visual_id` deve ser informado somente quando houver correspondencia exata em `src/config/exercise-media-library.json`; se nao houver correspondencia, o JSON importado e invalido.
 - `estimated_duration_weeks`, `days_per_week`, `order`, `duration_minutes`, `sets` e `rest_seconds` devem ser inteiros positivos.
 - `target_rir` deve ser inteiro maior ou igual a zero quando informado.
 

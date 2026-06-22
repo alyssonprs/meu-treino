@@ -95,7 +95,7 @@ O app pode mostrar um painel recolhido chamado "Ver como fazer" durante a execu�
 Regras gerais:
 
 - Os campos de orientação visual são opcionais.
-- O app usa `movement_pattern` para validar o padrao do movimento e sugerir dicas quando faltarem `execution_cues`; ele nao deve ser tratado como imagem do exercicio.
+- O app usa `movement_pattern` para validar o padrao do movimento; ele nao deve ser tratado como imagem do exercicio nem como substituto para `execution_cues`.
 - Portanto, preencha os campos de músculos e dicas sempre que conseguir fazer isso com segurança.
 - Não invente anatomia ou instruções se houver incerteza clínica, lesão importante ou exercício muito específico. Nesse caso, use dicas conservadoras e recomende orientação profissional nas `notes` quando apropriado.
 
@@ -127,7 +127,7 @@ Valores suportados para `movement_pattern`:
 - `core_anti_extension`: estabilidade contra extensão, como prancha.
 - `core_rotation`: rotação ou anti-rotação do tronco.
 
-Use o melhor `movement_pattern` disponivel quando ele representar bem o exercicio, pois ele ajuda o app a mostrar dicas. Ele nao garante imagem do exercicio.
+Use o melhor `movement_pattern` disponivel quando ele representar bem o exercicio, pois ele ajuda o app a validar a classificacao do movimento. Ele nao garante imagem do exercicio.
 
 Não use valores fora dessa lista. Se nenhum valor representar bem o exercício, omita `movement_pattern`.
 

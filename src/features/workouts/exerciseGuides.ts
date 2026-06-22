@@ -1,7 +1,5 @@
-import type { MovementPattern } from "@/domain/movementPattern";
 import type { PlannedExerciseRecord } from "@/storage/workoutPlanRepository";
 import {
-  defaultCuesByMovementPattern,
   visualGuideIdsByExerciseId,
   visualGuidesById,
 } from "./exerciseGuideCatalog";
@@ -22,7 +20,6 @@ export function getExerciseGuide(
   const primaryMuscles = normalizeList(exercise.primary_muscles);
   const secondaryMuscles = normalizeList(exercise.secondary_muscles);
   const executionCues = normalizeList(exercise.execution_cues);
-  const fallbackCues = getFallbackCues(exercise.movement_pattern);
 
   return {
     imageUrl: visualGuide?.imageUrl ?? null,
@@ -36,7 +33,7 @@ export function getExerciseGuide(
     executionCues:
       executionCues.length > 0
         ? executionCues.slice(0, 3)
-        : (fallbackCues ?? normalizeList([exercise.notes])).slice(0, 3),
+        : normalizeList([exercise.notes]).slice(0, 3),
   };
 }
 
@@ -56,12 +53,6 @@ function resolveVisualGuide(exercise: PlannedExerciseRecord) {
   }
 
   return null;
-}
-
-function getFallbackCues(movementPattern: MovementPattern | undefined) {
-  return movementPattern
-    ? defaultCuesByMovementPattern[movementPattern]
-    : undefined;
 }
 
 function normalizeList(items: (string | undefined)[] | undefined) {

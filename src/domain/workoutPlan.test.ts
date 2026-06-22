@@ -39,7 +39,7 @@ const validWorkoutPlan = {
             primary_muscles: ["Peitoral maior"],
             secondary_muscles: ["Triceps", "Deltoide anterior"],
             movement_pattern: "horizontal_push",
-            visual_id: "barbell_bench_press",
+            visual_id: "exdb_0001",
             execution_cues: [
               "Pes firmes no chao",
               "Desca com controle",
@@ -71,7 +71,7 @@ describe("workoutPlanSchema", () => {
       primary_muscles: ["Peitoral maior"],
       secondary_muscles: ["Triceps", "Deltoide anterior"],
       movement_pattern: "horizontal_push",
-      visual_id: "barbell_bench_press",
+      visual_id: "exdb_0001",
       execution_cues: [
         "Pes firmes no chao",
         "Desca com controle",
@@ -149,6 +149,36 @@ describe("workoutPlanSchema", () => {
         {
           path: "workout_plan.routines",
           message: "O plano deve ter ao menos uma rotina",
+        },
+      ]),
+    );
+  });
+
+  it("rejects visual_id values outside the exercise media library", () => {
+    const result = validateWorkoutPlanJson({
+      workout_plan: {
+        ...validWorkoutPlan.workout_plan,
+        routines: [
+          {
+            ...validWorkoutPlan.workout_plan.routines[0],
+            exercises: [
+              {
+                ...validWorkoutPlan.workout_plan.routines[0].exercises[0],
+                visual_id: "barbell_bench_press",
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual(
+      expect.arrayContaining([
+        {
+          path: "workout_plan.routines.0.exercises.0.visual_id",
+          message:
+            "visual_id deve existir em src/config/exercise-media-library.json",
         },
       ]),
     );

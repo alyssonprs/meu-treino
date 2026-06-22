@@ -80,21 +80,21 @@ describe("workoutImportService", () => {
     expect(result.preview?.warnings).toEqual([]);
   });
 
-  it("keeps import valid and warns when visual_id has no local media", () => {
+  it("rejects visual_id values outside the exercise media library", () => {
     const result = parseWorkoutPlanImport(
       createImportJsonWithVisualId("visual_inventado"),
     );
 
-    expect(result.success).toBe(true);
-    expect(result.preview?.warnings).toEqual([
-      {
-        code: "unknown_visual_id",
-        message:
-          "1 visual_id nao tem midia local no app. A importacao pode continuar, mas esse exercicio usara o guia sem imagem.",
-        visualIds: ["visual_inventado"],
-        exerciseNames: ["Supino reto"],
-      },
-    ]);
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual(
+      expect.arrayContaining([
+        {
+          path: "workout_plan.routines.0.exercises.0.visual_id",
+          message:
+            "visual_id deve existir em src/config/exercise-media-library.json",
+        },
+      ]),
+    );
   });
 
   it("does not warn when visual_id is absent", () => {

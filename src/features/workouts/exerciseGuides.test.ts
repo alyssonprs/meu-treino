@@ -74,7 +74,7 @@ describe("getExerciseGuide", () => {
     ]);
   });
 
-  it("uses movement pattern only for fallback cues", () => {
+  it("does not use movement pattern as fallback guide metadata", () => {
     const guide = getExerciseGuide({
       ...baseExercise,
       sourceExerciseId: null,
@@ -86,11 +86,7 @@ describe("getExerciseGuide", () => {
     expect(guide.animationUrl).toBeNull();
     expect(guide.primaryMuscles).toEqual(["Peitoral"]);
     expect(guide.secondaryMuscles).toEqual([]);
-    expect(guide.executionCues).toEqual([
-      "Pes firmes no chao",
-      "Desca com controle",
-      "Empurre sem tirar o ombro do banco",
-    ]);
+    expect(guide.executionCues).toEqual([]);
   });
 
   it("does not reuse retired aliases for different exercises", () => {
@@ -107,11 +103,7 @@ describe("getExerciseGuide", () => {
     expect(guide.imageUrl).toBeNull();
     expect(guide.animationUrl).toBeNull();
     expect(guide.imageAlt).toContain("Remada curvada");
-    expect(guide.executionCues).toEqual([
-      "Tronco firme",
-      "Puxe com os cotovelos",
-      "Controle a volta",
-    ]);
+    expect(guide.executionCues).toEqual([]);
   });
 
   it("keeps note fallback when no visual metadata is available", () => {

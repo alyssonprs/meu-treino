@@ -1,6 +1,9 @@
 import { z } from "zod";
 
-import { supportedMovementPatterns } from "./movementPattern";
+import {
+  supportedMovementPatterns,
+  supportedVisualIdSet,
+} from "./movementPattern";
 
 const requiredText = (fieldName: string) =>
   z.string().trim().min(1, `${fieldName} e obrigatorio`);
@@ -40,7 +43,21 @@ export const plannedExerciseSchema = z
     primary_muscles: z.array(requiredText("Musculo principal")).optional(),
     secondary_muscles: z.array(requiredText("Musculo secundario")).optional(),
     movement_pattern: z.enum(supportedMovementPatterns).optional(),
-    visual_id: z.string().trim().optional(),
+    visual_id: z
+      .string()
+      .trim()
+      .optional()
+      .refine((visualId) => visualId === undefined || visualId.length > 0, {
+        message: "visual_id nao pode ser vazio quando informado",
+      })
+      .refine(
+        (visualId) =>
+          visualId === undefined || supportedVisualIdSet.has(visualId),
+        {
+          message:
+            "visual_id deve existir em src/config/exercise-media-library.json",
+        },
+      ),
     execution_cues: z.array(requiredText("Dica de execucao")).optional(),
     notes: z.string().trim().optional(),
     media_url: z.string().trim().url("URL de midia invalida").optional(),
