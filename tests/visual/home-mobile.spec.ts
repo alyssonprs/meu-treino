@@ -139,7 +139,8 @@ test("mobile visual regression covers first use, import, active home, settings a
   await expect(page.getByText("Aquecimento")).toBeVisible();
   await expect(page.getByText(/Exerc.cios da rotina/)).toBeVisible();
   await expect(page.getByRole("button", { name: /Abrir/ })).toHaveCount(0);
-  await expect(page.getByRole("button", { name: /Supino reto/ })).toBeVisible();
+  await expect(page.getByText("Supino reto").first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: /S.rie 1 de 4/ })).toBeVisible();
   await assertMobileUsability(page);
 
   await screenshot(page, "09-ux-03-detalhe-treino.png");
@@ -164,7 +165,7 @@ test("mobile visual regression covers first use, import, active home, settings a
   await expect(
     page.getByRole("heading", { name: "Treino B - Costas e biceps" }),
   ).toBeVisible();
-  await page.getByRole("button", { name: /Remada curvada/ }).click();
+  await expect(page.getByText("Remada curvada").first()).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Treino em andamento" }),
   ).toBeVisible();
@@ -181,7 +182,6 @@ test("active workout keeps bottom nav hidden and shows integrated rest, finish a
   await page.getByRole("button", { name: "Confirmar importação" }).click();
 
   await page.getByRole("button", { name: "Iniciar treino" }).click();
-  await page.getByRole("button", { name: /Agachamento livre/ }).click();
 
   await expect(
     page.getByRole("heading", { name: "Treino em andamento" }),

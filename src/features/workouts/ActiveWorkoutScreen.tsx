@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   ArrowLeft,
   Check,
@@ -218,6 +218,85 @@ export function ActiveWorkoutScreen({
     }
   }
 
+  const currentExerciseDetails = (
+    <div className="mt-4 space-y-4">
+      <p className="text-sm leading-6 text-muted-foreground">
+        Meta: {currentExercise.sets}x {currentExercise.target_reps} ·{" "}
+        {currentExercise.rest_seconds ?? 90}s descanso
+      </p>
+
+      {exerciseGuide ? (
+        <ExerciseGuideDisclosure
+          guide={exerciseGuide}
+          isOpen={isExerciseGuideOpen}
+          onToggle={() => setIsExerciseGuideOpen((current) => !current)}
+        />
+      ) : null}
+
+      <div className="rounded-md bg-muted p-3">
+        <SetProgress
+          completedSetsCount={completedSetsCount}
+          totalSets={currentExerciseDraft.completedSets.length}
+        />
+
+        {restState ? (
+          <RestCard
+            exerciseName={currentExercise.name}
+            restState={restState}
+            onAddThirtySeconds={() =>
+              setRestState((current) =>
+                current
+                  ? {
+                      ...current,
+                      remainingSeconds: current.remainingSeconds + 30,
+                    }
+                  : current,
+              )
+            }
+            onSkip={() => setRestState(null)}
+          />
+        ) : isCurrentExerciseRegistered ? (
+          <ExerciseDoneCard
+            hasNextExercise={nextExerciseIndex !== null}
+            onFinish={onFinish}
+            onNextExercise={startNextStep}
+          />
+        ) : areAllSetsCompleted ? (
+          <ExerciseResultForm
+            canSaveResult={canSaveResult}
+            currentExercise={currentExercise}
+            resultValues={resultValues}
+            onDecrementLoad={() => incrementField("loadKg", -2.5)}
+            onDecrementReps={() => incrementField("reps", -1)}
+            onIncrementLoad={() => incrementField("loadKg", 2.5)}
+            onIncrementReps={() => incrementField("reps", 1)}
+            onSave={saveCurrentExerciseResult}
+            onUpdateResultValue={updateResultValue}
+          />
+        ) : (
+          <CurrentSetAction
+            currentSetNumber={(currentSetIndex ?? 0) + 1}
+            totalSets={currentExerciseDraft.completedSets.length}
+            onMarkCurrentSetCompleted={markCurrentSetCompleted}
+          />
+        )}
+      </div>
+
+      {loadHistory ? (
+        <div className="grid grid-cols-2 gap-2">
+          <MetricCard
+            label="Última carga"
+            value={`${formatLoad(loadHistory.lastLoadKg)} kg x ${loadHistory.lastReps}`}
+          />
+          <MetricCard
+            label="Maior carga"
+            value={`${formatLoad(loadHistory.maxLoadKg)} kg`}
+          />
+        </div>
+      ) : null}
+    </div>
+  );
+
   return (
     <section className="min-h-screen space-y-4 pt-2">
       <header className="flex items-center justify-between gap-2">
@@ -241,139 +320,6 @@ export function ActiveWorkoutScreen({
         </span>
       </header>
 
-      <article className="rounded-lg border border-info bg-card p-4">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-sm font-medium text-info">
-              Exercício {currentExerciseIndex + 1} de {draft.exercises.length}
-            </p>
-            <h3 className="mt-1 text-2xl font-semibold">
-              {currentExercise.name}
-            </h3>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Meta: {currentExercise.sets}x {currentExercise.target_reps} ·{" "}
-              {currentExercise.rest_seconds ?? 90}s descanso
-            </p>
-          </div>
-        </div>
-
-        {exerciseGuide ? (
-          <ExerciseGuideDisclosure
-            guide={exerciseGuide}
-            isOpen={isExerciseGuideOpen}
-            onToggle={() => setIsExerciseGuideOpen((current) => !current)}
-          />
-        ) : null}
-
-        <div className="mt-4">
-          <SetProgress
-            completedSetsCount={completedSetsCount}
-            totalSets={currentExerciseDraft.completedSets.length}
-          />
-        </div>
-
-        {loadHistory ? (
-          <div className="mt-4 grid grid-cols-2 gap-2">
-            <MetricCard
-              label="Última carga"
-              value={`${formatLoad(loadHistory.lastLoadKg)} kg x ${loadHistory.lastReps}`}
-            />
-            <MetricCard
-              label="Maior carga"
-              value={`${formatLoad(loadHistory.maxLoadKg)} kg`}
-            />
-          </div>
-        ) : null}
-      </article>
-
-      {restState ? (
-        <RestCard
-          exerciseName={currentExercise.name}
-          restState={restState}
-          onAddThirtySeconds={() =>
-            setRestState((current) =>
-              current
-                ? {
-                    ...current,
-                    remainingSeconds: current.remainingSeconds + 30,
-                  }
-                : current,
-            )
-          }
-          onSkip={() => setRestState(null)}
-        />
-      ) : isCurrentExerciseRegistered ? (
-        <ExerciseDoneCard
-          hasNextExercise={nextExerciseIndex !== null}
-          onFinish={onFinish}
-          onNextExercise={startNextStep}
-        />
-      ) : areAllSetsCompleted ? (
-        <div className="rounded-lg border border-border bg-card p-4">
-          <div>
-            <p className="text-sm font-medium text-info">Exercício atual</p>
-            <h3 className="mt-1 text-xl font-semibold">Registrar resultado</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Informe carga e reps uma vez para este exercício.
-            </p>
-          </div>
-
-          <div className="mt-4 grid gap-3">
-            <StepperInput
-              label="Carga"
-              suffix="kg"
-              value={resultValues.loadKg}
-              onChange={(value) => updateResultValue("loadKg", value)}
-              onDecrement={() => incrementField("loadKg", -2.5)}
-              onIncrement={() => incrementField("loadKg", 2.5)}
-            />
-            <StepperInput
-              label="Reps"
-              value={resultValues.reps}
-              onChange={(value) => updateResultValue("reps", value)}
-              onDecrement={() => incrementField("reps", -1)}
-              onIncrement={() => incrementField("reps", 1)}
-            />
-          </div>
-
-          {currentExercise.notes ? (
-            <p className="mt-4 rounded-md bg-muted p-3 text-sm leading-6 text-muted-foreground">
-              {currentExercise.notes}
-            </p>
-          ) : null}
-
-          <Button
-            className="mt-4 h-14 w-full gap-3 text-base"
-            disabled={!canSaveResult}
-            onClick={saveCurrentExerciseResult}
-            type="button"
-          >
-            <Save className="h-5 w-5" aria-hidden="true" />
-            Concluir exercício
-          </Button>
-        </div>
-      ) : (
-        <div className="rounded-lg border border-border bg-card p-4">
-          <p className="text-sm font-medium text-info">Série atual</p>
-          <h3 className="mt-1 text-xl font-semibold">
-            Série {(currentSetIndex ?? 0) + 1} de{" "}
-            {currentExerciseDraft.completedSets.length}
-          </h3>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            Marque quando terminar a série. A carga e reps entram no fim do
-            exercício.
-          </p>
-          <Button
-            className="mt-4 h-14 w-full gap-3 text-base"
-            onClick={markCurrentSetCompleted}
-            type="button"
-          >
-            <Check className="h-5 w-5" aria-hidden="true" />
-            Série concluída
-          </Button>
-        </div>
-      )}
-
       {message ? (
         <p className="rounded-lg border border-destructive bg-card p-4 text-sm leading-6">
           {message}
@@ -381,6 +327,7 @@ export function ActiveWorkoutScreen({
       ) : null}
 
       <ExerciseStatusList
+        currentExerciseDetails={currentExerciseDetails}
         draft={draft}
         loadHistoryByExerciseId={loadHistoryByExerciseId}
         onSelectExercise={onSelectExercise}
@@ -599,7 +546,7 @@ function RestCard({
   onSkip: () => void;
 }) {
   return (
-    <div className="rounded-lg border border-info bg-card p-4">
+    <div className="mt-4 rounded-lg border border-info bg-card p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="flex items-center gap-2 text-sm font-medium text-info">
@@ -641,7 +588,7 @@ function ExerciseDoneCard({
   onNextExercise: () => void;
 }) {
   return (
-    <div className="rounded-lg border border-primary bg-card p-4">
+    <div className="mt-4 rounded-lg border border-primary bg-card p-4">
       <p className="text-sm font-medium text-primary">Exercício concluído</p>
       <h3 className="mt-1 text-xl font-semibold">
         Carga e repetições foram registradas.
@@ -666,7 +613,7 @@ function SetProgress({
   totalSets: number;
 }) {
   return (
-    <div className="rounded-md bg-muted p-3">
+    <div>
       <div className="flex items-center justify-between gap-3">
         <p className="text-xs font-medium text-muted-foreground">Séries</p>
         <p className="text-sm font-semibold">
@@ -692,11 +639,112 @@ function SetProgress({
   );
 }
 
+function CurrentSetAction({
+  currentSetNumber,
+  totalSets,
+  onMarkCurrentSetCompleted,
+}: {
+  currentSetNumber: number;
+  totalSets: number;
+  onMarkCurrentSetCompleted: () => void;
+}) {
+  return (
+    <div className="mt-4 rounded-lg border border-border bg-background p-3">
+      <p className="text-sm font-medium text-info">Série atual</p>
+      <h3 className="mt-1 text-xl font-semibold">
+        Série {currentSetNumber} de {totalSets}
+      </h3>
+      <p className="mt-2 text-sm leading-6 text-muted-foreground">
+        Marque quando terminar a série. A carga e reps entram no fim do
+        exercício.
+      </p>
+      <Button
+        className="mt-4 h-14 w-full gap-3 text-base"
+        onClick={onMarkCurrentSetCompleted}
+        type="button"
+      >
+        <Check className="h-5 w-5" aria-hidden="true" />
+        Série concluída
+      </Button>
+    </div>
+  );
+}
+
+function ExerciseResultForm({
+  canSaveResult,
+  currentExercise,
+  resultValues,
+  onDecrementLoad,
+  onDecrementReps,
+  onIncrementLoad,
+  onIncrementReps,
+  onSave,
+  onUpdateResultValue,
+}: {
+  canSaveResult: boolean;
+  currentExercise: WorkoutSessionDraft["routine"]["exercises"][number];
+  resultValues: Pick<WorkoutSetDraft, "loadKg" | "reps" | "rir" | "notes">;
+  onDecrementLoad: () => void;
+  onDecrementReps: () => void;
+  onIncrementLoad: () => void;
+  onIncrementReps: () => void;
+  onSave: () => void;
+  onUpdateResultValue: (field: EditableResultField, value: string) => void;
+}) {
+  return (
+    <div className="mt-4 rounded-lg border border-border bg-background p-3">
+      <div>
+        <p className="text-sm font-medium text-info">Exercício atual</p>
+        <h3 className="mt-1 text-xl font-semibold">Registrar resultado</h3>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Informe carga e reps uma vez para este exercício.
+        </p>
+      </div>
+
+      <div className="mt-4 grid gap-3">
+        <StepperInput
+          label="Carga"
+          suffix="kg"
+          value={resultValues.loadKg}
+          onChange={(value) => onUpdateResultValue("loadKg", value)}
+          onDecrement={onDecrementLoad}
+          onIncrement={onIncrementLoad}
+        />
+        <StepperInput
+          label="Reps"
+          value={resultValues.reps}
+          onChange={(value) => onUpdateResultValue("reps", value)}
+          onDecrement={onDecrementReps}
+          onIncrement={onIncrementReps}
+        />
+      </div>
+
+      {currentExercise.notes ? (
+        <p className="mt-4 rounded-md bg-muted p-3 text-sm leading-6 text-muted-foreground">
+          {currentExercise.notes}
+        </p>
+      ) : null}
+
+      <Button
+        className="mt-4 h-14 w-full gap-3 text-base"
+        disabled={!canSaveResult}
+        onClick={onSave}
+        type="button"
+      >
+        <Save className="h-5 w-5" aria-hidden="true" />
+        Concluir exercício
+      </Button>
+    </div>
+  );
+}
+
 function ExerciseStatusList({
+  currentExerciseDetails,
   draft,
   loadHistoryByExerciseId,
   onSelectExercise,
 }: {
+  currentExerciseDetails: ReactNode;
   draft: WorkoutSessionDraft;
   loadHistoryByExerciseId: Map<string, ExerciseLoadHistoryRecord>;
   onSelectExercise: (exerciseIndex: number) => void;
@@ -725,6 +773,7 @@ function ExerciseStatusList({
           return (
             <ExerciseStatusButton
               completedSetsCount={completedSetsCount}
+              currentExerciseDetails={currentExerciseDetails}
               exercise={exercise}
               exerciseIndex={index}
               isCurrent={draft.currentExerciseIndex === index}
@@ -795,6 +844,7 @@ function RoutineStepList({
 
 function ExerciseStatusButton({
   completedSetsCount,
+  currentExerciseDetails,
   exercise,
   exerciseIndex,
   status,
@@ -805,6 +855,7 @@ function ExerciseStatusButton({
   onSelectExercise,
 }: {
   completedSetsCount: number;
+  currentExerciseDetails: ReactNode;
   exercise: WorkoutSessionDraft["routine"]["exercises"][number];
   exerciseIndex: number;
   status: ReturnType<typeof getExerciseStatus>;
@@ -814,9 +865,57 @@ function ExerciseStatusButton({
   loadHistory: ExerciseLoadHistoryRecord | undefined;
   onSelectExercise: (exerciseIndex: number) => void;
 }) {
+  if (isCurrent) {
+    return (
+      <article
+        aria-current="step"
+        aria-label={`${exercise.name}: ${status}, ${completedSetsCount} de ${totalSets} series concluidas`}
+        className={cn(
+          "w-full rounded-lg border p-3 text-left shadow-sm transition-colors",
+          statusMeta.itemClassName,
+        )}
+      >
+        <span className="flex items-start gap-3">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-background/80 ring-1 ring-border/70">
+            <statusMeta.Icon
+              className={cn("h-4 w-4", statusMeta.iconClassName)}
+              aria-hidden="true"
+            />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-sm font-semibold text-foreground">
+              {exercise.name}
+            </span>
+            <span className="mt-1 block text-xs text-muted-foreground">
+              {statusMeta.description}
+            </span>
+          </span>
+          <span
+            className={cn(
+              "shrink-0 rounded-md px-2 py-1 text-xs font-semibold",
+              statusMeta.badgeClassName,
+            )}
+          >
+            {status}
+          </span>
+        </span>
+        <span className="mt-3 flex items-center justify-between gap-3 rounded-md border border-border/70 bg-background/70 px-3 py-2 text-xs">
+          <span className="font-medium text-muted-foreground">
+            Carga anterior
+          </span>
+          <span className="min-w-0 truncate font-semibold text-foreground">
+            {loadHistory
+              ? `${formatLoad(loadHistory.lastLoadKg)} kg x ${loadHistory.lastReps}`
+              : "Sem carga anterior"}
+          </span>
+        </span>
+        {currentExerciseDetails}
+      </article>
+    );
+  }
+
   return (
     <button
-      aria-current={status === "Em progresso" && isCurrent ? "step" : undefined}
       aria-label={`${exercise.name}: ${status}, ${completedSetsCount} de ${totalSets} series concluidas`}
       className={cn(
         "w-full rounded-lg border p-3 text-left shadow-sm transition-colors",
@@ -849,27 +948,6 @@ function ExerciseStatusButton({
           {status}
         </span>
       </span>
-      <span className="mt-3 grid grid-cols-2 gap-2">
-        <ExerciseMetricChip
-          label="Séries"
-          value={`${exercise.sets}x ${exercise.target_reps}`}
-        />
-        <ExerciseMetricChip
-          label="Progresso"
-          value={`${completedSetsCount}/${totalSets}`}
-          tone={completedSetsCount > 0 ? "info" : "default"}
-        />
-        <ExerciseMetricChip
-          label="Descanso"
-          value={`${exercise.rest_seconds ?? 90}s`}
-        />
-        {typeof exercise.target_rir === "number" ? (
-          <ExerciseMetricChip
-            label="RIR alvo"
-            value={String(exercise.target_rir)}
-          />
-        ) : null}
-      </span>
       <span className="mt-3 flex items-center justify-between gap-3 rounded-md border border-border/70 bg-background/70 px-3 py-2 text-xs">
         <span className="font-medium text-muted-foreground">Carga anterior</span>
         <span className="min-w-0 truncate font-semibold text-foreground">
@@ -879,34 +957,6 @@ function ExerciseStatusButton({
         </span>
       </span>
     </button>
-  );
-}
-
-function ExerciseMetricChip({
-  label,
-  value,
-  tone = "default",
-}: {
-  label: string;
-  value: string;
-  tone?: "default" | "info";
-}) {
-  return (
-    <span
-      className={cn(
-        "rounded-md border px-3 py-2",
-        tone === "info"
-          ? "border-info/40 bg-info/10"
-          : "border-border/70 bg-background/60",
-      )}
-    >
-      <span className="block text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">
-        {label}
-      </span>
-      <span className="mt-0.5 block text-xs font-semibold text-foreground">
-        {value}
-      </span>
-    </span>
   );
 }
 

@@ -217,7 +217,7 @@ Regra simples para aviso de novo treino:
 
 - Inicio: plano ativo, proximo treino sugerido, progresso do ciclo e botao para iniciar o treino recomendado.
 - Treino: lista todas as rotinas do plano ativo para o usuario escolher qual rotina quer executar no dia, com a rotina recomendada destacada.
-- Execucao de treino: mostrar a lista completa da rotina dentro da propria execucao, com separacao visual para aquecimento, exercicios e cooldown; permitir escolher o exercicio inicial ou alternar exercicios pela lista; em cada exercicio da lista, mostrar series planejadas, repeticoes, RIR alvo quando existir, descanso, progresso de series e carga sugerida/ultima carga quando houver.
+- Execucao de treino: mostrar a lista completa da rotina dentro da propria execucao, com separacao visual para aquecimento, exercicios e cooldown; permitir escolher o exercicio inicial ou alternar exercicios pela lista; exercicios nao selecionados devem ficar compactos, sem series, progresso, descanso ou RIR alvo; o exercicio selecionado deve expandir no proprio item da lista com meta, guia visual, series, descanso, registro final de carga/reps e carga sugerida/ultima carga quando houver.
 - Execucao de exercicio: marcar series concluidas durante o exercicio para disparar descanso entre series; registrar carga e repeticoes apenas no fim do exercicio; mostrar orientacao visual opcional em painel recolhido por padrao, abrindo por `Ver como fazer`; RIR nao aparece como campo obrigatorio na primeira versao e fica reservado para melhoria futura.
 - Historico: treinos concluidos e evolucao de carga por exercicio.
 - Importar treino: acao contextual na Home sem treino ou em Configuracoes com treino ativo; selecionar JSON, validar, mostrar preview e substituir plano atual.
