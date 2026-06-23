@@ -111,7 +111,7 @@ export function HealthConnectSettingsCard({
     };
   }, [adapter, getAutoExportEnabled]);
 
-  const content = statusContent[status];
+  const content = statusContent[status] ?? statusContent.unavailable;
   const canRequestPermission =
     status === "available" || status === "permission-missing";
   const canOpenSettings =
@@ -137,7 +137,9 @@ export function HealthConnectSettingsCard({
           );
         }
       } else {
-        setMessage(statusContent[nextStatus].description);
+        setMessage(
+          (statusContent[nextStatus] ?? statusContent.unavailable).description,
+        );
       }
     } catch {
       setMessage("Nao foi possivel abrir a permissao do Health Connect.");
