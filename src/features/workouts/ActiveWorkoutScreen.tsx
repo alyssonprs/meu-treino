@@ -563,16 +563,16 @@ function RestCard({
   return (
     <div className="mt-4 rounded-lg border border-info bg-card p-4">
       <div className="flex items-start justify-between gap-3">
-        <div>
+        <div className="min-w-0 flex-1">
           <p className="flex items-center gap-2 text-sm font-medium text-info">
             <TimerReset className="h-4 w-4" aria-hidden="true" />
             Descanso após série
           </p>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 break-words text-sm leading-5 text-muted-foreground">
             {exerciseName} · próxima série {restState.nextSetNumber}
           </p>
         </div>
-        <p className="text-4xl font-semibold tabular-nums">
+        <p className="shrink-0 text-4xl font-semibold tabular-nums">
           {formatTimer(restState.remainingSeconds)}
         </p>
       </div>
@@ -869,7 +869,7 @@ function ExerciseStatusButton({
             />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-sm font-semibold text-foreground">
+            <span className="block break-words text-sm font-semibold leading-5 text-foreground">
               {exercise.name}
             </span>
             <span className="mt-1 block text-xs text-muted-foreground">
@@ -918,7 +918,7 @@ function ExerciseStatusButton({
           />
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block truncate text-sm font-semibold text-foreground">
+          <span className="block break-words text-sm font-semibold leading-5 text-foreground">
             {exercise.name}
           </span>
           <span className="mt-1 block text-xs text-muted-foreground">
