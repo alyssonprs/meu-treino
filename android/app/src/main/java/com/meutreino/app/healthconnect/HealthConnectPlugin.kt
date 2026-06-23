@@ -57,7 +57,7 @@ class HealthConnectPlugin : Plugin() {
     }
 
     @PluginMethod
-    fun requestPermissions(call: PluginCall) {
+    override fun requestPermissions(call: PluginCall) {
         scope.launch {
             val status = getCurrentStatus()
             if (status == "ready" || status == "unavailable" || status == "requires-install") {

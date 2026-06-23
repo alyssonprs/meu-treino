@@ -81,7 +81,12 @@ Checklist operacional:
 6. Registrar `versionCode` e `versionName` enviados.
 7. Testar instalacao e fluxo Health Connect em aparelho fisico antes de promover release.
 
+## Requisitos Android
+
+- `minSdkVersion`: 26, menor versao compativel com `androidx.health.connect:connect-client:1.1.0`.
+- `compileSdkVersion`: 36.
+- `targetSdkVersion`: 36.
+
 ## Bloqueios conhecidos
 
-Em 2026-06-22, esta maquina ainda nao possui JDK/Android SDK local validado para gerar APK/AAB. A validacao nativa segue pendente ate configurar ambiente Android ou usar uma maquina com Android Studio.
-
+Em 2026-06-22, esta maquina foi configurada com JDK 21 e Android SDK locais em `.codex-android-tools` para gerar APK de debug pelo script `pnpm android:apk`.
