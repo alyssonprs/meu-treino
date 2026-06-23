@@ -58,20 +58,19 @@ Use [docs/arquitetura/arquitetura-prompt.md](docs/arquitetura/arquitetura-prompt
 - Recommend the next routine by routine `order`; after the last routine, return to the first.
 - Show cycle completion when completed sessions reach `estimated_duration_weeks * days_per_week`.
 - In the first version, the active workout UI records load and reps only at the end of each exercise. The user may mark individual sets as completed to drive the rest timer, but visible load/reps entry remains exercise-level, not per-set.
-- RIR may remain optional/null in domain and storage for compatibility and future analytics, but it is not a required visible field in `UX-04`.
+- RIR may remain optional/null in domain and storage for compatibility and future analytics, but it is not a required visible field in the active workout screen.
 
-## UX Rules
+## Interface Rules
 
 - Design mobile-first for use during an actual workout.
 - Use large touch targets and fast numeric entry for sets, reps, load, and RIR.
 - Keep the first screen useful, not a marketing landing page.
 - Use the approved identity assets in `assets/identity` when configuring app branding, PWA icons, Android adaptive icons, splash screens, and any explicit brand/logo display.
 - Do not generate or introduce new brand icons when the existing `assets/identity` files cover the need.
-- Use [docs/arquitetura/ux-prototipo-aprovado.md](docs/arquitetura/ux-prototipo-aprovado.md) as the UX approval contract before implementing final screens.
-- Use Excalidraw as the default tool for UX wireframes before coding final screens.
-- Base the first version on the approved guided usability model: the home screen should focus on the next recommended workout.
+- The only source of truth for interface behavior is the implementation already present in the project. Do not use removed design documents as product contracts.
+- Base the first version on a guided model: the home screen should focus on the next recommended workout.
 - Use an active-workout experience focused on fast exercise logging, rest timer, and few distractions.
-- In `UX-04`, keep the final entry block focused on the current exercise with load and reps only. The UI may show per-set completion controls and rest between sets, but should not ask for load/reps per set.
+- In the active workout screen, keep the final entry block focused on the current exercise with load and reps only. The UI may show per-set completion controls and rest between sets, but should not ask for load/reps per set.
 - Make the PWA installable with manifest, icons, service worker, and offline support.
 - Keep visible text concise during workout execution.
 - Support selectable light and dark themes.
@@ -85,8 +84,8 @@ Use [docs/arquitetura/arquitetura-prompt.md](docs/arquitetura/arquitetura-prompt
 ## Codex Workflow
 
 - Before coding, read this file and the relevant parts of `docs/arquitetura/arquitetura-prompt.md`.
-- Work in small, reviewable tasks aligned with [docs/arquitetura/arquitetura-prompt.md](docs/arquitetura/arquitetura-prompt.md) and [docs/arquitetura/ux-prototipo-aprovado.md](docs/arquitetura/ux-prototipo-aprovado.md).
-- Keep operational execution plans, backlogs, and Codex working notes in `.agents/`; keep `docs/arquitetura/` for durable product, architecture, and UX contracts.
+- Work in small, reviewable tasks aligned with [docs/arquitetura/arquitetura-prompt.md](docs/arquitetura/arquitetura-prompt.md).
+- Keep operational execution plans, backlogs, and Codex working notes in `.agents/`; keep `docs/arquitetura/` for durable product and architecture contracts.
 - When creating a new multi-step execution plan, create or update a focused Markdown file under `.agents/` and link to it from architecture docs only when the decision should be discoverable as part of the product contract.
 - For each implementation task, confirm the goal, constraints, and "done when" criteria from the prompt.
 - Do not rewrite unrelated files or make broad refactors unless they are necessary for the current task.

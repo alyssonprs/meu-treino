@@ -20,14 +20,12 @@ const screensWithoutBottomNav: AppScreen[] = [
 type AppShellProps = {
   activeScreen: AppScreen;
   children: ReactNode;
-  interfaceCode: string;
   onNavigate: (screen: MainTabScreen) => void;
 };
 
 export function AppShell({
   activeScreen,
   children,
-  interfaceCode,
   onNavigate,
 }: AppShellProps) {
   const showBottomNav = !screensWithoutBottomNav.includes(activeScreen);
@@ -42,7 +40,6 @@ export function AppShell({
       >
         {activeScreen === "active-workout" ? null : <AppHeader />}
         {children}
-        <InterfaceReferenceCode code={interfaceCode} />
       </div>
 
       {showBottomNav ? (
@@ -64,17 +61,6 @@ export function AppShell({
         </nav>
       ) : null}
     </main>
-  );
-}
-
-function InterfaceReferenceCode({ code }: { code: string }) {
-  return (
-    <footer
-      aria-label="Codigo da interface"
-      className="mt-auto pt-6 text-center text-[0.625rem] font-medium uppercase tracking-[0.18em] text-muted-foreground/45"
-    >
-      {code}
-    </footer>
   );
 }
 

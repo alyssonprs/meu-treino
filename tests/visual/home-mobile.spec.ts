@@ -61,7 +61,7 @@ test("mobile visual regression covers first use, import, active home, settings a
   );
   await assertMobileUsability(page);
 
-  await screenshot(page, "05-ux-01-primeiro-uso.png");
+  await screenshot(page, "05-primeiro-uso.png");
 
   await importModelPlan(page);
   await expect(
@@ -72,7 +72,7 @@ test("mobile visual regression covers first use, import, active home, settings a
   ).toBeVisible();
   await assertMobileUsability(page);
 
-  await screenshot(page, "06-ux-10-preview-json.png");
+  await screenshot(page, "06-preview-json.png");
 
   await page.getByRole("button", { name: "Confirmar importação" }).click();
 
@@ -109,7 +109,7 @@ test("mobile visual regression covers first use, import, active home, settings a
     .toBe(true);
   await assertMobileUsability(page);
 
-  await screenshot(page, "12-ux-13-ajustes-tema-claro.png");
+  await screenshot(page, "12-ajustes-tema-claro.png");
 
   await replacePlanFromSettings(page);
   await expect(page.getByRole("button", { name: "Iniciar treino" })).toBeVisible();
@@ -128,7 +128,7 @@ test("mobile visual regression covers first use, import, active home, settings a
   ).toBeVisible();
   await assertMobileUsability(page);
 
-  await screenshot(page, "09-ux-03-detalhe-treino.png");
+  await screenshot(page, "09-detalhe-treino.png");
 
   await page
     .getByRole("button", { name: "Voltar para lista de exercícios" })
@@ -193,7 +193,7 @@ test("active workout keeps bottom nav hidden and shows integrated rest, finish a
   await expect(page.getByRole("navigation")).toHaveCount(0);
   await assertNoHorizontalOverflow(page);
 
-  await screenshot(page, "13-ux-04-descanso-integrado.png");
+  await screenshot(page, "13-descanso-integrado.png");
 
   await page.getByRole("button", { name: /Concluir s.rie 2/ }).click();
   await expect(
@@ -214,7 +214,7 @@ test("active workout keeps bottom nav hidden and shows integrated rest, finish a
   await expect(page.getByRole("navigation")).toHaveCount(0);
   await assertNoHorizontalOverflow(page);
 
-  await screenshot(page, "10-ux-06-finalizacao.png");
+  await screenshot(page, "10-finalizacao.png");
 
   await page.getByRole("button", { name: "Ver histórico" }).click();
   await expect(page.getByRole("heading", { name: "Seu progresso" })).toBeVisible();
@@ -222,7 +222,7 @@ test("active workout keeps bottom nav hidden and shows integrated rest, finish a
   await expect(page.getByRole("button", { name: /Agachamento livre/ })).toBeVisible();
   await assertMobileUsability(page);
 
-  await screenshot(page, "11-ux-07-08-historico.png");
+  await screenshot(page, "11-historico.png");
 
   await page.getByRole("button", { name: /Agachamento livre/ }).click();
   await expect(
@@ -233,13 +233,13 @@ test("active workout keeps bottom nav hidden and shows integrated rest, finish a
   ).toBeVisible();
   await assertMobileUsability(page);
 
-  await screenshot(page, "14-ux-08-detalhe-exercicio.png");
+  await screenshot(page, "14-detalhe-exercicio.png");
 
   await page.getByRole("button", { name: "Início" }).click();
   await expect(page.getByText("Ciclo concluído")).toBeVisible();
   await assertMobileUsability(page);
 
-  await screenshot(page, "15-ux-ciclo-concluido.png");
+  await screenshot(page, "15-ciclo-concluido.png");
 });
 
 test("invalid import shows the dedicated recovery screen", async ({ page }) => {
@@ -258,7 +258,7 @@ test("invalid import shows the dedicated recovery screen", async ({ page }) => {
   ).toBeVisible();
   await assertMobileUsability(page);
 
-  await screenshot(page, "08-ux-11-erro-importacao.png");
+  await screenshot(page, "08-erro-importacao.png");
 });
 
 test("settings clears local workout data after confirmation", async ({ page }) => {

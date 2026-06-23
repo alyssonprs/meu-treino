@@ -235,20 +235,20 @@ Regra simples para aviso de novo treino:
 - Criar treino com IA: acao contextual na Home sem treino ou em Configuracoes com treino ativo; copia o conteudo de `prompt-treino-modelo.md`. O prompt deve instruir a IA a buscar por GET `meu-treino-modelo.json` e `meu-treino-catalogo-exercicios.json` nas URLs publicas do app. Se o GET de qualquer um desses arquivos falhar, a IA deve interromper a geracao do treino e pedir ao usuario para corrigir o acesso aos arquivos auxiliares antes de continuar.
 - Configuracoes: exportar backup local, restaurar backup local, apagar dados locais e informacoes da versao.
 
-### Direcao de usabilidade aprovada
+### Direcao de interface
 
-A primeira versao deve seguir o modelo de usabilidade **Guiada**:
+A primeira versao deve seguir o modelo **Guiado**:
 
 - A tela inicial deve priorizar o proximo treino recomendado.
 - O botao principal deve ser iniciar o treino recomendado.
 - O plano completo deve existir, mas nao deve competir com a acao principal da tela inicial.
 - O item `Treino` da navegacao inferior deve listar todas as rotinas do plano ativo, permitindo escolher uma rotina diferente da recomendada quando fizer sentido para o usuario.
-- Ao tocar em uma rotina na lista do menu `Treino`, o app deve abrir a execucao da rotina com a lista completa de exercicios visivel na propria `UX-04`.
+- Ao tocar em uma rotina na lista do menu `Treino`, o app deve abrir a execucao da rotina com a lista completa de exercicios visivel na propria tela de execucao.
 - A tela de execucao deve ser focada no uso durante a academia, com registro rapido por exercicio, timer de descanso e poucos elementos concorrendo por atencao.
 - A orientacao visual da tela de execucao deve ficar recolhida por padrao para nao competir com o treino; quando aberta, deve priorizar musculo principal, musculos auxiliares em cor mais fria, movimento do exercicio quando houver asset e ate 3 dicas curtas.
 - A evolucao do guia visual deve seguir `.agents/plano-incorporacao-biblioteca-exercicios.md`: usar somente assets especificos validados por exercicio ou alias confiavel; `movement_pattern` permanece para dicas e classificacao, nao como imagem generica.
 - Toda midia de exercicio usada a partir de bibliotecas externas deve ser importada para este repositorio e servida como asset local. O app nao deve acessar GitHub, raw.githubusercontent.com, CDN ou qualquer URL remota de midia durante a execucao.
-- O detalhamento e aprovacao das telas deve seguir `docs/arquitetura/ux-prototipo-aprovado.md` antes da implementacao visual final.
+- A unica fonte da verdade para o comportamento de interface e a implementacao ja existente no projeto. Documentos de desenho removidos nao devem ser usados como contrato de produto.
 
 ## Experiencia mobile
 
