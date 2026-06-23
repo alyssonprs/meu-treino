@@ -1,4 +1,8 @@
 import { createExerciseCanonicalKey } from "@/domain/exerciseKey";
+import {
+  createLocalDataBackup,
+  type LocalDataBackup,
+} from "@/services/localBackupService";
 
 import { MeuTreinoDatabase, workoutDatabase } from "./workoutDatabase";
 import type {
@@ -378,6 +382,111 @@ export class DexieWorkoutPlanRepository implements WorkoutPlanRepository {
     });
   }
 
+  async exportLocalDataBackup(): Promise<LocalDataBackup> {
+    const [
+      workoutPlans,
+      routines,
+      routineSteps,
+      exercises,
+      plannedExercises,
+      workoutPlanProgress,
+      workoutSessions,
+      exerciseLogs,
+      setLogs,
+      exerciseLoadHistory,
+      appSettings,
+    ] = await Promise.all([
+      this.database.workoutPlans.toArray(),
+      this.database.routines.toArray(),
+      this.database.routineSteps.toArray(),
+      this.database.exercises.toArray(),
+      this.database.plannedExercises.toArray(),
+      this.database.workoutPlanProgress.toArray(),
+      this.database.workoutSessions.toArray(),
+      this.database.exerciseLogs.toArray(),
+      this.database.setLogs.toArray(),
+      this.database.exerciseLoadHistory.toArray(),
+      this.database.appSettings.toArray(),
+    ]);
+
+    return createLocalDataBackup({
+      exportedAt: this.now(),
+      tables: {
+        workoutPlans,
+        routines,
+        routineSteps,
+        exercises,
+        plannedExercises,
+        workoutPlanProgress,
+        workoutSessions,
+        exerciseLogs,
+        setLogs,
+        exerciseLoadHistory,
+        appSettings,
+      },
+    });
+  }
+
+  async restoreLocalDataBackup(backup: LocalDataBackup): Promise<void> {
+    await this.database.transaction(
+      "rw",
+      [
+        this.database.workoutPlans,
+        this.database.routines,
+        this.database.routineSteps,
+        this.database.exercises,
+        this.database.plannedExercises,
+        this.database.workoutPlanProgress,
+        this.database.workoutSessions,
+        this.database.exerciseLogs,
+        this.database.setLogs,
+        this.database.exerciseLoadHistory,
+        this.database.appSettings,
+      ],
+      async () => {
+        await Promise.all([
+          this.database.workoutPlans.clear(),
+          this.database.routines.clear(),
+          this.database.routineSteps.clear(),
+          this.database.exercises.clear(),
+          this.database.plannedExercises.clear(),
+          this.database.workoutPlanProgress.clear(),
+          this.database.workoutSessions.clear(),
+          this.database.exerciseLogs.clear(),
+          this.database.setLogs.clear(),
+          this.database.exerciseLoadHistory.clear(),
+          this.database.appSettings.clear(),
+        ]);
+
+        await Promise.all([
+          bulkAddIfAny(this.database.workoutPlans, backup.tables.workoutPlans),
+          bulkAddIfAny(this.database.routines, backup.tables.routines),
+          bulkAddIfAny(this.database.routineSteps, backup.tables.routineSteps),
+          bulkAddIfAny(this.database.exercises, backup.tables.exercises),
+          bulkAddIfAny(
+            this.database.plannedExercises,
+            backup.tables.plannedExercises,
+          ),
+          bulkAddIfAny(
+            this.database.workoutPlanProgress,
+            backup.tables.workoutPlanProgress,
+          ),
+          bulkAddIfAny(
+            this.database.workoutSessions,
+            backup.tables.workoutSessions,
+          ),
+          bulkAddIfAny(this.database.exerciseLogs, backup.tables.exerciseLogs),
+          bulkAddIfAny(this.database.setLogs, backup.tables.setLogs),
+          bulkAddIfAny(
+            this.database.exerciseLoadHistory,
+            backup.tables.exerciseLoadHistory,
+          ),
+          bulkAddIfAny(this.database.appSettings, backup.tables.appSettings),
+        ]);
+      },
+    );
+  }
+
   async clearAllWorkoutData(): Promise<void> {
     await this.database.transaction(
       "rw",
@@ -569,3 +678,14 @@ function createInitialProgress({
 }
 
 export const pwaWorkoutPlanRepository = new DexieWorkoutPlanRepository();
+
+async function bulkAddIfAny<T>(
+  table: { bulkAdd(items: T[]): Promise<unknown> },
+  items: T[],
+) {
+  if (items.length === 0) {
+    return;
+  }
+
+  await table.bulkAdd(items);
+}

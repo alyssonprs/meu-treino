@@ -599,6 +599,89 @@ describe("DexieWorkoutPlanRepository", () => {
     ).resolves.toBe(true);
   });
 
+  it("exports and restores a local backup with active plan, sessions and load history", async () => {
+    const repository = createRepository();
+
+    await repository.saveActivePlan({ plan: basePlan });
+    await repository.setHealthConnectAutoExportEnabled(true);
+
+    const activePlan = await repository.getActivePlan();
+    const routine = activePlan?.routines[0];
+    const exercise = routine?.exercises[0];
+
+    if (!activePlan || !routine || !exercise) {
+      throw new Error("Fixture should create a routine with exercises");
+    }
+
+    await repository.saveCompletedWorkoutSession({
+      planId: activePlan.plan.id,
+      routineId: routine.id,
+      routineName: routine.name,
+      routineOrder: routine.order,
+      startedAt: "2026-06-15T12:00:00.000Z",
+      completedAt: "2026-06-15T13:00:00.000Z",
+      exercises: [
+        {
+          plannedExerciseId: exercise.id,
+          exerciseId: exercise.exerciseId,
+          sourceExerciseId: exercise.sourceExerciseId,
+          exerciseName: exercise.name,
+          order: exercise.order,
+          sets: [
+            { setNumber: 1, loadKg: 60, reps: 8, rir: null, notes: null },
+            { setNumber: 2, loadKg: 62.5, reps: 7, rir: null, notes: null },
+          ],
+        },
+      ],
+    });
+
+    const backup = await repository.exportLocalDataBackup();
+
+    await repository.clearAllWorkoutData();
+    await expect(repository.getActivePlan()).resolves.toBeNull();
+
+    await repository.restoreLocalDataBackup(backup);
+
+    const restoredPlan = await repository.getActivePlan();
+    const restoredSessions = await repository.getRecentCompletedWorkoutSessions();
+    const restoredHistory = await repository.getExerciseLoadHistory([
+      exercise.exerciseId,
+    ]);
+
+    expect(restoredPlan?.plan).toMatchObject({
+      id: activePlan.plan.id,
+      name: "Hipertrofia 4 dias",
+      isActive: true,
+    });
+    expect(restoredPlan?.progress).toMatchObject({
+      completedSessionsCount: 1,
+      lastCompletedRoutineId: routine.id,
+    });
+    expect(restoredSessions).toMatchObject([
+      {
+        routineName: routine.name,
+        exercisesCount: 1,
+        setsCount: 2,
+      },
+    ]);
+    expect(restoredHistory).toEqual([
+      {
+        exerciseId: exercise.exerciseId,
+        sourceExerciseId: exercise.sourceExerciseId,
+        exerciseName: exercise.name,
+        lastLoadKg: 62.5,
+        maxLoadKg: 62.5,
+        lastReps: 7,
+        lastRir: null,
+        completedSetsCount: 2,
+        updatedAt: "2026-06-15T13:00:00.000Z",
+      },
+    ]);
+    await expect(
+      repository.getHealthConnectAutoExportEnabled(),
+    ).resolves.toBe(true);
+  });
+
   it("opens a pre-settings database and initializes Health Connect auto-export as disabled", async () => {
     const databaseName = `meu-treino-test-${crypto.randomUUID()}`;
     const legacyDatabase = new Dexie(databaseName);

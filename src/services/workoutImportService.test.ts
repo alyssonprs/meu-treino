@@ -134,6 +134,8 @@ describe("workoutImportService", () => {
       getExerciseSetHistory: vi.fn(),
       getHealthConnectAutoExportEnabled: vi.fn(),
       setHealthConnectAutoExportEnabled: vi.fn(),
+      exportLocalDataBackup: vi.fn(),
+      restoreLocalDataBackup: vi.fn(),
       clearAllWorkoutData: vi.fn(),
     };
 

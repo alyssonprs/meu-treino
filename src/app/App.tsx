@@ -38,6 +38,10 @@ import {
   activateImportedWorkoutPlan,
   parseWorkoutPlanImport,
 } from "@/services/workoutImportService";
+import {
+  parseLocalDataBackupJson,
+  serializeLocalDataBackup,
+} from "@/services/localBackupService";
 import { getNextRecommendedRoutineFromSnapshot } from "@/services/workoutRecommendationService";
 import {
   createWorkoutSessionDraft,
@@ -48,6 +52,7 @@ import {
   type WorkoutSessionDraft,
   type WorkoutSetDraft,
 } from "@/services/workoutSessionService";
+import { downloadTextFile, readTextFile } from "@/platform/files";
 import { healthConnectAdapter } from "@/platform/health-connect";
 import { pwaWorkoutPlanRepository } from "@/storage/pwa/dexieWorkoutPlanRepository";
 import type {
@@ -417,6 +422,66 @@ export function App() {
     });
   }
 
+  async function handleExportLocalBackup() {
+    try {
+      const backup = await pwaWorkoutPlanRepository.exportLocalDataBackup();
+      const exportedDate = backup.exportedAt.slice(0, 10);
+
+      downloadTextFile({
+        contents: serializeLocalDataBackup(backup),
+        fileName: `meu-treino-backup-${exportedDate}.json`,
+        mimeType: "application/json",
+      });
+
+      return {
+        success: true,
+        message: "Backup baixado neste dispositivo.",
+      };
+    } catch {
+      return {
+        success: false,
+        message: "Nao foi possivel gerar o backup agora.",
+      };
+    }
+  }
+
+  async function handleRestoreLocalBackupFile(file: File) {
+    try {
+      const text = await readTextFile(file);
+      const result = parseLocalDataBackupJson(text);
+
+      if (!result.success) {
+        return {
+          success: false,
+          message: "O arquivo selecionado nao e um backup valido.",
+          details: result.errors
+            .slice(0, 3)
+            .map((error) => `${error.path}: ${error.message}`),
+        };
+      }
+
+      await pwaWorkoutPlanRepository.restoreLocalDataBackup(result.backup);
+      const restoredPlan = await pwaWorkoutPlanRepository.getActivePlan();
+
+      setActivePlan(restoredPlan);
+      setActiveWorkout(null);
+      setWorkoutLoadHistory(new Map());
+      setWorkoutCompletion(null);
+      setImportStatus(idleImportStatus);
+      setWorkoutMessage("Backup restaurado com sucesso.");
+
+      return {
+        success: true,
+        message: "Backup restaurado com plano e historico.",
+      };
+    } catch {
+      return {
+        success: false,
+        message: "Nao foi possivel restaurar este backup agora.",
+      };
+    }
+  }
+
   function markWorkoutSetCompleted({
     exerciseIndex,
     setIndex,
@@ -593,6 +658,8 @@ export function App() {
           }
           onChooseImportFile={() => fileInputRef.current?.click()}
           onClearLocalData={handleClearLocalData}
+          onExportLocalBackup={handleExportLocalBackup}
+          onRestoreLocalBackupFile={handleRestoreLocalBackupFile}
           setHealthConnectAutoExportEnabled={(enabled) =>
             pwaWorkoutPlanRepository.setHealthConnectAutoExportEnabled(enabled)
           }

@@ -233,7 +233,7 @@ Regra simples para aviso de novo treino:
 - Historico: treinos concluidos e evolucao de carga por exercicio.
 - Importar treino: acao contextual na Home sem treino ou em Configuracoes com treino ativo; selecionar JSON, validar, mostrar preview e substituir plano atual.
 - Criar treino com IA: acao contextual na Home sem treino ou em Configuracoes com treino ativo; copia o conteudo de `prompt-treino-modelo.md`. O prompt deve instruir a IA a buscar por GET `meu-treino-modelo.json` e `meu-treino-catalogo-exercicios.json` nas URLs publicas do app. Se o GET de qualquer um desses arquivos falhar, a IA deve interromper a geracao do treino e pedir ao usuario para corrigir o acesso aos arquivos auxiliares antes de continuar.
-- Configuracoes: exportar backup local, apagar dados locais e informacoes da versao.
+- Configuracoes: exportar backup local, restaurar backup local, apagar dados locais e informacoes da versao.
 
 ### Direcao de usabilidade aprovada
 
@@ -297,6 +297,8 @@ Regras:
 - Contar treinos concluidos no ciclo atual.
 - Avisar quando o ciclo terminou.
 - Consultar historico de cargas por exercicio.
+- Exportar backup local com plano vigente, progresso, sessoes, logs, historico de cargas e preferencias.
+- Restaurar backup local validado, substituindo os dados locais atuais e preservando o historico contido no backup.
 
 ## Requisitos nao funcionais
 
@@ -310,7 +312,7 @@ Regras:
 - Codigo tipado em TypeScript.
 - Validacao forte do JSON.
 - Banco local versionado com migrations.
-- Possibilidade futura de backup/exportacao dos dados.
+- Backup/exportacao e restauracao local dos dados, preservando o treino vigente e todo o historico de treino.
 
 ## Fora do escopo da primeira versao
 

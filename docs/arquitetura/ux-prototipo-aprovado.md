@@ -86,7 +86,7 @@ Regra importante: o Excalidraw valida estrutura e fluxo. A fidelidade visual fin
 | UX-08 | Detalhe de exercicio no historico | Mostrar ultima carga, maior carga e progresso por exercicio | Aprovada |
 | UX-10 | Preview do JSON importado | Mostrar resumo do plano e confirmar substituicao do treino atual | Aprovada |
 | UX-11 | Erro de importacao | Explicar problema no JSON e orientar nova tentativa | Aprovada |
-| UX-13 | Configuracoes | Trocar tema, substituir treino atual, baixar modelo, exportar backup, apagar dados e ver versao | Aprovada |
+| UX-13 | Configuracoes | Trocar tema, substituir treino atual, baixar modelo, exportar/restaurar backup, apagar dados e ver versao | Aprovada |
 | UX-14 | Tema claro | Validar a aparencia das telas principais no tema claro | Aprovada |
 
 ## Fluxos principais

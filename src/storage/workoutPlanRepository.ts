@@ -3,6 +3,7 @@ import type {
   WorkoutPlan,
   WorkoutPlanStep,
 } from "@/domain/workoutPlan";
+import type { LocalDataBackup } from "@/services/localBackupService";
 
 export type WorkoutPlanRecord = {
   id: string;
@@ -226,5 +227,7 @@ export interface WorkoutPlanRepository {
   ): Promise<ExerciseSetHistoryRecord[]>;
   getHealthConnectAutoExportEnabled(): Promise<boolean>;
   setHealthConnectAutoExportEnabled(enabled: boolean): Promise<void>;
+  exportLocalDataBackup(): Promise<LocalDataBackup>;
+  restoreLocalDataBackup(backup: LocalDataBackup): Promise<void>;
   clearAllWorkoutData(): Promise<void>;
 }

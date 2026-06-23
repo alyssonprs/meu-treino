@@ -1,18 +1,26 @@
 import {
   Database,
+  Download,
   FileInput,
   Info,
   Settings,
   Trash2,
+  Upload,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PromptCopyButton } from "@/features/import-export/PromptCopyButton";
 import type { HealthConnectAdapter } from "@/platform/health-connect";
 import type { ActiveWorkoutPlanSnapshot } from "@/storage/workoutPlanRepository";
 import { HealthConnectSettingsCard } from "./HealthConnectSettingsCard";
 import { ThemeSegmentedControl } from "./ThemeSegmentedControl";
+
+type BackupActionResult = {
+  success: boolean;
+  message: string;
+  details?: string[];
+};
 
 type SettingsScreenProps = {
   activePlan: ActiveWorkoutPlanSnapshot | null;
@@ -22,6 +30,8 @@ type SettingsScreenProps = {
   getHealthConnectAutoExportEnabled: () => Promise<boolean>;
   onChooseImportFile: () => void;
   onClearLocalData: () => Promise<void>;
+  onExportLocalBackup: () => Promise<BackupActionResult>;
+  onRestoreLocalBackupFile: (file: File) => Promise<BackupActionResult>;
   setHealthConnectAutoExportEnabled: (enabled: boolean) => Promise<void>;
 };
 
@@ -33,9 +43,42 @@ export function SettingsScreen({
   getHealthConnectAutoExportEnabled,
   onChooseImportFile,
   onClearLocalData,
+  onExportLocalBackup,
+  onRestoreLocalBackupFile,
   setHealthConnectAutoExportEnabled,
 }: SettingsScreenProps) {
+  const backupFileInputRef = useRef<HTMLInputElement>(null);
   const [showClearConfirmation, setShowClearConfirmation] = useState(false);
+  const [isExportingBackup, setIsExportingBackup] = useState(false);
+  const [isRestoringBackup, setIsRestoringBackup] = useState(false);
+  const [backupFeedback, setBackupFeedback] =
+    useState<BackupActionResult | null>(null);
+
+  async function handleExportBackup() {
+    setIsExportingBackup(true);
+    setBackupFeedback(null);
+
+    try {
+      setBackupFeedback(await onExportLocalBackup());
+    } finally {
+      setIsExportingBackup(false);
+    }
+  }
+
+  async function handleRestoreBackup(file: File) {
+    setIsRestoringBackup(true);
+    setBackupFeedback(null);
+
+    try {
+      setBackupFeedback(await onRestoreLocalBackupFile(file));
+    } finally {
+      setIsRestoringBackup(false);
+
+      if (backupFileInputRef.current) {
+        backupFileInputRef.current.value = "";
+      }
+    }
+  }
 
   return (
     <>
@@ -46,14 +89,14 @@ export function SettingsScreen({
           </div>
           <div>
             <p className="text-sm font-medium text-info">Ajustes</p>
-            <h2 className="text-2xl font-semibold">Preferências locais</h2>
+            <h2 className="text-2xl font-semibold">Preferencias locais</h2>
           </div>
         </div>
 
         <div className="mt-5">
           <h3 className="font-medium">Tema do app</h3>
           <p className="mt-1 text-sm leading-6 text-muted-foreground">
-            A preferência fica salva neste dispositivo e muda sem reiniciar.
+            A preferencia fica salva neste dispositivo e muda sem reiniciar.
           </p>
           <div className="mt-3">
             <ThemeSegmentedControl />
@@ -105,9 +148,63 @@ export function SettingsScreen({
         <div className="mt-4 rounded-md bg-muted p-3">
           <p className="text-sm font-semibold">Backup local</p>
           <p className="mt-1 text-sm leading-6 text-muted-foreground">
-            Planejado para uma etapa própria. Nenhuma ação de backup aparece
-            como funcional até a exportação e a restauração serem implementadas.
+            Baixe um arquivo com plano ativo, sessoes, cargas e preferencias.
+            Ao restaurar, os dados atuais deste dispositivo serao substituidos.
           </p>
+          <div className="mt-4 grid gap-3">
+            <Button
+              className="h-12 justify-start gap-3"
+              disabled={isExportingBackup || isRestoringBackup}
+              onClick={() => {
+                void handleExportBackup();
+              }}
+              type="button"
+            >
+              <Download className="h-5 w-5" aria-hidden="true" />
+              {isExportingBackup ? "Gerando backup..." : "Baixar backup"}
+            </Button>
+            <Button
+              className="h-12 justify-start gap-3"
+              disabled={isExportingBackup || isRestoringBackup}
+              onClick={() => backupFileInputRef.current?.click()}
+              type="button"
+              variant="secondary"
+            >
+              <Upload className="h-5 w-5" aria-hidden="true" />
+              {isRestoringBackup ? "Restaurando..." : "Restaurar backup"}
+            </Button>
+          </div>
+          {backupFeedback ? (
+            <div
+              className={`mt-4 rounded-md border p-3 text-sm ${
+                backupFeedback.success
+                  ? "border-info bg-background text-foreground"
+                  : "border-destructive bg-background text-destructive"
+              }`}
+            >
+              <p className="font-semibold">{backupFeedback.message}</p>
+              {backupFeedback.details?.length ? (
+                <ul className="mt-2 list-disc space-y-1 pl-5 text-muted-foreground">
+                  {backupFeedback.details.map((detail) => (
+                    <li key={detail}>{detail}</li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+          ) : null}
+          <input
+            accept="application/json,.json"
+            className="sr-only"
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+
+              if (file) {
+                void handleRestoreBackup(file);
+              }
+            }}
+            ref={backupFileInputRef}
+            type="file"
+          />
         </div>
 
         {showClearConfirmation ? (
@@ -116,7 +213,7 @@ export function SettingsScreen({
               Apagar todos os dados de treino?
             </p>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Isso remove plano ativo, progresso, histórico de treinos e cargas
+              Isso remove plano ativo, progresso, historico de treinos e cargas
               salvas neste dispositivo.
             </p>
             <div className="mt-4 grid gap-2">
@@ -158,9 +255,9 @@ export function SettingsScreen({
       </section>
 
       <section className="mt-5 rounded-lg border border-border bg-card p-5">
-        <SectionHeader icon={Info} label="App" title="Informações" />
+        <SectionHeader icon={Info} label="App" title="Informacoes" />
         <dl className="mt-4 grid gap-3">
-          <InfoRow label="Versão" value={appVersion} />
+          <InfoRow label="Versao" value={appVersion} />
           <InfoRow label="Armazenamento" value="Local no dispositivo" />
           <InfoRow label="Modo" value="PWA offline-first" />
         </dl>
