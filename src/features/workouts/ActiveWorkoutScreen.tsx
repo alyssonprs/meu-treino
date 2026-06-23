@@ -11,7 +11,6 @@ import {
   Save,
   Square,
   Target,
-  TimerReset,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/utils";
@@ -234,11 +233,6 @@ export function ActiveWorkoutScreen({
 
   const currentExerciseDetails = (
     <div className="mt-4 space-y-4">
-      <p className="text-sm leading-6 text-muted-foreground">
-        Meta: {currentExercise.sets}x {currentExercise.target_reps} ·{" "}
-        {currentExercise.rest_seconds ?? 90}s descanso
-      </p>
-
       {exerciseGuide ? (
         <ExerciseGuideDisclosure
           guide={exerciseGuide}
@@ -250,23 +244,13 @@ export function ActiveWorkoutScreen({
       <div className="rounded-md bg-muted p-3">
         <SetProgress
           completedSetsCount={completedSetsCount}
+          targetReps={currentExercise.target_reps}
           totalSets={currentExerciseDraft.completedSets.length}
         />
 
         {restState ? (
-          <RestCard
-            exerciseName={currentExercise.name}
+          <SetActionPanel
             restState={restState}
-            onAddThirtySeconds={() =>
-              setRestState((current) =>
-                current
-                  ? {
-                      ...current,
-                      remainingSeconds: current.remainingSeconds + 30,
-                    }
-                  : current,
-              )
-            }
             onCompleteNextSet={() => markSetCompleted(restState.nextSetIndex)}
           />
         ) : isCurrentExerciseRegistered && nextExerciseIndex === null ? (
@@ -290,9 +274,9 @@ export function ActiveWorkoutScreen({
             onUpdateResultValue={updateResultValue}
           />
         ) : (
-          <SetCompletionAction
+          <SetActionPanel
             currentSetNumber={(currentSetIndex ?? 0) + 1}
-            onMarkCurrentSetCompleted={markCurrentSetCompleted}
+            onCompleteNextSet={markCurrentSetCompleted}
           />
         )}
       </div>
@@ -549,65 +533,30 @@ function StepperInput({
   );
 }
 
-function RestCard({
-  exerciseName,
-  restState,
-  onAddThirtySeconds,
-  onCompleteNextSet,
-}: {
-  exerciseName: string;
-  restState: RestState;
-  onAddThirtySeconds: () => void;
-  onCompleteNextSet: () => void;
-}) {
-  return (
-    <div className="mt-4 rounded-lg border border-info bg-card p-4">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0 flex-1">
-          <p className="flex items-center gap-2 text-sm font-medium text-info">
-            <TimerReset className="h-4 w-4" aria-hidden="true" />
-            Descanso após série
-          </p>
-          <p className="mt-1 break-words text-sm leading-5 text-muted-foreground">
-            {exerciseName} · próxima série {restState.nextSetNumber}
-          </p>
-        </div>
-        <p className="shrink-0 text-4xl font-semibold tabular-nums">
-          {formatTimer(restState.remainingSeconds)}
-        </p>
-      </div>
-      <div className="mt-4 grid grid-cols-2 gap-2">
-        <Button
-          className="h-12"
-          onClick={onAddThirtySeconds}
-          type="button"
-          variant="secondary"
-        >
-          +30s
-        </Button>
-        <Button className="h-12 gap-2" onClick={onCompleteNextSet} type="button">
-          <Check className="h-4 w-4" aria-hidden="true" />
-          Concluir série
-        </Button>
-      </div>
-    </div>
-  );
-}
-
 function SetProgress({
   completedSetsCount,
+  targetReps,
   totalSets,
 }: {
   completedSetsCount: number;
+  targetReps: string;
   totalSets: number;
 }) {
   return (
     <div>
       <div className="flex items-center justify-between gap-3">
-        <p className="text-xs font-medium text-muted-foreground">Séries</p>
-        <p className="text-sm font-semibold">
-          {completedSetsCount}/{totalSets}
-        </p>
+        <div>
+          <p className="text-xs font-medium text-muted-foreground">Séries</p>
+          <p className="mt-1 text-sm font-semibold">
+            {completedSetsCount}/{totalSets}
+          </p>
+        </div>
+        <div className="text-right">
+          <p className="text-xs font-medium text-muted-foreground">
+            Movimentos por série
+          </p>
+          <p className="mt-1 text-sm font-semibold">{targetReps}</p>
+        </div>
       </div>
       <div
         className="mt-3 grid gap-2"
@@ -628,26 +577,35 @@ function SetProgress({
   );
 }
 
-function SetCompletionAction({
+function SetActionPanel({
   currentSetNumber,
-  onMarkCurrentSetCompleted,
+  restState,
+  onCompleteNextSet,
 }: {
-  currentSetNumber: number;
-  onMarkCurrentSetCompleted: () => void;
+  currentSetNumber?: number;
+  restState?: RestState;
+  onCompleteNextSet: () => void;
 }) {
+  const ariaLabel = restState
+    ? `Concluir série ${restState.nextSetNumber}`
+    : `Concluir série ${currentSetNumber ?? ""}`.trim();
+
   return (
-    <div className="mt-4">
+    <div className="mt-4 space-y-3">
+      {restState ? (
+        <p className="text-center text-4xl font-semibold tabular-nums">
+          {formatTimer(restState.remainingSeconds)}
+        </p>
+      ) : null}
       <Button
         className="h-14 w-full gap-3 text-base"
-        onClick={onMarkCurrentSetCompleted}
+        aria-label={ariaLabel}
+        onClick={onCompleteNextSet}
         type="button"
       >
         <Check className="h-5 w-5" aria-hidden="true" />
-        Concluir série {currentSetNumber}
+        Concluir série
       </Button>
-      <p className="mt-2 text-center text-xs text-muted-foreground">
-        Carga e reps entram no fim do exercício.
-      </p>
     </div>
   );
 }
