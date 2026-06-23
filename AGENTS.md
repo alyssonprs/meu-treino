@@ -12,6 +12,8 @@ Use [docs/arquitetura/arquitetura-prompt.md](docs/arquitetura/arquitetura-prompt
 - Host the PWA on Cloudflare Pages, connected to the GitHub repository, unless the user explicitly changes deployment target.
 - Keep the same codebase ready for Android packaging with Capacitor.
 - Prepare for APK generation and possible future Google Play publishing.
+- When generating a new Android APK, always increase the Android `versionCode` so the device can update the installed app without data loss. The `scripts/build-android-apk.ps1` script increments `android/app/build.gradle` automatically before packaging.
+- Debug APK updates preserve installed app data only when the `applicationId` and debug signing key match the installed APK. The debug key is normally stable on the same machine, but can change if the local Android debug keystore is deleted, regenerated, or a different machine builds the APK.
 - Do not implement iPhone/App Store distribution in the first phase.
 - Keep the app low-cost, offline-first, and 100% local on the device.
 - Do not add a remote backend, remote database, login, account system, payments, or cloud sync unless the user explicitly changes scope.

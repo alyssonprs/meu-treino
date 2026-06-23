@@ -31,6 +31,24 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 cap sync android
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+$appBuildGradle = Join-Path $projectRoot "android\app\build.gradle"
+$appBuildGradleContent = Get-Content -Raw -Path $appBuildGradle
+$versionCodeMatch = [regex]::Match($appBuildGradleContent, "versionCode\s+(\d+)")
+if (-not $versionCodeMatch.Success) {
+  throw "versionCode nao encontrado em $appBuildGradle."
+}
+
+$currentVersionCode = [int]$versionCodeMatch.Groups[1].Value
+$nextVersionCode = $currentVersionCode + 1
+$updatedBuildGradleContent = [regex]::Replace(
+  $appBuildGradleContent,
+  "versionCode\s+\d+",
+  "versionCode $nextVersionCode",
+  1
+)
+Set-Content -Encoding ASCII -Path $appBuildGradle -Value $updatedBuildGradleContent
+Write-Host "Android versionCode atualizado: $currentVersionCode -> $nextVersionCode"
+
 Set-Location (Join-Path $projectRoot "android")
 .\gradlew.bat assembleDebug
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
