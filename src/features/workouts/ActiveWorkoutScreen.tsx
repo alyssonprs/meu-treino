@@ -392,7 +392,7 @@ function ExerciseGuideDisclosure({
           ) : (
             <Eye className="h-4 w-4" aria-hidden="true" />
           )}
-          {isOpen ? "Ocultar" : "Ver como fazer"}
+          {isOpen ? "Ocultar" : "Exibir"}
         </Button>
       </div>
 
