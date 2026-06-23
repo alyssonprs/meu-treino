@@ -79,9 +79,6 @@ export function ActiveWorkoutScreen({
   const registeredExercises = draft.exercises.filter(
     (exercise) => exercise.result.completedAt !== null,
   ).length;
-  const loadHistory = currentExercise
-    ? loadHistoryByExerciseId.get(currentExercise.exerciseId)
-    : undefined;
   const nextExerciseIndex = getNextExerciseIndex(draft, currentExerciseIndex);
   const isCurrentExerciseRegistered =
     currentExerciseDraft?.result.completedAt !== null;
@@ -280,19 +277,6 @@ export function ActiveWorkoutScreen({
           />
         )}
       </div>
-
-      {loadHistory ? (
-        <div className="grid grid-cols-2 gap-2">
-          <MetricCard
-            label="Última carga"
-            value={`${formatLoad(loadHistory.lastLoadKg)} kg x ${loadHistory.lastReps}`}
-          />
-          <MetricCard
-            label="Maior carga"
-            value={`${formatLoad(loadHistory.maxLoadKg)} kg`}
-          />
-        </div>
-      ) : null}
     </div>
   );
 
@@ -890,15 +874,6 @@ function ExerciseStatusButton({
         </span>
       </span>
     </button>
-  );
-}
-
-function MetricCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-md bg-muted p-3">
-      <p className="text-xs font-medium text-muted-foreground">{label}</p>
-      <p className="mt-1 text-sm font-semibold">{value}</p>
-    </div>
   );
 }
 
