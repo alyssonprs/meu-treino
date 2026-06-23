@@ -344,7 +344,6 @@ export function ActiveWorkoutScreen({
       <ExerciseStatusList
         currentExerciseDetails={currentExerciseDetails}
         draft={draft}
-        loadHistoryByExerciseId={loadHistoryByExerciseId}
         onSelectExercise={onSelectExercise}
       />
 
@@ -723,12 +722,10 @@ function ExerciseResultForm({
 function ExerciseStatusList({
   currentExerciseDetails,
   draft,
-  loadHistoryByExerciseId,
   onSelectExercise,
 }: {
   currentExerciseDetails: ReactNode;
   draft: WorkoutSessionDraft;
-  loadHistoryByExerciseId: Map<string, ExerciseLoadHistoryRecord>;
   onSelectExercise: (exerciseIndex: number) => void;
 }) {
   return (
@@ -745,7 +742,6 @@ function ExerciseStatusList({
           const exerciseDraft = draft.exercises[index];
           const status = getExerciseStatus(draft, index);
           const statusMeta = getExerciseStatusMeta(status);
-          const loadHistory = loadHistoryByExerciseId.get(exercise.exerciseId);
           const completedSetsCount = exerciseDraft.completedSets.filter(
             (set) => set.completedAt !== null,
           ).length;
@@ -758,7 +754,6 @@ function ExerciseStatusList({
               exerciseIndex={index}
               isCurrent={draft.currentExerciseIndex === index}
               key={exercise.id}
-              loadHistory={loadHistory}
               onSelectExercise={onSelectExercise}
               status={status}
               statusMeta={statusMeta}
@@ -837,7 +832,6 @@ function ExerciseStatusButton({
   statusMeta,
   totalSets,
   isCurrent,
-  loadHistory,
   onSelectExercise,
 }: {
   completedSetsCount: number;
@@ -848,7 +842,6 @@ function ExerciseStatusButton({
   statusMeta: ReturnType<typeof getExerciseStatusMeta>;
   totalSets: number;
   isCurrent: boolean;
-  loadHistory: ExerciseLoadHistoryRecord | undefined;
   onSelectExercise: (exerciseIndex: number) => void;
 }) {
   if (isCurrent) {
@@ -872,9 +865,6 @@ function ExerciseStatusButton({
             <span className="block break-words text-sm font-semibold leading-5 text-foreground">
               {exercise.name}
             </span>
-            <span className="mt-1 block text-xs text-muted-foreground">
-              {statusMeta.description}
-            </span>
           </span>
           <span
             className={cn(
@@ -883,16 +873,6 @@ function ExerciseStatusButton({
             )}
           >
             {status}
-          </span>
-        </span>
-        <span className="mt-3 flex items-center justify-between gap-3 rounded-md border border-border/70 bg-background/70 px-3 py-2 text-xs">
-          <span className="font-medium text-muted-foreground">
-            Carga anterior
-          </span>
-          <span className="min-w-0 truncate font-semibold text-foreground">
-            {loadHistory
-              ? `${formatLoad(loadHistory.lastLoadKg)} kg x ${loadHistory.lastReps}`
-              : "Sem carga anterior"}
           </span>
         </span>
         {currentExerciseDetails}
@@ -921,9 +901,6 @@ function ExerciseStatusButton({
           <span className="block break-words text-sm font-semibold leading-5 text-foreground">
             {exercise.name}
           </span>
-          <span className="mt-1 block text-xs text-muted-foreground">
-            {statusMeta.description}
-          </span>
         </span>
         <span
           className={cn(
@@ -932,14 +909,6 @@ function ExerciseStatusButton({
           )}
         >
           {status}
-        </span>
-      </span>
-      <span className="mt-3 flex items-center justify-between gap-3 rounded-md border border-border/70 bg-background/70 px-3 py-2 text-xs">
-        <span className="font-medium text-muted-foreground">Carga anterior</span>
-        <span className="min-w-0 truncate font-semibold text-foreground">
-          {loadHistory
-            ? `${formatLoad(loadHistory.lastLoadKg)} kg x ${loadHistory.lastReps}`
-            : "Sem carga anterior"}
         </span>
       </span>
     </button>
@@ -979,7 +948,6 @@ function getExerciseStatusMeta(status: ReturnType<typeof getExerciseStatus>) {
   if (status === "Concluído") {
     return {
       Icon: Check,
-      description: "Carga e reps registradas",
       itemClassName: "border-primary/50 bg-primary/10",
       iconClassName: "text-primary",
       badgeClassName: "bg-primary text-primary-foreground",
@@ -989,7 +957,6 @@ function getExerciseStatusMeta(status: ReturnType<typeof getExerciseStatus>) {
   if (status === "Em progresso") {
     return {
       Icon: CircleDot,
-      description: "Exercício aberto ou com série marcada",
       itemClassName: "border-info/60 bg-info/10",
       iconClassName: "text-info",
       badgeClassName: "bg-info text-info-foreground",
@@ -998,7 +965,6 @@ function getExerciseStatusMeta(status: ReturnType<typeof getExerciseStatus>) {
 
   return {
     Icon: Circle,
-    description: "Ainda não iniciado",
     itemClassName: "border-border bg-muted",
     iconClassName: "text-muted-foreground",
     badgeClassName: "bg-background text-muted-foreground",
