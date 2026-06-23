@@ -344,6 +344,7 @@ export function ActiveWorkoutScreen({
       <ExerciseStatusList
         currentExerciseDetails={currentExerciseDetails}
         draft={draft}
+        loadHistoryByExerciseId={loadHistoryByExerciseId}
         onSelectExercise={onSelectExercise}
       />
 
@@ -722,10 +723,12 @@ function ExerciseResultForm({
 function ExerciseStatusList({
   currentExerciseDetails,
   draft,
+  loadHistoryByExerciseId,
   onSelectExercise,
 }: {
   currentExerciseDetails: ReactNode;
   draft: WorkoutSessionDraft;
+  loadHistoryByExerciseId: Map<string, ExerciseLoadHistoryRecord>;
   onSelectExercise: (exerciseIndex: number) => void;
 }) {
   return (
@@ -745,6 +748,10 @@ function ExerciseStatusList({
           const completedSetsCount = exerciseDraft.completedSets.filter(
             (set) => set.completedAt !== null,
           ).length;
+          const isCurrent = draft.currentExerciseIndex === index;
+          const loadHistory = isCurrent
+            ? loadHistoryByExerciseId.get(exercise.exerciseId)
+            : undefined;
 
           return (
             <ExerciseStatusButton
@@ -752,8 +759,9 @@ function ExerciseStatusList({
               currentExerciseDetails={currentExerciseDetails}
               exercise={exercise}
               exerciseIndex={index}
-              isCurrent={draft.currentExerciseIndex === index}
+              isCurrent={isCurrent}
               key={exercise.id}
+              loadHistory={loadHistory}
               onSelectExercise={onSelectExercise}
               status={status}
               statusMeta={statusMeta}
@@ -832,6 +840,7 @@ function ExerciseStatusButton({
   statusMeta,
   totalSets,
   isCurrent,
+  loadHistory,
   onSelectExercise,
 }: {
   completedSetsCount: number;
@@ -842,6 +851,7 @@ function ExerciseStatusButton({
   statusMeta: ReturnType<typeof getExerciseStatusMeta>;
   totalSets: number;
   isCurrent: boolean;
+  loadHistory: ExerciseLoadHistoryRecord | undefined;
   onSelectExercise: (exerciseIndex: number) => void;
 }) {
   if (isCurrent) {
@@ -873,6 +883,16 @@ function ExerciseStatusButton({
             )}
           >
             {status}
+          </span>
+        </span>
+        <span className="mt-3 flex items-center justify-between gap-3 rounded-md border border-border/70 bg-background/70 px-3 py-2 text-xs">
+          <span className="font-medium text-muted-foreground">
+            Carga anterior
+          </span>
+          <span className="min-w-0 truncate font-semibold text-foreground">
+            {loadHistory
+              ? `${formatLoad(loadHistory.lastLoadKg)} kg x ${loadHistory.lastReps}`
+              : "Sem carga anterior"}
           </span>
         </span>
         {currentExerciseDetails}
