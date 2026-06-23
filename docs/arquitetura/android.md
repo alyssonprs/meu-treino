@@ -6,9 +6,11 @@ Este projeto mantem a primeira entrega como PWA, mas ja possui alvo Android prep
 
 - App name: `Meu Treino`
 - App ID / package: `com.meutreino.app`
+- Namespace Android: `com.meutreino.app`
 - Web build usado pelo Capacitor: `dist`
 - Plataforma nativa versionada: `android/`
 - Assets de identidade usados a partir de `assets/identity`
+- Health Connect opcional no APK Android, com permissao minima `android.permission.health.WRITE_EXERCISE`
 
 ## Comandos
 
@@ -46,5 +48,7 @@ No Android Studio:
 - criar uma chave de assinatura somente quando a publicacao ou distribuicao exigir.
 
 Para teste local rapido, use APK debug gerado pelo Android Studio. Para Google Play no futuro, use AAB assinado e mantenha a chave de assinatura fora do repositorio.
+
+Antes de publicar na Google Play, seguir `docs/arquitetura/publicacao-google-play.md` e publicar a politica baseada em `docs/arquitetura/privacidade.md` em uma URL HTTPS estavel.
 
 Nao ha configuracao iOS neste projeto nesta fase.

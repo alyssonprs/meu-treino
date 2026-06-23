@@ -2,7 +2,7 @@
 
 Data: 2026-06-22
 
-Status: E3 implementada parcialmente; aguardando validacao nativa com JDK/dispositivo Android
+Status: E7 documentada; aguardando validacao nativa com JDK/dispositivo Android
 
 ## Objetivo
 
@@ -444,6 +444,14 @@ Pronto quando:
 
 - O repo tem checklist de publicacao para Health Connect.
 - O texto de privacidade do app corresponde ao que aparece no fluxo de permissao.
+
+Registro de execucao em 2026-06-22:
+
+- Criada politica local-first em `docs/arquitetura/privacidade.md`, cobrindo PWA, Android, Health Connect, consentimento, retencao e escopo fora do MVP.
+- Criado checklist de publicacao futura em `docs/arquitetura/publicacao-google-play.md`, incluindo Play Console, Data Safety, Health Apps, permissoes, package name e assinatura.
+- Confirmado que `capacitor.config.ts`, `android/app/build.gradle` e `android/app/src/main/res/values/strings.xml` usam o package/applicationId `com.meutreino.app`.
+- Confirmado que o manifesto Android solicita apenas `android.permission.health.WRITE_EXERCISE` para Health Connect.
+- O texto da activity nativa de justificativa de permissoes permanece coerente com a politica: escrita de exercicio com consentimento, dados locais e sem frequencia cardiaca/calorias/leitura do relogio nesta etapa.
 
 ## Criterios de aceite da integracao
 
