@@ -46,7 +46,7 @@ $updatedBuildGradleContent = [regex]::Replace(
   "versionCode $nextVersionCode",
   1
 )
-Set-Content -Encoding ASCII -Path $appBuildGradle -Value $updatedBuildGradleContent
+Set-Content -Encoding ASCII -Path $appBuildGradle -Value ($updatedBuildGradleContent.TrimEnd() + "`r`n")
 Write-Host "Android versionCode atualizado: $currentVersionCode -> $nextVersionCode"
 
 Set-Location (Join-Path $projectRoot "android")
