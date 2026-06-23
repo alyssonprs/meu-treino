@@ -91,7 +91,7 @@ test("mobile visual regression covers first use, import, active home, settings a
 
   await page.getByRole("button", { name: "Ajustes" }).click();
   await expect(
-    page.getByRole("heading", { name: "Preferências locais" }),
+    page.getByRole("heading", { name: /Prefer.ncias locais/ }),
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Substituir treino atual" }),
@@ -134,7 +134,7 @@ test("mobile visual regression covers first use, import, active home, settings a
     .getByRole("button", { name: "Voltar para lista de exercícios" })
     .click();
   await expect(
-    page.getByRole("heading", { name: "Escolha uma rotina" }),
+    page.getByRole("button", { name: /Treino A - Peito e triceps/ }),
   ).toBeVisible();
   await expect(page.getByText("Recomendado")).toBeVisible();
   await expect(
@@ -174,10 +174,10 @@ test("active workout keeps bottom nav hidden and shows integrated rest, finish a
   ).toBeVisible();
   await expect(page.getByLabel("Aumentar RIR")).toHaveCount(0);
   await expect(page.getByRole("navigation")).toHaveCount(0);
-  await expect(page.getByRole("button", { name: /Ver como fazer/ })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Exibir" })).toBeVisible();
   await assertNoHorizontalOverflow(page);
 
-  await page.getByRole("button", { name: /Ver como fazer/ }).click();
+  await page.getByRole("button", { name: "Exibir" }).click();
   await expect(page.getByText("Principal: Pernas")).toBeVisible();
   await expect(page.getByRole("button", { name: "Ocultar" })).toBeVisible();
   await assertNoHorizontalOverflow(page);
@@ -186,17 +186,16 @@ test("active workout keeps bottom nav hidden and shows integrated rest, finish a
 
   await page.getByRole("button", { name: /Concluir s.rie 1/ }).click();
 
-  await expect(page.getByText(/Descanso ap.s s.rie/)).toBeVisible();
-  await expect(page.getByRole("button", { name: "+30s" })).toBeVisible();
   await expect(
-    page.getByRole("button", { name: /^Concluir s.rie$/ }),
+    page.getByRole("button", { name: /Concluir s.rie 2/ }),
   ).toBeVisible();
+  await expect(page.getByText(/0:4/)).toBeVisible();
   await expect(page.getByRole("navigation")).toHaveCount(0);
   await assertNoHorizontalOverflow(page);
 
   await screenshot(page, "13-ux-04-descanso-integrado.png");
 
-  await page.getByRole("button", { name: /^Concluir s.rie$/ }).click();
+  await page.getByRole("button", { name: /Concluir s.rie 2/ }).click();
   await expect(
     page.getByRole("heading", { name: "Registrar resultado" }),
   ).toBeVisible();
@@ -207,7 +206,7 @@ test("active workout keeps bottom nav hidden and shows integrated rest, finish a
   await page.getByLabel("Aumentar Reps").click();
   await page.getByRole("button", { name: /Concluir exerc.cio/ }).click();
 
-  await expect(page.getByText("Exercício concluído")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Finalizar rotina" })).toBeVisible();
   await page.getByRole("button", { name: "Finalizar rotina" }).click();
 
   await expect(page.getByText("Treino concluído")).toBeVisible();

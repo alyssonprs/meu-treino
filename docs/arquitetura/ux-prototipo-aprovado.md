@@ -218,6 +218,7 @@ Atualize esta tabela quando cada tela for aprovada.
 | UX-04 | Lista expansivel aprovada | Exercicios nao selecionados ficam compactos, sem series, progresso, descanso ou RIR alvo; o exercicio selecionado expande no proprio card da lista com os detalhes de execucao, series, descanso e registro final de carga/reps | 2026-06-22 |
 | UX-04 | Descanso com conclusao direta da proxima serie | O card de descanso troca `Proxima serie` por `Concluir serie`; ao concluir, a proxima serie e marcada e um novo descanso inicia no mesmo bloco quando ainda houver series pendentes. Remover o card separado de `Serie atual`/`Serie concluida`. | 2026-06-22 |
 | UX-04 | Avanco automatico apos registrar exercicio | Ao salvar carga e repeticoes de um exercicio com todas as series concluidas, nao exibir card de confirmacao; marcar o exercicio como concluido e abrir o proximo exercicio disponivel. | 2026-06-22 |
+| UX-04 | Bloco de series estavel | O descanso nao deve empurrar o botao de concluir serie para baixo; o timer aparece compacto no proprio botao. Ao concluir todas as series, carga e reps devem abrir em modal/bottom sheet para nao deslocar a lista de exercicios. | 2026-06-23 |
 
 ## Prototipos aprovados
 
@@ -253,6 +254,8 @@ Pontos aprovados:
 - A acao `Concluir serie`, o descanso e o registro final de carga/reps devem ficar junto do bloco de series dentro do card expandido do exercicio selecionado; nao deve haver um bloco separado de `Serie atual` fora da lista.
 - O card de descanso deve aparecer entre series depois de marcar uma serie como concluida.
 - Durante o descanso, a acao principal deve ser `Concluir serie`, marcando a proxima serie e reiniciando o descanso no mesmo bloco quando ainda houver series pendentes; nao deve haver uma etapa intermediaria de `Proxima serie` seguida por outro card de `Serie atual`.
+- O timer de descanso deve ser compacto e integrado ao botao `Concluir serie`, sem criar uma linha grande nem deslocar verticalmente a acao principal.
+- Ao terminar todas as series do exercicio, o registro de carga e reps deve abrir em modal/bottom sheet; o card expandido deve mostrar apenas uma chamada compacta para registrar, evitando que a lista seja empurrada para baixo.
 - O exercicio atual tem destaque suficiente.
 - Os controles de carga e reps parecem confortaveis para uso com uma mao.
 - A navegacao inferior some durante o treino para reduzir distracao.

@@ -69,6 +69,7 @@ export function ActiveWorkoutScreen({
 }: ActiveWorkoutScreenProps) {
   const [restState, setRestState] = useState<RestState | null>(null);
   const [isExerciseGuideOpen, setIsExerciseGuideOpen] = useState(false);
+  const [isResultSheetOpen, setIsResultSheetOpen] = useState(false);
   const currentExerciseIndex = draft.currentExerciseIndex;
   const currentExercise = draft.routine.exercises[currentExerciseIndex];
   const currentExerciseDraft = draft.exercises[currentExerciseIndex];
@@ -100,6 +101,7 @@ export function ActiveWorkoutScreen({
   useEffect(() => {
     setRestState(null);
     setIsExerciseGuideOpen(false);
+    setIsResultSheetOpen(false);
   }, [currentExerciseIndex]);
 
   useEffect(() => {
@@ -198,6 +200,7 @@ export function ActiveWorkoutScreen({
     }
 
     setRestState(null);
+    setIsResultSheetOpen(true);
   }
 
   function markCurrentSetCompleted() {
@@ -222,6 +225,7 @@ export function ActiveWorkoutScreen({
     });
 
     setRestState(null);
+    setIsResultSheetOpen(false);
 
     if (nextExerciseIndex !== null) {
       onSelectExercise(nextExerciseIndex);
@@ -259,15 +263,9 @@ export function ActiveWorkoutScreen({
             Finalizar rotina
           </Button>
         ) : areAllSetsCompleted ? (
-          <ExerciseResultForm
+          <ExerciseResultPrompt
             canSaveResult={canSaveResult}
-            resultValues={resultValues}
-            onDecrementLoad={() => incrementField("loadKg", -2.5)}
-            onDecrementReps={() => incrementField("reps", -1)}
-            onIncrementLoad={() => incrementField("loadKg", 2.5)}
-            onIncrementReps={() => incrementField("reps", 1)}
-            onSave={saveCurrentExerciseResult}
-            onUpdateResultValue={updateResultValue}
+            onOpen={() => setIsResultSheetOpen(true)}
           />
         ) : (
           <SetActionPanel
@@ -313,6 +311,23 @@ export function ActiveWorkoutScreen({
         draft={draft}
         loadHistoryByExerciseId={loadHistoryByExerciseId}
         onSelectExercise={onSelectExercise}
+      />
+
+      <ExerciseResultSheet
+        canSaveResult={canSaveResult}
+        isOpen={
+          isResultSheetOpen &&
+          areAllSetsCompleted &&
+          !isCurrentExerciseRegistered
+        }
+        resultValues={resultValues}
+        onClose={() => setIsResultSheetOpen(false)}
+        onDecrementLoad={() => incrementField("loadKg", -2.5)}
+        onDecrementReps={() => incrementField("reps", -1)}
+        onIncrementLoad={() => incrementField("loadKg", 2.5)}
+        onIncrementReps={() => incrementField("reps", 1)}
+        onSave={saveCurrentExerciseResult}
+        onUpdateResultValue={updateResultValue}
       />
 
       <div className="grid grid-cols-2 gap-3 pb-2">
@@ -569,28 +584,67 @@ function SetActionPanel({
     : `Concluir série ${currentSetNumber ?? ""}`.trim();
 
   return (
-    <div className="mt-4 space-y-3">
-      {restState ? (
-        <p className="text-center text-4xl font-semibold tabular-nums">
-          {formatTimer(restState.remainingSeconds)}
-        </p>
-      ) : null}
+    <div className="mt-4">
       <Button
-        className="h-14 w-full gap-3 text-base"
+        className={cn(
+          "relative h-14 w-full gap-3 px-4 text-base",
+          restState ? "pr-20" : "",
+        )}
         aria-label={ariaLabel}
         onClick={onCompleteNextSet}
         type="button"
       >
         <Check className="h-5 w-5" aria-hidden="true" />
-        Concluir série
+        <span>Concluir série</span>
+        {restState ? (
+          <span className="absolute right-3 rounded-md bg-primary-foreground/15 px-2 py-1 text-sm font-semibold tabular-nums">
+            {formatTimer(restState.remainingSeconds)}
+          </span>
+        ) : null}
       </Button>
     </div>
   );
 }
 
-function ExerciseResultForm({
+function ExerciseResultPrompt({
   canSaveResult,
+  onOpen,
+}: {
+  canSaveResult: boolean;
+  onOpen: () => void;
+}) {
+  return (
+    <div className="mt-4 rounded-lg border border-border bg-background p-3">
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h3 className="text-base font-semibold">Séries concluídas</h3>
+          <p className="mt-1 text-xs leading-5 text-muted-foreground">
+            Registre carga e reps para fechar o exercício.
+          </p>
+        </div>
+        <Button
+          className="h-12 shrink-0 gap-2 px-3"
+          onClick={onOpen}
+          type="button"
+        >
+          <Save className="h-4 w-4" aria-hidden="true" />
+          Registrar
+        </Button>
+      </div>
+      {!canSaveResult ? (
+        <p className="mt-3 rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
+          Carga e reps ficam em uma janela rápida para não deslocar a lista.
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+function ExerciseResultSheet({
+  canSaveResult,
+  isOpen,
   resultValues,
+  onClose,
   onDecrementLoad,
   onDecrementReps,
   onIncrementLoad,
@@ -599,7 +653,9 @@ function ExerciseResultForm({
   onUpdateResultValue,
 }: {
   canSaveResult: boolean;
+  isOpen: boolean;
   resultValues: Pick<WorkoutSetDraft, "loadKg" | "reps" | "rir" | "notes">;
+  onClose: () => void;
   onDecrementLoad: () => void;
   onDecrementReps: () => void;
   onIncrementLoad: () => void;
@@ -607,39 +663,69 @@ function ExerciseResultForm({
   onSave: () => void;
   onUpdateResultValue: (field: EditableResultField, value: string) => void;
 }) {
+  if (!isOpen) {
+    return null;
+  }
+
   return (
-    <div className="mt-4 rounded-lg border border-border bg-background p-3">
-      <div>
-        <h3 className="text-xl font-semibold">Registrar resultado</h3>
-      </div>
-
-      <div className="mt-4 grid gap-3">
-        <StepperInput
-          label="Carga"
-          suffix="kg"
-          value={resultValues.loadKg}
-          onChange={(value) => onUpdateResultValue("loadKg", value)}
-          onDecrement={onDecrementLoad}
-          onIncrement={onIncrementLoad}
-        />
-        <StepperInput
-          label="Reps"
-          value={resultValues.reps}
-          onChange={(value) => onUpdateResultValue("reps", value)}
-          onDecrement={onDecrementReps}
-          onIncrement={onIncrementReps}
-        />
-      </div>
-
-      <Button
-        className="mt-4 h-14 w-full gap-3 text-base"
-        disabled={!canSaveResult}
-        onClick={onSave}
+    <div
+      aria-modal="true"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-background/70 px-3 pb-3 backdrop-blur-sm"
+      role="dialog"
+    >
+      <button
+        aria-label="Fechar registro do exercício"
+        className="absolute inset-0 cursor-default"
+        onClick={onClose}
         type="button"
-      >
-        <Save className="h-5 w-5" aria-hidden="true" />
-        Concluir exercício
-      </Button>
+      />
+      <div className="relative w-full max-w-md rounded-t-xl border border-border bg-card p-4 shadow-lg">
+        <div className="mx-auto mb-4 h-1 w-12 rounded-full bg-border" />
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h3 className="text-xl font-semibold">Registrar resultado</h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Uma vez por exercício.
+            </p>
+          </div>
+          <Button
+            className="h-10 px-3"
+            onClick={onClose}
+            type="button"
+            variant="ghost"
+          >
+            Fechar
+          </Button>
+        </div>
+
+        <div className="mt-4 grid gap-3">
+          <StepperInput
+            label="Carga"
+            suffix="kg"
+            value={resultValues.loadKg}
+            onChange={(value) => onUpdateResultValue("loadKg", value)}
+            onDecrement={onDecrementLoad}
+            onIncrement={onIncrementLoad}
+          />
+          <StepperInput
+            label="Reps"
+            value={resultValues.reps}
+            onChange={(value) => onUpdateResultValue("reps", value)}
+            onDecrement={onDecrementReps}
+            onIncrement={onIncrementReps}
+          />
+        </div>
+
+        <Button
+          className="mt-4 h-14 w-full gap-3 text-base"
+          disabled={!canSaveResult}
+          onClick={onSave}
+          type="button"
+        >
+          <Save className="h-5 w-5" aria-hidden="true" />
+          Concluir exercício
+        </Button>
+      </div>
     </div>
   );
 }
