@@ -261,7 +261,6 @@ export function ActiveWorkoutScreen({
         ) : areAllSetsCompleted ? (
           <ExerciseResultForm
             canSaveResult={canSaveResult}
-            currentExercise={currentExercise}
             resultValues={resultValues}
             onDecrementLoad={() => incrementField("loadKg", -2.5)}
             onDecrementReps={() => incrementField("reps", -1)}
@@ -591,7 +590,6 @@ function SetActionPanel({
 
 function ExerciseResultForm({
   canSaveResult,
-  currentExercise,
   resultValues,
   onDecrementLoad,
   onDecrementReps,
@@ -601,7 +599,6 @@ function ExerciseResultForm({
   onUpdateResultValue,
 }: {
   canSaveResult: boolean;
-  currentExercise: WorkoutSessionDraft["routine"]["exercises"][number];
   resultValues: Pick<WorkoutSetDraft, "loadKg" | "reps" | "rir" | "notes">;
   onDecrementLoad: () => void;
   onDecrementReps: () => void;
@@ -613,11 +610,7 @@ function ExerciseResultForm({
   return (
     <div className="mt-4 rounded-lg border border-border bg-background p-3">
       <div>
-        <p className="text-sm font-medium text-info">Exercício atual</p>
-        <h3 className="mt-1 text-xl font-semibold">Registrar resultado</h3>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Informe carga e reps uma vez para este exercício.
-        </p>
+        <h3 className="text-xl font-semibold">Registrar resultado</h3>
       </div>
 
       <div className="mt-4 grid gap-3">
@@ -637,12 +630,6 @@ function ExerciseResultForm({
           onIncrement={onIncrementReps}
         />
       </div>
-
-      {currentExercise.notes ? (
-        <p className="mt-4 rounded-md bg-muted p-3 text-sm leading-6 text-muted-foreground">
-          {currentExercise.notes}
-        </p>
-      ) : null}
 
       <Button
         className="mt-4 h-14 w-full gap-3 text-base"
