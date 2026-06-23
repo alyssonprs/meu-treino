@@ -1,11 +1,4 @@
-import {
-  CalendarCheck2,
-  ChevronRight,
-  Clock3,
-  Dumbbell,
-  RefreshCw,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { ChevronRight, Dumbbell } from "lucide-react";
 import type { RoutineExecutionSummary } from "@/services/progressService";
 import type { NextRoutineRecommendation } from "@/services/workoutRecommendationService";
 import type { ActiveWorkoutPlanSnapshot } from "@/storage/workoutPlanRepository";
@@ -43,16 +36,7 @@ export function RoutineListScreen({
   );
 
   return (
-    <section className="mt-4 space-y-5">
-      <div className="rounded-lg border border-border bg-card p-5">
-        <p className="text-sm font-medium text-info">Treino</p>
-        <h2 className="mt-2 text-2xl font-semibold">Escolha uma rotina</h2>
-        <p className="mt-3 text-sm leading-6 text-muted-foreground">
-          {activePlan.plan.name} tem {routines.length} rotinas. A recomendada
-          fica marcada, mas você pode abrir qualquer rotina do plano.
-        </p>
-      </div>
-
+    <section className="mt-4">
       <div className="space-y-3">
         {routines.map((routine) => {
           const isRecommended = routine.id === nextRecommendation?.routineId;
@@ -81,10 +65,6 @@ export function RoutineListScreen({
                       </span>
                     ) : null}
                   </div>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                    Ordem {routine.order} - {routine.exercises.length}{" "}
-                    exercícios
-                  </p>
                   <p className="mt-1 text-sm font-medium text-info">
                     {getRoutineExecutionLabel(executionSummary)}
                   </p>
@@ -94,47 +74,11 @@ export function RoutineListScreen({
                   aria-hidden="true"
                 />
               </div>
-
-              <div className="mt-4 grid grid-cols-3 gap-2 rounded-lg border border-border bg-background p-3">
-                <RoutineMetric
-                  icon={Clock3}
-                  label="Duração"
-                  value={`${getEstimatedRoutineDuration(routine)} min`}
-                />
-                <RoutineMetric
-                  icon={CalendarCheck2}
-                  label="Volume"
-                  value={`${routine.exercises.length} exercícios`}
-                />
-                <RoutineMetric
-                  icon={RefreshCw}
-                  label="Descanso"
-                  value={getRoutineRestRangeLabel(routine)}
-                />
-              </div>
             </button>
           );
         })}
       </div>
     </section>
-  );
-}
-
-function RoutineMetric({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: LucideIcon;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="min-w-0 text-center">
-      <Icon className="mx-auto h-5 w-5 text-info" aria-hidden="true" />
-      <p className="mt-2 truncate text-sm font-semibold leading-5">{value}</p>
-      <p className="mt-1 text-xs text-muted-foreground">{label}</p>
-    </div>
   );
 }
 
@@ -160,42 +104,5 @@ function formatShortDate(value: string) {
     month: "2-digit",
     year: "2-digit",
   }).format(date);
-}
-
-function getEstimatedRoutineDuration(
-  routine: ActiveWorkoutPlanSnapshot["routines"][number],
-) {
-  const warmupMinutes = routine.warmup.reduce(
-    (total, step) => total + step.duration_minutes,
-    0,
-  );
-  const cooldownMinutes = routine.cooldown.reduce(
-    (total, step) => total + step.duration_minutes,
-    0,
-  );
-  const exerciseMinutes = routine.exercises.reduce((total, exercise) => {
-    const restMinutes = ((exercise.rest_seconds ?? 90) * exercise.sets) / 60;
-
-    return total + restMinutes + exercise.sets * 1.5;
-  }, 0);
-
-  return Math.max(
-    1,
-    Math.round(warmupMinutes + cooldownMinutes + exerciseMinutes),
-  );
-}
-
-function getRoutineRestRangeLabel(
-  routine: ActiveWorkoutPlanSnapshot["routines"][number],
-) {
-  if (routine.exercises.length === 0) {
-    return "0s";
-  }
-
-  const rests = routine.exercises.map((exercise) => exercise.rest_seconds ?? 90);
-  const min = Math.min(...rests);
-  const max = Math.max(...rests);
-
-  return min === max ? `${min}s` : `${min}-${max}s`;
 }
 
