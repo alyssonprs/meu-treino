@@ -375,11 +375,6 @@ function ExerciseGuideDisclosure({
             <Target className="h-4 w-4 text-primary" aria-hidden="true" />
             Como fazer
           </p>
-          <p className="mt-1 truncate text-xs text-muted-foreground">
-            {isOpen
-              ? "Musculos, movimento e dicas rapidas"
-              : "Veja musculos e dicas do movimento"}
-          </p>
         </div>
         <Button
           className="h-10 shrink-0 gap-2 px-3"
