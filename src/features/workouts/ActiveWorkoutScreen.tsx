@@ -394,24 +394,37 @@ function ExerciseGuideDisclosure({
 }) {
   const primaryLabel = guide.primaryMuscles.join(", ");
   const secondaryLabel = guide.secondaryMuscles.join(", ");
-  const [shouldLoadAnimation, setShouldLoadAnimation] = useState(false);
+  const [isAnimationReady, setIsAnimationReady] = useState(false);
 
   useEffect(() => {
-    setShouldLoadAnimation(false);
+    setIsAnimationReady(false);
 
     if (!isOpen || !guide.animationUrl) {
       return;
     }
 
-    const frameId = window.requestAnimationFrame(() => {
-      setShouldLoadAnimation(true);
-    });
+    const animation = new Image();
+    let isCurrent = true;
 
-    return () => window.cancelAnimationFrame(frameId);
+    animation.onload = () => {
+      if (isCurrent) {
+        setIsAnimationReady(true);
+      }
+    };
+    animation.onerror = () => {
+      if (isCurrent) {
+        setIsAnimationReady(false);
+      }
+    };
+    animation.src = guide.animationUrl;
+
+    return () => {
+      isCurrent = false;
+    };
   }, [guide.animationUrl, guide.imageUrl, isOpen]);
 
   const mediaUrl =
-    isOpen && shouldLoadAnimation && guide.animationUrl
+    isOpen && isAnimationReady && guide.animationUrl
       ? guide.animationUrl
       : guide.imageUrl;
 
