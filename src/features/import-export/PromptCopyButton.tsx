@@ -39,6 +39,9 @@ export function PromptCopyButton({ className }: PromptCopyButtonProps) {
         <Icon className="h-5 w-5" aria-hidden="true" />
         {copyState === "copied" ? "Prompt copiado" : "Copiar prompt para IA"}
       </Button>
+      <span className="sr-only" aria-live="polite">
+        {copyState === "copied" ? "Prompt copiado" : ""}
+      </span>
 
       {copyState === "error" ? (
         <p

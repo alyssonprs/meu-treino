@@ -1,5 +1,6 @@
 import { Activity, ExternalLink, RefreshCw, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Notice } from "@/components/Notice";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/utils";
 import type {
@@ -287,9 +288,12 @@ export function HealthConnectSettingsCard({
       </div>
 
       {message ? (
-        <p className="mt-3 rounded-md bg-muted p-3 text-sm leading-6 text-muted-foreground">
+        <Notice
+          className="mt-3"
+          tone={loadState === "error" ? "danger" : "info"}
+        >
           {message}
-        </p>
+        </Notice>
       ) : null}
     </section>
   );

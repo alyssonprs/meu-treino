@@ -1,5 +1,4 @@
 import {
-  ArrowRight,
   CalendarCheck2,
   ClipboardList,
   Clock3,
@@ -11,6 +10,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { Notice } from "@/components/Notice";
 import { Button } from "@/components/ui/button";
 import { PromptCopyButton } from "@/features/import-export/PromptCopyButton";
 import type {
@@ -57,7 +57,7 @@ export function HomeScreen({
 
           <div className="mt-5 space-y-3">
             <p className="text-sm text-muted-foreground">
-              {isLoadingActivePlan ? "Carregando" : "Primeiro uso"}
+              {isLoadingActivePlan ? "Carregando..." : "Primeiro uso"}
             </p>
             <h2 className="text-3xl font-semibold leading-tight">
               {isLoadingActivePlan
@@ -103,9 +103,9 @@ export function HomeScreen({
         </section>
 
         {workoutMessage ? (
-          <p className="mt-5 rounded-lg border border-info bg-card p-4 text-sm leading-6">
+          <Notice className="mt-5">
             {workoutMessage}
-          </p>
+          </Notice>
         ) : null}
       </>
     );
@@ -187,9 +187,9 @@ export function HomeScreen({
         ) : null}
 
         {cycleProgress?.isComplete ? (
-          <p className="mt-4 rounded-md border border-info bg-muted p-3 text-sm leading-6">
+          <Notice className="mt-4">
             Ciclo concluído. Copie o prompt e gere um novo treino.
-          </p>
+          </Notice>
         ) : null}
       </section>
 
@@ -264,9 +264,9 @@ export function HomeScreen({
       </div>
 
       {workoutMessage ? (
-        <p className="mt-5 rounded-lg border border-info bg-card p-4 text-sm leading-6">
+        <Notice className="mt-5">
           {workoutMessage}
-        </p>
+        </Notice>
       ) : null}
     </>
   );
@@ -325,7 +325,6 @@ function SummaryRow({
         <p className="font-semibold">{label}</p>
         <p className="mt-1 truncate text-sm text-muted-foreground">{value}</p>
       </div>
-      <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode, type Ref } from "react";
 import {
   ArrowLeft,
   Check,
@@ -13,6 +13,7 @@ import {
   Target,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Notice } from "@/components/Notice";
 import { cn } from "@/components/ui/utils";
 import {
   getNextPendingSetIndex,
@@ -70,6 +71,7 @@ export function ActiveWorkoutScreen({
   const [restState, setRestState] = useState<RestState | null>(null);
   const [isExerciseGuideOpen, setIsExerciseGuideOpen] = useState(false);
   const [isResultSheetOpen, setIsResultSheetOpen] = useState(false);
+  const [showFinishConfirmation, setShowFinishConfirmation] = useState(false);
   const currentExerciseIndex = draft.currentExerciseIndex;
   const currentExercise = draft.routine.exercises[currentExerciseIndex];
   const currentExerciseDraft = draft.exercises[currentExerciseIndex];
@@ -80,6 +82,7 @@ export function ActiveWorkoutScreen({
   const registeredExercises = draft.exercises.filter(
     (exercise) => exercise.result.completedAt !== null,
   ).length;
+  const hasIncompleteExercises = registeredExercises < draft.exercises.length;
   const nextExerciseIndex = getNextExerciseIndex(draft, currentExerciseIndex);
   const isCurrentExerciseRegistered =
     currentExerciseDraft?.result.completedAt !== null;
@@ -102,6 +105,7 @@ export function ActiveWorkoutScreen({
     setRestState(null);
     setIsExerciseGuideOpen(false);
     setIsResultSheetOpen(false);
+    setShowFinishConfirmation(false);
   }, [currentExerciseIndex]);
 
   useEffect(() => {
@@ -232,6 +236,15 @@ export function ActiveWorkoutScreen({
     }
   }
 
+  function requestFinishWorkout() {
+    if (!hasIncompleteExercises) {
+      onFinish();
+      return;
+    }
+
+    setShowFinishConfirmation(true);
+  }
+
   const currentExerciseDetails = (
     <div className="mt-4 space-y-4">
       {exerciseGuide ? (
@@ -257,7 +270,7 @@ export function ActiveWorkoutScreen({
         ) : isCurrentExerciseRegistered && nextExerciseIndex === null ? (
           <Button
             className="mt-4 h-14 w-full text-base"
-            onClick={onFinish}
+            onClick={requestFinishWorkout}
             type="button"
           >
             Finalizar rotina
@@ -330,6 +343,32 @@ export function ActiveWorkoutScreen({
         onUpdateResultValue={updateResultValue}
       />
 
+      {showFinishConfirmation ? (
+        <Notice
+          className="mt-2"
+          tone="warning"
+          title="Finalizar treino incompleto?"
+        >
+          <p>
+            Ainda ha exercicios sem registro. Finalize mesmo assim somente se o
+            treino acabou por hoje.
+          </p>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <Button
+              className="h-12"
+              onClick={() => setShowFinishConfirmation(false)}
+              type="button"
+              variant="secondary"
+            >
+              Continuar
+            </Button>
+            <Button className="h-12" onClick={onFinish} type="button">
+              Finalizar
+            </Button>
+          </div>
+        </Notice>
+      ) : null}
+
       <div className="grid grid-cols-2 gap-3 pb-2">
         <Button
           className="h-12 gap-2"
@@ -340,7 +379,7 @@ export function ActiveWorkoutScreen({
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           Lista
         </Button>
-        <Button className="h-12 gap-2" onClick={onFinish} type="button">
+        <Button className="h-12 gap-2" onClick={requestFinishWorkout} type="button">
           <Square className="h-4 w-4" aria-hidden="true" />
           Finalizar
         </Button>
@@ -412,8 +451,10 @@ function ExerciseGuideDisclosure({
               <img
                 alt={guide.imageAlt}
                 className="aspect-[16/9] w-full object-contain"
+                height={360}
                 loading="lazy"
                 src={mediaUrl}
+                width={640}
               />
             </div>
           ) : null}
@@ -469,14 +510,18 @@ function MuscleBadge({
 }
 
 function StepperInput({
+  inputRef,
   label,
+  name,
   suffix,
   value,
   onChange,
   onDecrement,
   onIncrement,
 }: {
+  inputRef?: Ref<HTMLInputElement>;
   label: string;
+  name: string;
   suffix?: string;
   value: string;
   onChange: (value: string) => void;
@@ -500,9 +545,12 @@ function StepperInput({
         </span>
         <div className="mt-1 flex items-baseline justify-center gap-1">
           <input
-            className="h-12 w-full min-w-0 bg-transparent text-center text-3xl font-semibold tabular-nums outline-none"
+            autoComplete="off"
+            className="h-12 w-full min-w-0 rounded-md bg-transparent text-center text-3xl font-semibold tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             inputMode="decimal"
+            name={name}
             onChange={(event) => onChange(event.target.value)}
+            ref={inputRef}
             type="text"
             value={value}
           />
@@ -663,6 +711,36 @@ function ExerciseResultSheet({
   onSave: () => void;
   onUpdateResultValue: (field: EditableResultField, value: string) => void;
 }) {
+  const loadInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const frameId = window.requestAnimationFrame(() => {
+      loadInputRef.current?.focus();
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) {
     return null;
   }
@@ -670,6 +748,7 @@ function ExerciseResultSheet({
   return (
     <div
       aria-modal="true"
+      aria-labelledby="exercise-result-sheet-title"
       className="fixed inset-0 z-50 flex items-end justify-center bg-background/70 px-3 pb-3 backdrop-blur-sm"
       role="dialog"
     >
@@ -683,7 +762,12 @@ function ExerciseResultSheet({
         <div className="mx-auto mb-4 h-1 w-12 rounded-full bg-border" />
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h3 className="text-xl font-semibold">Registrar resultado</h3>
+            <h3
+              className="text-xl font-semibold"
+              id="exercise-result-sheet-title"
+            >
+              Registrar resultado
+            </h3>
             <p className="mt-1 text-sm text-muted-foreground">
               Uma vez por exercício.
             </p>
@@ -700,7 +784,9 @@ function ExerciseResultSheet({
 
         <div className="mt-4 grid gap-3">
           <StepperInput
+            inputRef={loadInputRef}
             label="Carga"
+            name="exercise-load-kg"
             suffix="kg"
             value={resultValues.loadKg}
             onChange={(value) => onUpdateResultValue("loadKg", value)}
@@ -709,6 +795,7 @@ function ExerciseResultSheet({
           />
           <StepperInput
             label="Reps"
+            name="exercise-reps"
             value={resultValues.reps}
             onChange={(value) => onUpdateResultValue("reps", value)}
             onDecrement={onDecrementReps}

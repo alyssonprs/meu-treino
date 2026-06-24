@@ -1,4 +1,5 @@
 import {
+  ArrowLeft,
   AlertTriangle,
   CheckCircle2,
   FileInput,
@@ -15,12 +16,14 @@ type ImportPreviewStatus = Extract<
 type ImportPreviewScreenProps = {
   importStatus: ImportPreviewStatus;
   onActivatePlan: () => void;
+  onCancelImport: () => void;
   onChooseAnotherFile: () => void;
 };
 
 export function ImportPreviewScreen({
   importStatus,
   onActivatePlan,
+  onCancelImport,
   onChooseAnotherFile,
 }: ImportPreviewScreenProps) {
   const isSaving = importStatus.state === "saving";
@@ -109,6 +112,16 @@ export function ImportPreviewScreen({
         >
           <RotateCcw className="h-5 w-5" aria-hidden="true" />
           Escolher outro JSON
+        </Button>
+        <Button
+          className="h-12 w-full gap-2"
+          disabled={isSaving}
+          onClick={onCancelImport}
+          type="button"
+          variant="ghost"
+        >
+          <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+          Voltar ao inicio
         </Button>
       </div>
     </section>

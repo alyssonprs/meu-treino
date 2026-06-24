@@ -268,6 +268,11 @@ export function App() {
     }
   }
 
+  function handleCancelImport() {
+    setImportStatus(idleImportStatus);
+    setActiveScreen("home");
+  }
+
   async function handleStartRoutineExercise(
     routine: RoutineWithDetails,
     exerciseIndex = 0,
@@ -656,6 +661,7 @@ export function App() {
           onActivatePlan={() => {
             void handleActivatePlan();
           }}
+          onCancelImport={handleCancelImport}
           onChooseAnotherFile={() => fileInputRef.current?.click()}
         />
       );
@@ -665,6 +671,7 @@ export function App() {
       return (
         <ImportErrorScreen
           importStatus={importStatus}
+          onCancelImport={handleCancelImport}
           onChooseAnotherFile={() => fileInputRef.current?.click()}
         />
       );

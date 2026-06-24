@@ -1,5 +1,6 @@
 import {
   AlertCircle,
+  ArrowLeft,
   RotateCcw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,11 +11,13 @@ type ImportErrorStatus = Extract<ImportStatus, { state: "error" }>;
 
 type ImportErrorScreenProps = {
   importStatus: ImportErrorStatus;
+  onCancelImport: () => void;
   onChooseAnotherFile: () => void;
 };
 
 export function ImportErrorScreen({
   importStatus,
+  onCancelImport,
   onChooseAnotherFile,
 }: ImportErrorScreenProps) {
   return (
@@ -59,6 +62,15 @@ export function ImportErrorScreen({
           Escolher outro arquivo
         </Button>
         <PromptCopyButton className="h-12 w-full gap-2" />
+        <Button
+          className="h-12 w-full gap-2"
+          onClick={onCancelImport}
+          type="button"
+          variant="ghost"
+        >
+          <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+          Voltar ao inicio
+        </Button>
       </div>
     </section>
   );

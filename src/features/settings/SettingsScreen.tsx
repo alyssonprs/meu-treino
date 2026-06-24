@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useRef, useState } from "react";
+import { Notice } from "@/components/Notice";
 import { Button } from "@/components/ui/button";
 import { PromptCopyButton } from "@/features/import-export/PromptCopyButton";
 import type { HealthConnectAdapter } from "@/platform/health-connect";
@@ -175,14 +176,11 @@ export function SettingsScreen({
             </Button>
           </div>
           {backupFeedback ? (
-            <div
-              className={`mt-4 rounded-md border p-3 text-sm ${
-                backupFeedback.success
-                  ? "border-info bg-background text-foreground"
-                  : "border-destructive bg-background text-destructive"
-              }`}
+            <Notice
+              className="mt-4"
+              tone={backupFeedback.success ? "success" : "danger"}
+              title={backupFeedback.message}
             >
-              <p className="font-semibold">{backupFeedback.message}</p>
               {backupFeedback.details?.length ? (
                 <ul className="mt-2 list-disc space-y-1 pl-5 text-muted-foreground">
                   {backupFeedback.details.map((detail) => (
@@ -190,7 +188,7 @@ export function SettingsScreen({
                   ))}
                 </ul>
               ) : null}
-            </div>
+            </Notice>
           ) : null}
           <input
             accept="application/json,.json"
