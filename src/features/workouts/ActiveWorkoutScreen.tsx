@@ -12,8 +12,9 @@ import {
   Square,
   Target,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ModalDialog } from "@/components/ModalDialog";
 import { Notice } from "@/components/Notice";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/utils";
 import {
   getNextPendingSetIndex,
@@ -277,7 +278,6 @@ export function ActiveWorkoutScreen({
           </Button>
         ) : areAllSetsCompleted ? (
           <ExerciseResultPrompt
-            canSaveResult={canSaveResult}
             onOpen={() => setIsResultSheetOpen(true)}
           />
         ) : (
@@ -314,9 +314,9 @@ export function ActiveWorkoutScreen({
       </header>
 
       {message ? (
-        <p className="rounded-lg border border-destructive bg-card p-4 text-sm leading-6">
+        <Notice tone="danger">
           {message}
-        </p>
+        </Notice>
       ) : null}
 
       <ExerciseStatusList
@@ -343,31 +343,26 @@ export function ActiveWorkoutScreen({
         onUpdateResultValue={updateResultValue}
       />
 
-      {showFinishConfirmation ? (
-        <Notice
-          className="mt-2"
-          tone="warning"
-          title="Finalizar treino incompleto?"
-        >
-          <p>
-            Ainda ha exercicios sem registro. Finalize mesmo assim somente se o
-            treino acabou por hoje.
-          </p>
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            <Button
-              className="h-12"
-              onClick={() => setShowFinishConfirmation(false)}
-              type="button"
-              variant="secondary"
-            >
-              Continuar
-            </Button>
-            <Button className="h-12" onClick={onFinish} type="button">
-              Finalizar
-            </Button>
-          </div>
-        </Notice>
-      ) : null}
+      <ModalDialog
+        description="Ainda há exercícios sem registro. Finalize mesmo assim somente se o treino acabou por hoje."
+        isOpen={showFinishConfirmation}
+        onClose={() => setShowFinishConfirmation(false)}
+        title="Finalizar treino incompleto?"
+      >
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <Button
+            className="h-12"
+            onClick={() => setShowFinishConfirmation(false)}
+            type="button"
+            variant="secondary"
+          >
+            Continuar
+          </Button>
+          <Button className="h-12" onClick={onFinish} type="button">
+            Finalizar
+          </Button>
+        </div>
+      </ModalDialog>
 
       <div className="grid grid-cols-2 gap-3 pb-2">
         <Button
@@ -645,22 +640,21 @@ function SetActionPanel({
         <Check className="h-5 w-5" aria-hidden="true" />
         <span>Concluir série</span>
         {restState ? (
-          <span className="absolute right-3 rounded-md bg-primary-foreground/15 px-2 py-1 text-sm font-semibold tabular-nums">
-            {formatTimer(restState.remainingSeconds)}
-          </span>
+          <>
+            <span className="absolute right-3 rounded-md bg-primary-foreground/15 px-2 py-1 text-sm font-semibold tabular-nums">
+              {formatTimer(restState.remainingSeconds)}
+            </span>
+            <span className="sr-only" aria-live="polite">
+              Descanso restante: {formatTimer(restState.remainingSeconds)}
+            </span>
+          </>
         ) : null}
       </Button>
     </div>
   );
 }
 
-function ExerciseResultPrompt({
-  canSaveResult,
-  onOpen,
-}: {
-  canSaveResult: boolean;
-  onOpen: () => void;
-}) {
+function ExerciseResultPrompt({ onOpen }: { onOpen: () => void }) {
   return (
     <div className="mt-4 rounded-lg border border-border bg-background p-3">
       <div className="flex items-center justify-between gap-3">
@@ -679,11 +673,6 @@ function ExerciseResultPrompt({
           Registrar
         </Button>
       </div>
-      {!canSaveResult ? (
-        <p className="mt-3 rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
-          Carga e reps ficam em uma janela rápida para não deslocar a lista.
-        </p>
-      ) : null}
     </div>
   );
 }
@@ -713,107 +702,49 @@ function ExerciseResultSheet({
 }) {
   const loadInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    const frameId = window.requestAnimationFrame(() => {
-      loadInputRef.current?.focus();
-    });
-
-    return () => window.cancelAnimationFrame(frameId);
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
-
-  if (!isOpen) {
-    return null;
-  }
-
   return (
-    <div
-      aria-modal="true"
-      aria-labelledby="exercise-result-sheet-title"
-      className="fixed inset-0 z-50 flex items-end justify-center bg-background/70 px-3 pb-3 backdrop-blur-sm"
-      role="dialog"
+    <ModalDialog
+      description="Uma vez por exercício."
+      initialFocusRef={loadInputRef}
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Registrar resultado"
     >
-      <button
-        aria-label="Fechar registro do exercício"
-        className="absolute inset-0 cursor-default"
-        onClick={onClose}
-        type="button"
-      />
-      <div className="relative w-full max-w-md rounded-t-xl border border-border bg-card p-4 shadow-lg">
-        <div className="mx-auto mb-4 h-1 w-12 rounded-full bg-border" />
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <h3
-              className="text-xl font-semibold"
-              id="exercise-result-sheet-title"
-            >
-              Registrar resultado
-            </h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Uma vez por exercício.
-            </p>
-          </div>
-          <Button
-            className="h-10 px-3"
-            onClick={onClose}
-            type="button"
-            variant="ghost"
-          >
-            Fechar
-          </Button>
-        </div>
-
-        <div className="mt-4 grid gap-3">
-          <StepperInput
-            inputRef={loadInputRef}
-            label="Carga"
-            name="exercise-load-kg"
-            suffix="kg"
-            value={resultValues.loadKg}
-            onChange={(value) => onUpdateResultValue("loadKg", value)}
-            onDecrement={onDecrementLoad}
-            onIncrement={onIncrementLoad}
-          />
-          <StepperInput
-            label="Reps"
-            name="exercise-reps"
-            value={resultValues.reps}
-            onChange={(value) => onUpdateResultValue("reps", value)}
-            onDecrement={onDecrementReps}
-            onIncrement={onIncrementReps}
-          />
-        </div>
-
+      <div className="mt-4 grid gap-3">
+        <StepperInput
+          inputRef={loadInputRef}
+          label="Carga"
+          name="exercise-load-kg"
+          suffix="kg"
+          value={resultValues.loadKg}
+          onChange={(value) => onUpdateResultValue("loadKg", value)}
+          onDecrement={onDecrementLoad}
+          onIncrement={onIncrementLoad}
+        />
+        <StepperInput
+          label="Reps"
+          name="exercise-reps"
+          value={resultValues.reps}
+          onChange={(value) => onUpdateResultValue("reps", value)}
+          onDecrement={onDecrementReps}
+          onIncrement={onIncrementReps}
+        />
+      </div>
+      <div className="mt-4 grid grid-cols-2 gap-2">
+        <Button className="h-12" onClick={onClose} type="button" variant="secondary">
+          Fechar
+        </Button>
         <Button
-          className="mt-4 h-14 w-full gap-3 text-base"
+          className="h-12 gap-2"
           disabled={!canSaveResult}
           onClick={onSave}
           type="button"
         >
           <Save className="h-5 w-5" aria-hidden="true" />
-          Concluir exercício
+          Concluir
         </Button>
       </div>
-    </div>
+    </ModalDialog>
   );
 }
 

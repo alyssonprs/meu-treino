@@ -4,9 +4,9 @@ import {
   Dumbbell,
   History,
   Home,
-  Link2,
   Repeat2,
 } from "lucide-react";
+import { Notice } from "@/components/Notice";
 import { Button } from "@/components/ui/button";
 import type { HealthConnectAutoExportResult } from "@/services/healthConnectExportService";
 import type { CycleProgressSummary } from "@/services/progressService";
@@ -78,19 +78,12 @@ export function WorkoutFinishedScreen({
       </div>
 
       {completion.healthConnectExport ? (
-        <div
-          className={`rounded-lg border bg-card p-4 ${getHealthConnectExportTone(
-            completion.healthConnectExport.status,
-          )}`}
+        <Notice
+          title="Health Connect"
+          tone={getHealthConnectExportTone(completion.healthConnectExport.status)}
         >
-          <p className="flex items-center gap-2 text-sm font-medium">
-            <Link2 className="h-4 w-4" aria-hidden="true" />
-            Health Connect
-          </p>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            {completion.healthConnectExport.message}
-          </p>
-        </div>
+          {completion.healthConnectExport.message}
+        </Notice>
       ) : null}
 
       <div className="rounded-lg border border-border bg-card p-4">
@@ -163,14 +156,14 @@ function getHealthConnectExportTone(
   status: WorkoutHealthConnectExport["status"],
 ) {
   if (status === "exported") {
-    return "border-primary text-primary";
+    return "success";
   }
 
   if (status === "failed" || status === "permission-missing") {
-    return "border-warning text-warning";
+    return "warning";
   }
 
-  return "border-border text-info";
+  return "info";
 }
 
 function SummaryMetric({

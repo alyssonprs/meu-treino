@@ -64,9 +64,18 @@ import type {
 
 const appVersion = "0.1.0";
 
+const mainTabHashByScreen: Record<MainTabScreen, string> = {
+  history: "#/historico",
+  home: "#/",
+  settings: "#/ajustes",
+  workout: "#/treino",
+};
+
 export function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [activeScreen, setActiveScreen] = useState<AppScreen>("home");
+  const [activeScreen, setActiveScreen] = useState<AppScreen>(
+    () => getMainTabScreenFromHash() ?? "home",
+  );
   const [activePlan, setActivePlan] = useState<ActiveWorkoutPlanSnapshot | null>(
     null,
   );
@@ -119,6 +128,22 @@ export function App() {
   }, []);
 
   useEffect(() => {
+    function handleHashChange() {
+      const nextScreen = getMainTabScreenFromHash();
+
+      if (nextScreen) {
+        setActiveScreen(nextScreen);
+        setWorkoutMessage(null);
+        setWorkoutCompletion(null);
+      }
+    }
+
+    window.addEventListener("hashchange", handleHashChange);
+
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  useEffect(() => {
     let isMounted = true;
 
     if (!activePlan) {
@@ -168,6 +193,10 @@ export function App() {
     setActiveScreen(screen);
     setWorkoutMessage(null);
     setWorkoutCompletion(null);
+
+    if (window.location.hash !== mainTabHashByScreen[screen]) {
+      window.location.hash = mainTabHashByScreen[screen];
+    }
   }
 
   async function handleImportFile(file: File) {
@@ -239,6 +268,7 @@ export function App() {
       setActivePlan(savedPlan);
       setImportStatus(idleImportStatus);
       setActiveScreen("home");
+      window.location.hash = mainTabHashByScreen.home;
     } catch {
       setImportStatus({
         state: "error",
@@ -271,6 +301,7 @@ export function App() {
   function handleCancelImport() {
     setImportStatus(idleImportStatus);
     setActiveScreen("home");
+    window.location.hash = mainTabHashByScreen.home;
   }
 
   async function handleStartRoutineExercise(
@@ -389,6 +420,7 @@ export function App() {
       setImportStatus(idleImportStatus);
       setWorkoutMessage("Dados de treino apagados deste dispositivo.");
       setActiveScreen("home");
+      window.location.hash = mainTabHashByScreen.home;
     } catch {
       setWorkoutMessage("Nao foi possivel apagar os dados locais agora.");
     } finally {
@@ -558,8 +590,7 @@ export function App() {
           loadHistoryByExerciseId={workoutLoadHistory}
           message={workoutMessage}
           onBackToDetail={() => {
-            setWorkoutMessage(null);
-            setActiveScreen("workout");
+            navigateToMainTab("workout");
           }}
           onFinish={() => {
             void handleFinishWorkout();
@@ -706,4 +737,26 @@ export function App() {
       repository: pwaWorkoutPlanRepository,
     });
   }
+}
+
+function getMainTabScreenFromHash(): MainTabScreen | null {
+  const hashPath = window.location.hash.replace(/^#\/?/, "");
+
+  if (hashPath === "" || hashPath === "/") {
+    return "home";
+  }
+
+  if (hashPath === "treino") {
+    return "workout";
+  }
+
+  if (hashPath === "historico") {
+    return "history";
+  }
+
+  if (hashPath === "ajustes") {
+    return "settings";
+  }
+
+  return null;
 }
