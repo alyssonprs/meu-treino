@@ -2,6 +2,7 @@ node_modules
 dist
 .pnpm-store
 .codex-android-tools
+.tools/
 .env
 .env.*
 !.env.example
