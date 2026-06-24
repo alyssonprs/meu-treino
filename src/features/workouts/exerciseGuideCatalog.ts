@@ -48,6 +48,7 @@ function toPublicAssetUrl(assetPath: string) {
   }
 
   const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+  const publicBaseUrl = baseUrl === "" ? "." : baseUrl;
 
-  return `${baseUrl}/${normalizedPath}`;
+  return `${publicBaseUrl}/${normalizedPath}`;
 }

@@ -31,8 +31,8 @@ describe("getExerciseGuide", () => {
     const firstExercise = exerciseMediaLibrary.exercises[0];
     const visualGuide = visualGuidesById[firstExercise.visual_id];
 
-    expect(visualGuide.imageUrl).toBe(`/${firstExercise.image_asset}`);
-    expect(visualGuide.animationUrl).toBe(`/${firstExercise.animation_asset}`);
+    expect(visualGuide.imageUrl).toBe(`./${firstExercise.image_asset}`);
+    expect(visualGuide.animationUrl).toBe(`./${firstExercise.animation_asset}`);
     expect(visualGuide.imageUrl).not.toMatch(/https?:\/\//);
     expect(visualGuide.animationUrl).not.toMatch(/https?:\/\//);
   });
@@ -43,8 +43,8 @@ describe("getExerciseGuide", () => {
       visual_id: "exdb_0001",
     });
 
-    expect(guide.imageUrl).toBe("/exercise-media/images/0001-2gPfomN.jpg");
-    expect(guide.animationUrl).toBe("/exercise-media/videos/0001-2gPfomN.gif");
+    expect(guide.imageUrl).toBe("./exercise-media/images/0001-2gPfomN.jpg");
+    expect(guide.animationUrl).toBe("./exercise-media/videos/0001-2gPfomN.gif");
     expect(guide.imageAlt).toContain("3/4 sit-up");
   });
 
