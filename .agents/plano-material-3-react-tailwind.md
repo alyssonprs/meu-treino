@@ -163,6 +163,8 @@ Arquivos provaveis:
 
 ## Fase 5 - Treino ativo
 
+Status: concluida em `ui/material-3-react-tailwind`.
+
 Done when:
 
 - Tela de treino ativo segue Material 3 sem perder velocidade de uso durante a

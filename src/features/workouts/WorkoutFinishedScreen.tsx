@@ -8,6 +8,8 @@ import {
 } from "lucide-react";
 import { Notice } from "@/components/Notice";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { LinearProgress } from "@/components/ui/progress";
 import type { HealthConnectAutoExportResult } from "@/services/healthConnectExportService";
 import type { CycleProgressSummary } from "@/services/progressService";
 import type { NextRoutineRecommendation } from "@/services/workoutRecommendationService";
@@ -45,13 +47,13 @@ export function WorkoutFinishedScreen({
 }: WorkoutFinishedScreenProps) {
   return (
     <section className="mt-4 space-y-5">
-      <div className="rounded-lg border border-primary bg-card p-5">
+      <Card className="border-md-primary" padding="lg" variant="outlined">
         <div className="flex items-start gap-3">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-md-primary-container text-md-on-primary-container">
             <CheckCircle2 className="h-6 w-6" aria-hidden="true" />
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-medium text-primary">
+            <p className="text-sm font-medium text-md-primary">
               Treino concluído
             </p>
             <h2 className="mt-1 text-2xl font-semibold">
@@ -62,7 +64,7 @@ export function WorkoutFinishedScreen({
             </p>
           </div>
         </div>
-      </div>
+      </Card>
 
       <div className="grid grid-cols-2 gap-3">
         <SummaryMetric
@@ -86,7 +88,7 @@ export function WorkoutFinishedScreen({
         </Notice>
       ) : null}
 
-      <div className="rounded-lg border border-border bg-card p-4">
+      <Card variant="outlined">
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-sm font-medium text-info">Progresso do ciclo</p>
@@ -105,12 +107,11 @@ export function WorkoutFinishedScreen({
 
         {cycleProgress ? (
           <>
-            <div className="mt-4 h-2 overflow-hidden rounded-full bg-muted">
-              <div
-                className="h-full rounded-full bg-primary"
-                style={{ width: `${cycleProgress.percentage}%` }}
-              />
-            </div>
+            <LinearProgress
+              aria-label="Progresso do ciclo"
+              className="mt-4 h-2"
+              value={cycleProgress.percentage}
+            />
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
               {cycleProgress.isComplete
                 ? "Ciclo concluído. Baixe o modelo e gere um novo treino."
@@ -118,9 +119,9 @@ export function WorkoutFinishedScreen({
             </p>
           </>
         ) : null}
-      </div>
+      </Card>
 
-      <div className="rounded-lg border border-border bg-card p-4">
+      <Card variant="outlined">
         <p className="flex items-center gap-2 text-sm font-medium text-info">
           <Repeat2 className="h-4 w-4" aria-hidden="true" />
           Próxima recomendação
@@ -131,7 +132,7 @@ export function WorkoutFinishedScreen({
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
           A tela inicial já vai abrir com a próxima rotina pela ordem do plano.
         </p>
-      </div>
+      </Card>
 
       <div className="grid gap-3">
         <Button className="h-14 gap-3 text-base" onClick={onGoHome} type="button">
@@ -176,10 +177,10 @@ function SummaryMetric({
   value: string;
 }) {
   return (
-    <div className="rounded-lg border border-border bg-card p-4">
+    <Card variant="outlined">
       <Icon className="h-5 w-5 text-info" aria-hidden="true" />
       <p className="mt-3 text-3xl font-semibold tabular-nums">{value}</p>
       <p className="mt-1 text-sm text-muted-foreground">{label}</p>
-    </div>
+    </Card>
   );
 }
