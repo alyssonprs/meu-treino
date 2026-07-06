@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { LinearProgress } from "@/components/ui/progress";
 import {
   formatLoad,
   formatShortDate,
@@ -90,7 +92,7 @@ export function ProgressScreen({
 
   return (
     <section className="mt-6 space-y-5">
-      <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
+      <Card padding="lg" variant="outlined">
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-secondary text-info">
             <History className="h-5 w-5" aria-hidden="true" />
@@ -110,12 +112,11 @@ export function ProgressScreen({
                 {cycleProgress.plannedSessions}
               </p>
             </div>
-            <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
-              <div
-                className="h-full rounded-full bg-primary"
-                style={{ width: `${cycleProgress.percentage}%` }}
-              />
-            </div>
+            <LinearProgress
+              aria-label="Progresso do ciclo"
+              className="mt-3 h-2"
+              value={cycleProgress.percentage}
+            />
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
               {cycleProgress.isComplete
                 ? "Ciclo concluído. Gere um novo plano quando quiser trocar."
@@ -123,7 +124,7 @@ export function ProgressScreen({
             </p>
           </div>
         ) : null}
-      </div>
+      </Card>
 
       <div className="grid grid-cols-2 gap-3">
         <HistoryMetric
@@ -138,7 +139,7 @@ export function ProgressScreen({
         />
       </div>
 
-      <section className="rounded-lg border border-border bg-card p-4">
+      <Card variant="outlined">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-info">
             <LineChart className="h-5 w-5" aria-hidden="true" />
@@ -194,9 +195,9 @@ export function ProgressScreen({
             ))}
           </div>
         )}
-      </section>
+      </Card>
 
-      <section className="rounded-lg border border-border bg-card p-4">
+      <Card variant="outlined">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-info">
             <Dumbbell className="h-5 w-5" aria-hidden="true" />
@@ -235,7 +236,7 @@ export function ProgressScreen({
             ))}
           </div>
         )}
-      </section>
+      </Card>
     </section>
   );
 }
@@ -256,7 +257,7 @@ function ExerciseHistoryScreen({
         Voltar
       </Button>
 
-      <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
+      <Card padding="lg" variant="outlined">
         <p className="text-sm font-medium text-info">Detalhe do exercício</p>
         <h2 className="mt-2 text-2xl font-semibold">
           {details?.exerciseName ?? "Carregando"}
@@ -264,7 +265,7 @@ function ExerciseHistoryScreen({
         <p className="mt-3 text-sm leading-6 text-muted-foreground">
           Última carga, maior carga e registros recentes salvos neste dispositivo.
         </p>
-      </div>
+      </Card>
 
       {isLoading || !details ? (
         <p className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">
@@ -298,7 +299,7 @@ function ExerciseHistoryScreen({
             />
           </div>
 
-          <section className="rounded-lg border border-border bg-card p-4">
+          <Card variant="outlined">
             <h3 className="font-semibold">Registros recentes</h3>
             {details.records.length === 0 ? (
               <p className="mt-3 text-sm leading-6 text-muted-foreground">
@@ -331,7 +332,7 @@ function ExerciseHistoryScreen({
                 ))}
               </div>
             )}
-          </section>
+          </Card>
         </>
       )}
     </section>
@@ -341,7 +342,7 @@ function ExerciseHistoryScreen({
 function EmptyHistoryScreen() {
   return (
     <>
-      <section className="mt-6 rounded-lg border border-border bg-card p-5">
+      <Card className="mt-6" padding="lg" variant="outlined">
       <div className="flex items-center gap-3">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-secondary text-info">
           <History className="h-5 w-5" aria-hidden="true" />
@@ -354,7 +355,7 @@ function EmptyHistoryScreen() {
       <p className="mt-4 text-sm leading-6 text-muted-foreground">
         Importe um plano e finalize uma sessao para acompanhar suas cargas.
       </p>
-      </section>
+      </Card>
     </>
   );
 }
@@ -369,10 +370,10 @@ function HistoryMetric({
   value: string;
 }) {
   return (
-    <div className="rounded-lg border border-border bg-card p-4">
+    <Card variant="outlined">
       <Icon className="h-5 w-5 text-info" aria-hidden="true" />
       <p className="mt-3 text-2xl font-semibold tabular-nums">{value}</p>
       <p className="mt-1 text-sm text-muted-foreground">{label}</p>
-    </div>
+    </Card>
   );
 }

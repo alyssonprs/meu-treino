@@ -11,6 +11,9 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { Notice } from "@/components/Notice";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Chip } from "@/components/ui/chip";
+import { LinearProgress } from "@/components/ui/progress";
 import { PromptCopyButton } from "@/features/import-export/PromptCopyButton";
 import type {
   CycleProgressSummary,
@@ -49,8 +52,8 @@ export function HomeScreen({
   if (!activePlan) {
     return (
       <>
-        <section className="mt-6 rounded-lg border border-border bg-card p-5 shadow-sm">
-          <div className="flex items-center gap-2 text-sm font-medium text-info">
+        <Card className="mt-6" padding="lg" variant="outlined">
+          <div className="flex items-center gap-2 text-label-lg font-medium text-md-secondary">
             <ShieldCheck className="h-4 w-4" aria-hidden="true" />
             Dados locais
           </div>
@@ -83,9 +86,9 @@ export function HomeScreen({
             </Button>
             <PromptCopyButton className="h-14 w-full justify-start gap-3 text-base" />
           </div>
-        </section>
+        </Card>
 
-        <section className="mt-5 rounded-lg border border-border bg-card p-4">
+        <Card className="mt-5" variant="outlined">
           <div className="grid gap-3">
             <BenefitItem
               description="Treino e cargas ficam neste dispositivo."
@@ -100,7 +103,7 @@ export function HomeScreen({
               title="Prompt pronto"
             />
           </div>
-        </section>
+        </Card>
 
         {workoutMessage ? (
           <Notice className="mt-5">
@@ -136,8 +139,8 @@ export function HomeScreen({
   const previousRoutine = getPreviousRoutineLabel(activePlan);
   return (
     <>
-      <section className="mt-6 rounded-lg border border-border bg-card p-5 shadow-sm">
-        <div className="flex items-center gap-2 text-sm font-medium text-info">
+      <Card className="mt-6" padding="lg" variant="outlined">
+        <div className="flex items-center gap-2 text-label-lg font-medium text-md-secondary">
           <ShieldCheck className="h-4 w-4" aria-hidden="true" />
           Plano ativo
         </div>
@@ -152,9 +155,9 @@ export function HomeScreen({
                 : activePlan.plan.name}
             </h2>
           </div>
-          <span className="rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
+          <Chip as="span" variant="selected">
             Ativo
-          </span>
+          </Chip>
         </div>
 
         {cycleProgress ? (
@@ -166,12 +169,11 @@ export function HomeScreen({
                 {cycleProgress.plannedSessions} treinos
               </p>
             </div>
-            <div className="mt-4 h-3 overflow-hidden rounded-full bg-muted">
-              <div
-                className="h-full rounded-full bg-primary"
-                style={{ width: `${cycleProgress.percentage}%` }}
-              />
-            </div>
+            <LinearProgress
+              aria-label="Progresso do ciclo"
+              className="mt-4 h-3"
+              value={cycleProgress.percentage}
+            />
             <p className="mt-4 text-base leading-7 text-muted-foreground">
               Você está na{" "}
               <span className="font-semibold text-info">
@@ -188,10 +190,10 @@ export function HomeScreen({
             Ciclo concluído. Copie o prompt e gere um novo treino.
           </Notice>
         ) : null}
-      </section>
+      </Card>
 
       {nextRecommendation && recommendedRoutine ? (
-        <section className="mt-5 rounded-lg border border-primary bg-card p-5 shadow-sm">
+        <Card className="mt-5 border-md-primary" padding="lg" variant="outlined">
           <p className="inline-flex rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
             Próximo treino
           </p>
@@ -212,10 +214,10 @@ export function HomeScreen({
             <Play className="h-5 w-5" aria-hidden="true" />
             Iniciar treino
           </Button>
-        </section>
+        </Card>
       ) : null}
 
-      <section className="mt-5 rounded-lg border border-border bg-card p-4">
+      <Card className="mt-5" variant="outlined">
         <div className="divide-y divide-border">
           <SummaryRow
             icon={CalendarCheck2}
@@ -237,7 +239,7 @@ export function HomeScreen({
             value={`${loadSummaries.length || totalExercises} exercícios`}
           />
         </div>
-      </section>
+      </Card>
 
       <div className="mt-5 grid grid-cols-2 gap-3">
         <ShortcutButton
@@ -265,9 +267,9 @@ function BenefitItem({
   title: string;
 }) {
   return (
-    <div className="rounded-md bg-muted p-3">
+    <div className="rounded-md bg-md-surface-container-high p-3">
       <p className="text-sm font-semibold">{title}</p>
-      <p className="mt-1 text-sm leading-6 text-muted-foreground">
+      <p className="mt-1 text-body-md text-md-on-surface-variant">
         {description}
       </p>
     </div>
@@ -285,12 +287,12 @@ function SummaryRow({
 }) {
   return (
     <div className="flex items-center gap-3 py-4 first:pt-0 last:pb-0">
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-secondary text-info">
+      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-md-secondary-container text-md-on-secondary-container">
         <Icon className="h-5 w-5" aria-hidden="true" />
       </div>
       <div className="min-w-0 flex-1">
         <p className="font-semibold">{label}</p>
-        <p className="mt-1 truncate text-sm text-muted-foreground">{value}</p>
+        <p className="mt-1 truncate text-body-md text-md-on-surface-variant">{value}</p>
       </div>
     </div>
   );
@@ -307,11 +309,11 @@ function ShortcutButton({
 }) {
   return (
     <button
-      className="flex min-h-28 flex-col items-center justify-center rounded-lg border border-border bg-card p-4 text-center font-medium"
+      className="flex min-h-28 flex-col items-center justify-center rounded-lg border border-md-outline-variant bg-md-surface-container-lowest p-4 text-center font-medium text-md-on-surface transition-colors hover:bg-md-surface-container"
       onClick={onClick}
       type="button"
     >
-      <Icon className="h-7 w-7 text-info" aria-hidden="true" />
+      <Icon className="h-7 w-7 text-md-secondary" aria-hidden="true" />
       <span className="mt-3">{label}</span>
     </button>
   );

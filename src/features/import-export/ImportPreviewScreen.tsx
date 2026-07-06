@@ -6,6 +6,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import type { ImportStatus } from "./importStatus";
 
 type ImportPreviewStatus = Extract<
@@ -39,14 +40,14 @@ export function ImportPreviewScreen({
 
   return (
     <>
-      <section className="mt-6 rounded-lg border border-border bg-card p-5">
+      <Card className="mt-6" padding="lg" variant="outlined">
         <div className="flex items-start gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-primary">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-md-primary-container text-md-on-primary-container">
             <FileInput className="h-5 w-5" aria-hidden="true" />
           </div>
           <div className="min-w-0">
-            <p className="text-sm text-muted-foreground">{importStatus.fileName}</p>
-            <h2 className="mt-1 text-2xl font-semibold">Preview do JSON</h2>
+            <p className="text-body-md text-md-on-surface-variant">{importStatus.fileName}</p>
+            <h2 className="mt-1 text-headline-sm font-medium">Preview do JSON</h2>
           </div>
         </div>
 
@@ -54,30 +55,30 @@ export function ImportPreviewScreen({
         <h3 className="text-xl font-semibold leading-tight">{preview.name}</h3>
         <dl className="mt-4 grid grid-cols-2 gap-3">
           {summaryItems.map(([label, value]) => (
-            <div className="rounded-md bg-muted p-3" key={label}>
-              <dt className="text-xs font-medium text-muted-foreground">
+            <div className="rounded-md bg-md-surface-container-high p-3" key={label}>
+              <dt className="text-label-md font-medium text-md-on-surface-variant">
                 {label}
               </dt>
               <dd className="mt-1 text-sm font-semibold">{value}</dd>
             </div>
           ))}
         </dl>
-        <p className="mt-4 text-sm leading-6 text-muted-foreground">
+        <p className="mt-4 text-body-md text-md-on-surface-variant">
           Ao confirmar, o progresso da sequência atual é reiniciado. Históricos
           de carga já salvos permanecem no dispositivo.
         </p>
         {preview.warnings.length > 0 ? (
-          <div className="mt-4 rounded-md border border-warning/60 bg-warning/10 p-3 text-sm">
+          <div className="mt-4 rounded-md border border-md-tertiary/60 bg-md-tertiary-container p-3 text-body-md text-md-on-tertiary-container">
             <div className="flex items-start gap-2">
               <AlertTriangle
-                className="mt-0.5 h-4 w-4 shrink-0 text-warning"
+                className="mt-0.5 h-4 w-4 shrink-0"
                 aria-hidden="true"
               />
               <div className="min-w-0">
-                <p className="font-semibold text-foreground">
+                <p className="font-medium">
                   Avisos de qualidade
                 </p>
-                <ul className="mt-2 grid gap-2 text-muted-foreground">
+                <ul className="mt-2 grid gap-2">
                   {preview.warnings.map((warning) => (
                     <li key={warning.code}>
                       <p>{warning.message}</p>
@@ -125,7 +126,7 @@ export function ImportPreviewScreen({
           Voltar ao inicio
         </Button>
         </div>
-      </section>
+      </Card>
     </>
   );
 }

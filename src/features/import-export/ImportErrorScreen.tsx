@@ -4,6 +4,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { PromptCopyButton } from "./PromptCopyButton";
 import type { ImportStatus } from "./importStatus";
 
@@ -22,9 +23,9 @@ export function ImportErrorScreen({
 }: ImportErrorScreenProps) {
   return (
     <>
-      <section className="mt-6 rounded-lg border border-destructive bg-card p-5">
+      <Card className="mt-6 border-md-error" padding="lg" variant="outlined">
       <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-destructive">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-md-error-container text-md-on-error-container">
           <AlertCircle className="h-5 w-5" aria-hidden="true" />
         </div>
         <div className="min-w-0">
@@ -41,7 +42,7 @@ export function ImportErrorScreen({
         um plano compatível.
       </p>
 
-      <ul className="mt-4 space-y-2 rounded-md bg-muted p-3">
+      <ul className="mt-4 space-y-2 rounded-md bg-md-surface-container-high p-3">
         {importStatus.errors.slice(0, 5).map((error) => (
           <li
             className="text-sm leading-6"
@@ -73,7 +74,7 @@ export function ImportErrorScreen({
           Voltar ao inicio
         </Button>
       </div>
-      </section>
+      </Card>
     </>
   );
 }

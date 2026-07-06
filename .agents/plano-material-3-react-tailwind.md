@@ -137,6 +137,8 @@ Arquivos provaveis:
 
 ## Fase 4 - Home e telas de apoio
 
+Status: concluida em `ui/material-3-react-tailwind`.
+
 Done when:
 
 - Home usa cards Material 3 para plano ativo, proximo treino, progresso e atalhos.
