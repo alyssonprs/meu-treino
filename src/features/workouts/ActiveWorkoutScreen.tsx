@@ -925,16 +925,10 @@ function ExerciseStatusButton({
         ref={currentExerciseRef}
       >
         <div className="flex items-start gap-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-background/80 ring-1 ring-border/70">
-            <statusMeta.Icon
-              className={cn("h-4 w-4", statusMeta.iconClassName)}
-              aria-hidden="true"
-            />
-          </span>
           <span className="min-w-0 flex-1">
             <button
               aria-label={`Recolher card de ${exercise.name}`}
-              className="block w-full break-words rounded-sm text-left text-sm font-semibold leading-5 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="block w-full break-words rounded-sm text-left text-base font-semibold leading-6 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               onClick={() => onSelectExercise(exerciseIndex)}
               type="button"
             >
@@ -965,6 +959,8 @@ function ExerciseStatusButton({
     );
   }
 
+  const previewGuide = getExerciseGuide(exercise);
+
   return (
     <button
       aria-label={`${exercise.name}: ${status}, ${completedSetsCount} de ${totalSets} series concluidas`}
@@ -976,12 +972,15 @@ function ExerciseStatusButton({
       type="button"
     >
       <span className="flex items-start gap-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-background/80 ring-1 ring-border/70">
-          <statusMeta.Icon
-            className={cn("h-4 w-4", statusMeta.iconClassName)}
-            aria-hidden="true"
-          />
-        </span>
+        <ExercisePreviewThumb
+          fallbackIcon={
+            <statusMeta.Icon
+              className={cn("h-4 w-4", statusMeta.iconClassName)}
+              aria-hidden="true"
+            />
+          }
+          guide={previewGuide}
+        />
         <span className="min-w-0 flex-1">
           <span className="block break-words text-sm font-semibold leading-5 text-foreground">
             {exercise.name}
@@ -997,6 +996,31 @@ function ExerciseStatusButton({
         </span>
       </span>
     </button>
+  );
+}
+
+function ExercisePreviewThumb({
+  fallbackIcon,
+  guide,
+}: {
+  fallbackIcon: ReactNode;
+  guide: ExerciseGuide;
+}) {
+  return (
+    <span className="flex h-12 w-14 shrink-0 items-center justify-center overflow-hidden rounded-md bg-background/80 ring-1 ring-border/70">
+      {guide.imageUrl ? (
+        <img
+          alt={guide.imageAlt}
+          className="h-full w-full object-contain"
+          height={96}
+          loading="lazy"
+          src={guide.imageUrl}
+          width={112}
+        />
+      ) : (
+        fallbackIcon
+      )}
+    </span>
   );
 }
 
