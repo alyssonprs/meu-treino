@@ -9,6 +9,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { ScreenIdentifier } from "@/components/ScreenIdentifier";
 import { Button } from "@/components/ui/button";
 import {
   formatLoad,
@@ -90,6 +91,7 @@ export function ProgressScreen({
 
   return (
     <section className="mt-6 space-y-5">
+      <ScreenIdentifier code="UX-0005" />
       <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-secondary text-info">
@@ -251,6 +253,7 @@ function ExerciseHistoryScreen({
 }) {
   return (
     <section className="mt-6 space-y-5">
+      <ScreenIdentifier code="UX-0009" />
       <Button className="gap-2" onClick={onBack} type="button" variant="ghost">
         <ArrowLeft className="h-4 w-4" aria-hidden="true" />
         Voltar
@@ -340,7 +343,9 @@ function ExerciseHistoryScreen({
 
 function EmptyHistoryScreen() {
   return (
-    <section className="mt-6 rounded-lg border border-border bg-card p-5">
+    <>
+      <ScreenIdentifier code="UX-0005" className="mt-2" />
+      <section className="mt-6 rounded-lg border border-border bg-card p-5">
       <div className="flex items-center gap-3">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-secondary text-info">
           <History className="h-5 w-5" aria-hidden="true" />
@@ -353,7 +358,8 @@ function EmptyHistoryScreen() {
       <p className="mt-4 text-sm leading-6 text-muted-foreground">
         Importe um plano e finalize uma sessao para acompanhar suas cargas.
       </p>
-    </section>
+      </section>
+    </>
   );
 }
 

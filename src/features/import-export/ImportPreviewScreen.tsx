@@ -5,6 +5,7 @@ import {
   FileInput,
   RotateCcw,
 } from "lucide-react";
+import { ScreenIdentifier } from "@/components/ScreenIdentifier";
 import { Button } from "@/components/ui/button";
 import type { ImportStatus } from "./importStatus";
 
@@ -38,18 +39,20 @@ export function ImportPreviewScreen({
   ];
 
   return (
-    <section className="mt-6 rounded-lg border border-border bg-card p-5">
-      <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-primary">
-          <FileInput className="h-5 w-5" aria-hidden="true" />
+    <>
+      <ScreenIdentifier code="UX-0007" className="mt-2" />
+      <section className="mt-6 rounded-lg border border-border bg-card p-5">
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-primary">
+            <FileInput className="h-5 w-5" aria-hidden="true" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm text-muted-foreground">{importStatus.fileName}</p>
+            <h2 className="mt-1 text-2xl font-semibold">Preview do JSON</h2>
+          </div>
         </div>
-        <div className="min-w-0">
-          <p className="text-sm text-muted-foreground">{importStatus.fileName}</p>
-          <h2 className="mt-1 text-2xl font-semibold">Preview do JSON</h2>
-        </div>
-      </div>
 
-      <div className="mt-5">
+        <div className="mt-5">
         <h3 className="text-xl font-semibold leading-tight">{preview.name}</h3>
         <dl className="mt-4 grid grid-cols-2 gap-3">
           {summaryItems.map(([label, value]) => (
@@ -91,9 +94,9 @@ export function ImportPreviewScreen({
             </div>
           </div>
         ) : null}
-      </div>
+        </div>
 
-      <div className="mt-5 grid gap-2">
+        <div className="mt-5 grid gap-2">
         <Button
           className="h-12 w-full gap-2"
           disabled={isSaving}
@@ -123,7 +126,8 @@ export function ImportPreviewScreen({
           <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           Voltar ao inicio
         </Button>
-      </div>
-    </section>
+        </div>
+      </section>
+    </>
   );
 }

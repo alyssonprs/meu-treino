@@ -7,6 +7,7 @@ import {
   Repeat2,
 } from "lucide-react";
 import { Notice } from "@/components/Notice";
+import { ScreenIdentifier } from "@/components/ScreenIdentifier";
 import { Button } from "@/components/ui/button";
 import type { HealthConnectAutoExportResult } from "@/services/healthConnectExportService";
 import type { CycleProgressSummary } from "@/services/progressService";
@@ -45,6 +46,7 @@ export function WorkoutFinishedScreen({
 }: WorkoutFinishedScreenProps) {
   return (
     <section className="mt-4 space-y-5">
+      <ScreenIdentifier code="UX-0004" />
       <div className="rounded-lg border border-primary bg-card p-5">
         <div className="flex items-start gap-3">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground">

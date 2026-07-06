@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Notice } from "@/components/Notice";
+import { ScreenIdentifier } from "@/components/ScreenIdentifier";
 import { Button } from "@/components/ui/button";
 import { PromptCopyButton } from "@/features/import-export/PromptCopyButton";
 import type {
@@ -49,6 +50,7 @@ export function HomeScreen({
   if (!activePlan) {
     return (
       <>
+        <ScreenIdentifier code="UX-0001" className="mt-2" />
         <section className="mt-6 rounded-lg border border-border bg-card p-5 shadow-sm">
           <div className="flex items-center gap-2 text-sm font-medium text-info">
             <ShieldCheck className="h-4 w-4" aria-hidden="true" />
@@ -139,6 +141,7 @@ export function HomeScreen({
 
   return (
     <>
+      <ScreenIdentifier code="UX-0001" className="mt-2" />
       <section className="mt-6 rounded-lg border border-border bg-card p-5 shadow-sm">
         <div className="flex items-center gap-2 text-sm font-medium text-info">
           <ShieldCheck className="h-4 w-4" aria-hidden="true" />
