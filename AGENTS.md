@@ -23,8 +23,9 @@ Use [docs/arquitetura/arquitetura-prompt.md](docs/arquitetura/arquitetura-prompt
 
 - React + Vite + TypeScript for the app foundation.
 - Use `pnpm` as the project package manager; do not add npm/yarn lockfiles.
-- Tailwind CSS for styling and responsive layout.
-- shadcn/ui as the base for modern, accessible, customizable UI components.
+- Tailwind CSS for styling, responsive layout, and Material Design 3 tokens.
+- Material Design 3 is the visual system for the app. Implement it with custom React primitives and Tailwind in this codebase.
+- Do not add `@material/web`, MUI, or another production UI library without an explicit user decision for that dependency.
 - lucide-react for icons.
 - Capacitor only for Android packaging.
 - Do not use Ionic Framework components in the first version.
@@ -43,7 +44,7 @@ Use [docs/arquitetura/arquitetura-prompt.md](docs/arquitetura/arquitetura-prompt
 - Keep PWA/Android-specific file, sharing, download, and platform behavior in `src/platform`.
 - Keep UI features under `src/features`.
 - Keep reusable visual components under `src/components`.
-- Keep shadcn/ui-derived primitives under `src/components/ui`.
+- Keep reusable Material 3 React primitives under `src/components/ui`.
 - Make storage access go through repository interfaces so PWA and Android adapters can differ without changing UI code.
 - Validate imported workout JSON before writing it to local storage.
 - Prefer small, explicit functions over broad abstractions until duplication is real.
@@ -76,10 +77,10 @@ Use [docs/arquitetura/arquitetura-prompt.md](docs/arquitetura/arquitetura-prompt
 - Keep visible text concise during workout execution.
 - Support selectable light and dark themes.
 - Use the dark theme as the default first-run theme.
-- Base the light theme on `Tema 2 - Energia Clara` from `docs/arquitetura/identidade-visual-opcoes.md`.
-- Base the dark theme on `Tema 5 - Hibrido recomendado` from `docs/arquitetura/identidade-visual-opcoes.md`.
+- Base light and dark themes on Material Design 3 color roles, seeded from the approved identity direction when useful.
 - Store the user's theme preference locally and apply it without restarting the app.
 - Use design tokens/CSS variables for colors instead of hard-coded colors in components.
+- Material 3 migration plan: `.agents/plano-material-3-react-tailwind.md`.
 - In mobile cards with detailed content, do not keep the main content inside a side column next to an icon; use a compact header for the icon/title and let previews, summaries, errors, and action buttons use the full card width.
 
 ## Codex Workflow

@@ -13,8 +13,9 @@ O app tambem deve disponibilizar um prompt recomendado copiavel, com instrucao p
 ### Stack principal
 
 - Usar React + Vite + TypeScript como base da aplicacao.
-- Usar Tailwind CSS para estilos, responsividade e tokens visuais.
-- Usar shadcn/ui como base de componentes modernos, acessiveis e customizaveis.
+- Usar Tailwind CSS para estilos, responsividade e tokens Material Design 3.
+- Usar Material Design 3 como sistema visual da aplicacao, implementado com componentes React proprios e Tailwind.
+- Nao adicionar `@material/web`, MUI ou outra biblioteca visual de producao sem decisao explicita do usuario para essa dependencia.
 - Usar lucide-react para icones.
 - Nao usar Ionic Framework como biblioteca visual na primeira versao.
 - Usar Capacitor apenas para manter a mesma aplicacao pronta para empacotamento Android.
@@ -88,7 +89,7 @@ Organizar o projeto em camadas simples:
 - `src/features/progress`: historico de cargas, resumo de progresso e aviso de ciclo concluido.
 - `src/features/settings`: configuracoes locais, incluindo escolha de tema claro/escuro.
 - `src/components`: componentes visuais reutilizaveis.
-- `src/components/ui`: componentes primitivos baseados em shadcn/ui.
+- `src/components/ui`: componentes primitivos React alinhados a Material Design 3.
 - `src/domain`: tipos de dominio, regras de negocio e schemas Zod.
 - `src/services`: casos de uso locais, como importar plano, iniciar treino, finalizar treino e calcular progressao.
 - `src/storage`: repositorios e adaptadores SQLite/IndexedDB.
@@ -259,15 +260,16 @@ A primeira versao deve seguir o modelo **Guiado**:
 - Funcionar offline sempre.
 - Evitar textos longos durante a execucao do treino.
 - Mostrar descanso com timer simples.
-- Usar componentes React customizados e shadcn/ui para uma interface moderna, com comportamento consistente em PWA e Android.
+- Usar componentes React customizados alinhados a Material Design 3 para uma interface moderna, com comportamento consistente em PWA e Android.
 - Garantir instalabilidade como PWA com `manifest.webmanifest`, service worker, icones e suporte offline.
 
 ## Identidade visual e temas
 
-O app deve suportar dois temas selecionaveis:
+O app deve suportar dois temas selecionaveis, claro e escuro, baseados em roles
+de cor do Material Design 3. A direcao de identidade aprovada pode ser usada
+como seed de cor, mas a estrutura visual vigente deve seguir Material 3.
 
-- Tema claro, baseado no `Tema 2 - Energia Clara` de `docs/arquitetura/identidade-visual-opcoes.md`.
-- Tema escuro, baseado no `Tema 5 - Hibrido recomendado` de `docs/arquitetura/identidade-visual-opcoes.md`.
+Plano operacional da migracao: `.agents/plano-material-3-react-tailwind.md`.
 
 Regras:
 

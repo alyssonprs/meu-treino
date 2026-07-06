@@ -229,9 +229,18 @@ Regra: nao criar uma nova identidade visual, novos icones de marca ou novas imag
 
 ## Decisao oficial de tema
 
+A decisao visual vigente e seguir Material Design 3 como sistema de interface,
+implementado com componentes React proprios, Tailwind e tokens em `src/theme`.
+As paletas abaixo continuam como referencia de identidade e podem servir como
+seed para gerar os roles claro/escuro do Material 3, mas nao devem impedir a
+migracao para componentes, shapes, tipografia, navegacao e estados do Material 3.
+
+Plano operacional: `.agents/plano-material-3-react-tailwind.md`.
+
 ### Tema claro
 
-Baseado no Tema 2 - Energia Clara.
+Base Material 3 em tema claro, usando o Tema 2 - Energia Clara apenas como
+referencia de identidade quando fizer sentido.
 
 Usar quando o usuario preferir uma interface mais leve e com leitura clara em ambientes iluminados.
 
@@ -252,7 +261,8 @@ Paleta oficial:
 
 ### Tema escuro
 
-Baseado no Tema 5 - Hibrido recomendado.
+Base Material 3 em tema escuro, usando o Tema 5 - Hibrido recomendado apenas
+como referencia de identidade quando fizer sentido.
 
 Usar como tema padrao para a primeira abertura do app.
 
