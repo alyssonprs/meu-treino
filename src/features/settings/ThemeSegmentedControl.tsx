@@ -22,10 +22,10 @@ export function ThemeSegmentedControl() {
         const Icon = option.icon;
 
         return (
-          <label className="cursor-pointer" key={option.value}>
+          <label className="relative cursor-pointer" key={option.value}>
             <input
               checked={isSelected}
-              className="peer sr-only"
+              className="peer absolute inset-0 h-full w-full cursor-pointer opacity-0"
               name="theme-preference"
               onChange={() => setTheme(option.value)}
               type="radio"
@@ -33,7 +33,7 @@ export function ThemeSegmentedControl() {
             />
             <span
               className={cn(
-                "flex h-11 items-center justify-center gap-2 rounded-md text-sm font-semibold transition-colors peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-ring",
+                "pointer-events-none flex h-11 items-center justify-center gap-2 rounded-md text-sm font-semibold transition-colors peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-ring",
                 isSelected
                   ? "bg-card text-foreground shadow-sm hover:bg-card"
                   : "bg-transparent text-muted-foreground hover:bg-muted",

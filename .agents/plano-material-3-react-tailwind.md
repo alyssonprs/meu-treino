@@ -118,6 +118,8 @@ Arquivos provaveis:
 
 ## Fase 3 - Shell, navegacao e estrutura global
 
+Status: concluida em `ui/material-3-react-tailwind`.
+
 Done when:
 
 - `AppShell` usa top app bar e bottom navigation alinhados a Material 3.
