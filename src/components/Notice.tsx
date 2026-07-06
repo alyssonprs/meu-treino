@@ -17,10 +17,12 @@ type NoticeProps = {
 };
 
 const toneClasses: Record<NoticeTone, string> = {
-  info: "border-info/50 bg-info/10 text-info",
-  success: "border-primary/50 bg-primary/10 text-primary",
-  warning: "border-warning/60 bg-warning/10 text-warning",
-  danger: "border-destructive/70 bg-destructive/10 text-destructive",
+  info: "border-md-secondary/50 bg-md-secondary-container text-md-on-secondary-container",
+  success:
+    "border-md-primary/50 bg-md-primary-container text-md-on-primary-container",
+  warning:
+    "border-md-tertiary/60 bg-md-tertiary-container text-md-on-tertiary-container",
+  danger: "border-md-error/70 bg-md-error-container text-md-on-error-container",
 };
 
 const toneIcons = {
@@ -42,7 +44,7 @@ export function Notice({
     <div
       aria-live="polite"
       className={cn(
-        "rounded-md border p-3 text-sm leading-6",
+        "rounded-md border p-3 text-body-md",
         toneClasses[tone],
         className,
       )}
@@ -50,9 +52,9 @@ export function Notice({
     >
       <div className="flex items-start gap-2">
         <Icon className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-        <div className="min-w-0 text-foreground">
-          {title ? <p className="font-semibold">{title}</p> : null}
-          <div className={title ? "mt-1 text-muted-foreground" : ""}>
+        <div className="min-w-0 text-md-on-surface">
+          {title ? <p className="font-medium">{title}</p> : null}
+          <div className={title ? "mt-1 text-md-on-surface-variant" : ""}>
             {children}
           </div>
         </div>

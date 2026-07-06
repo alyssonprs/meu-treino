@@ -4,24 +4,36 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/components/ui/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex min-h-10 items-center justify-center whitespace-nowrap rounded-full text-label-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-[var(--md-sys-state-disabled-opacity)]",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:brightness-95",
+        filled:
+          "bg-md-primary text-md-on-primary shadow-md-0 hover:bg-md-primary/90",
+        tonal:
+          "bg-md-secondary-container text-md-on-secondary-container shadow-md-0 hover:bg-md-secondary-container/85",
+        outlined:
+          "border border-md-outline bg-transparent text-md-primary hover:bg-md-primary/[var(--md-sys-state-hover-opacity)]",
+        text: "bg-transparent text-md-primary hover:bg-md-primary/[var(--md-sys-state-hover-opacity)]",
+        elevated:
+          "bg-md-surface-container-low text-md-primary shadow-md-1 hover:bg-md-surface-container hover:shadow-md-2",
+        icon: "rounded-full bg-transparent p-0 text-md-on-surface-variant hover:bg-md-on-surface/[var(--md-sys-state-hover-opacity)]",
+        default:
+          "bg-md-primary text-md-on-primary shadow-md-0 hover:bg-md-primary/90",
         secondary:
-          "border border-border bg-secondary text-secondary-foreground hover:bg-muted",
-        ghost: "text-foreground hover:bg-muted",
+          "bg-md-secondary-container text-md-on-secondary-container shadow-md-0 hover:bg-md-secondary-container/85",
+        ghost:
+          "bg-transparent text-md-on-surface hover:bg-md-on-surface/[var(--md-sys-state-hover-opacity)]",
       },
       size: {
-        default: "h-11 px-4 py-2",
-        sm: "h-9 px-3",
-        lg: "h-12 px-6",
-        icon: "h-11 w-11",
+        default: "h-10 px-6 py-2",
+        sm: "h-9 px-4",
+        lg: "h-12 px-7",
+        icon: "h-12 w-12",
       },
     },
     defaultVariants: {
-      variant: "default",
+      variant: "filled",
       size: "default",
     },
   },

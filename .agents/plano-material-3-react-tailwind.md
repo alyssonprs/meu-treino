@@ -87,6 +87,8 @@ Arquivos provaveis:
 
 ## Fase 2 - Primitivos Material 3 em React
 
+Status: concluida em `ui/material-3-react-tailwind`.
+
 Done when:
 
 - `Button` suporta variantes Material 3: `filled`, `tonal`, `outlined`,
