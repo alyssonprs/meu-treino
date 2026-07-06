@@ -4,13 +4,10 @@ import {
   Check,
   Circle,
   CircleDot,
-  Eye,
-  EyeOff,
   Minus,
   Plus,
   Save,
   Square,
-  Target,
 } from "lucide-react";
 import { ModalDialog } from "@/components/ModalDialog";
 import { Notice } from "@/components/Notice";
@@ -70,7 +67,9 @@ export function ActiveWorkoutScreen({
   onUpdateExerciseResult,
 }: ActiveWorkoutScreenProps) {
   const [restState, setRestState] = useState<RestState | null>(null);
-  const [isExerciseGuideOpen, setIsExerciseGuideOpen] = useState(false);
+  const [expandedExerciseIndex, setExpandedExerciseIndex] = useState<
+    number | null
+  >(draft.currentExerciseIndex);
   const [isResultSheetOpen, setIsResultSheetOpen] = useState(false);
   const [showFinishConfirmation, setShowFinishConfirmation] = useState(false);
   const currentExerciseIndex = draft.currentExerciseIndex;
@@ -103,8 +102,11 @@ export function ActiveWorkoutScreen({
   });
 
   useEffect(() => {
+    setExpandedExerciseIndex(draft.currentExerciseIndex);
+  }, [draft.currentExerciseIndex, draft.routine.id]);
+
+  useEffect(() => {
     setRestState(null);
-    setIsExerciseGuideOpen(false);
     setIsResultSheetOpen(false);
     setShowFinishConfirmation(false);
   }, [currentExerciseIndex]);
@@ -218,6 +220,21 @@ export function ActiveWorkoutScreen({
     markSetCompleted(currentSetIndex);
   }
 
+  function selectExercise(exerciseIndex: number) {
+    if (expandedExerciseIndex === exerciseIndex) {
+      closeCurrentExerciseCard();
+      return;
+    }
+
+    setExpandedExerciseIndex(exerciseIndex);
+    onSelectExercise(exerciseIndex);
+  }
+
+  function closeCurrentExerciseCard() {
+    setExpandedExerciseIndex(null);
+    setIsResultSheetOpen(false);
+  }
+
   function saveCurrentExerciseResult() {
     if (!canSaveResult) {
       return;
@@ -235,7 +252,7 @@ export function ActiveWorkoutScreen({
     setIsResultSheetOpen(false);
 
     if (nextExerciseIndex !== null) {
-      onSelectExercise(nextExerciseIndex);
+      selectExercise(nextExerciseIndex);
     }
   }
 
@@ -251,11 +268,7 @@ export function ActiveWorkoutScreen({
   const currentExerciseDetails = (
     <div className="mt-4 space-y-4">
       {exerciseGuide ? (
-        <ExerciseGuideDisclosure
-          guide={exerciseGuide}
-          isOpen={isExerciseGuideOpen}
-          onToggle={() => setIsExerciseGuideOpen((current) => !current)}
-        />
+        <ExerciseGuidePanel guide={exerciseGuide} />
       ) : null}
 
       <div className="rounded-md bg-muted p-3">
@@ -324,8 +337,9 @@ export function ActiveWorkoutScreen({
       <ExerciseStatusList
         currentExerciseDetails={currentExerciseDetails}
         draft={draft}
+        expandedExerciseIndex={expandedExerciseIndex}
         loadHistoryByExerciseId={loadHistoryByExerciseId}
-        onSelectExercise={onSelectExercise}
+        onSelectExercise={selectExercise}
       />
 
       <ExerciseResultSheet
@@ -385,15 +399,7 @@ export function ActiveWorkoutScreen({
   );
 }
 
-function ExerciseGuideDisclosure({
-  guide,
-  isOpen,
-  onToggle,
-}: {
-  guide: ExerciseGuide;
-  isOpen: boolean;
-  onToggle: () => void;
-}) {
+function ExerciseGuidePanel({ guide }: { guide: ExerciseGuide }) {
   const primaryLabel = guide.primaryMuscles.join(", ");
   const secondaryLabel = guide.secondaryMuscles.join(", ");
   const [isAnimationReady, setIsAnimationReady] = useState(false);
@@ -401,7 +407,7 @@ function ExerciseGuideDisclosure({
   useEffect(() => {
     setIsAnimationReady(false);
 
-    if (!isOpen || !guide.animationUrl) {
+    if (!guide.animationUrl) {
       return;
     }
 
@@ -423,77 +429,53 @@ function ExerciseGuideDisclosure({
     return () => {
       isCurrent = false;
     };
-  }, [guide.animationUrl, guide.imageUrl, isOpen]);
+  }, [guide.animationUrl, guide.imageUrl]);
 
   const mediaUrl =
-    isOpen && isAnimationReady && guide.animationUrl
+    isAnimationReady && guide.animationUrl
       ? guide.animationUrl
       : guide.imageUrl;
 
   return (
     <div className="mt-4 rounded-md border border-border bg-muted p-3">
-      <div className="flex items-center justify-between gap-3">
-        <div className="min-w-0">
-          <p className="flex items-center gap-2 text-sm font-semibold">
-            <Target className="h-4 w-4 text-primary" aria-hidden="true" />
-            Como fazer
-          </p>
-        </div>
-        <Button
-          className="h-10 shrink-0 gap-2 px-3"
-          onClick={onToggle}
-          type="button"
-          variant="secondary"
-        >
-          {isOpen ? (
-            <EyeOff className="h-4 w-4" aria-hidden="true" />
-          ) : (
-            <Eye className="h-4 w-4" aria-hidden="true" />
-          )}
-          {isOpen ? "Ocultar" : "Exibir"}
-        </Button>
-      </div>
-
-      {isOpen ? (
-        <div className="mt-3 space-y-3">
-          {mediaUrl ? (
-            <div className="overflow-hidden rounded-md border border-border bg-background">
-              <img
-                alt={guide.imageAlt}
-                className="aspect-[16/9] w-full object-contain"
-                height={360}
-                loading="lazy"
-                src={mediaUrl}
-                width={640}
-              />
-            </div>
-          ) : null}
-
-          <div className="flex flex-wrap gap-2">
-            <MuscleBadge label={`Principal: ${primaryLabel}`} tone="primary" />
-            {secondaryLabel ? (
-              <MuscleBadge label={`Ajuda: ${secondaryLabel}`} tone="secondary" />
-            ) : null}
+      <div className="space-y-3">
+        {mediaUrl ? (
+          <div className="overflow-hidden rounded-md border border-border bg-background">
+            <img
+              alt={guide.imageAlt}
+              className="aspect-[16/9] w-full object-contain"
+              height={360}
+              loading="lazy"
+              src={mediaUrl}
+              width={640}
+            />
           </div>
+        ) : null}
 
-          {guide.executionCues.length > 0 ? (
-            <ul className="space-y-2">
-              {guide.executionCues.map((cue) => (
-                <li
-                  className="flex items-start gap-2 text-sm leading-5 text-muted-foreground"
-                  key={cue}
-                >
-                  <Check
-                    className="mt-0.5 h-4 w-4 shrink-0 text-primary"
-                    aria-hidden="true"
-                  />
-                  <span>{cue}</span>
-                </li>
-              ))}
-            </ul>
+        <div className="flex flex-wrap gap-2">
+          <MuscleBadge label={`Principal: ${primaryLabel}`} tone="primary" />
+          {secondaryLabel ? (
+            <MuscleBadge label={`Ajuda: ${secondaryLabel}`} tone="secondary" />
           ) : null}
         </div>
-      ) : null}
+
+        {guide.executionCues.length > 0 ? (
+          <ul className="space-y-2">
+            {guide.executionCues.map((cue) => (
+              <li
+                className="flex items-start gap-2 text-sm leading-5 text-muted-foreground"
+                key={cue}
+              >
+                <Check
+                  className="mt-0.5 h-4 w-4 shrink-0 text-primary"
+                  aria-hidden="true"
+                />
+                <span>{cue}</span>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -766,14 +748,42 @@ function ExerciseResultSheet({
 function ExerciseStatusList({
   currentExerciseDetails,
   draft,
+  expandedExerciseIndex,
   loadHistoryByExerciseId,
   onSelectExercise,
 }: {
   currentExerciseDetails: ReactNode;
   draft: WorkoutSessionDraft;
+  expandedExerciseIndex: number | null;
   loadHistoryByExerciseId: Map<string, ExerciseLoadHistoryRecord>;
   onSelectExercise: (exerciseIndex: number) => void;
 }) {
+  const currentExerciseCardRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (expandedExerciseIndex === null) {
+      return;
+    }
+
+    const currentExerciseCard = currentExerciseCardRef.current;
+
+    if (!currentExerciseCard) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      window.requestAnimationFrame(() => {
+        currentExerciseCard.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+          inline: "nearest",
+        });
+      });
+    }, 60);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [expandedExerciseIndex]);
+
   return (
     <div className="space-y-4">
       <RoutineStepList
@@ -786,13 +796,16 @@ function ExerciseStatusList({
         <RoutineSectionLabel>Exercícios da rotina</RoutineSectionLabel>
         {draft.routine.exercises.map((exercise, index) => {
           const exerciseDraft = draft.exercises[index];
-          const status = getExerciseStatus(draft, index);
+          const isExpanded =
+            expandedExerciseIndex === index && draft.currentExerciseIndex === index;
+          const selectedExerciseIndex =
+            expandedExerciseIndex === null ? null : draft.currentExerciseIndex;
+          const status = getExerciseStatus(draft, index, selectedExerciseIndex);
           const statusMeta = getExerciseStatusMeta(status);
           const completedSetsCount = exerciseDraft.completedSets.filter(
             (set) => set.completedAt !== null,
           ).length;
-          const isCurrent = draft.currentExerciseIndex === index;
-          const loadHistory = isCurrent
+          const loadHistory = isExpanded
             ? loadHistoryByExerciseId.get(exercise.exerciseId)
             : undefined;
 
@@ -800,9 +813,10 @@ function ExerciseStatusList({
             <ExerciseStatusButton
               completedSetsCount={completedSetsCount}
               currentExerciseDetails={currentExerciseDetails}
+              currentExerciseRef={isExpanded ? currentExerciseCardRef : undefined}
               exercise={exercise}
               exerciseIndex={index}
-              isCurrent={isCurrent}
+              isExpanded={isExpanded}
               key={exercise.id}
               loadHistory={loadHistory}
               onSelectExercise={onSelectExercise}
@@ -877,37 +891,40 @@ function RoutineStepList({
 function ExerciseStatusButton({
   completedSetsCount,
   currentExerciseDetails,
+  currentExerciseRef,
   exercise,
   exerciseIndex,
   status,
   statusMeta,
   totalSets,
-  isCurrent,
+  isExpanded,
   loadHistory,
   onSelectExercise,
 }: {
   completedSetsCount: number;
   currentExerciseDetails: ReactNode;
+  currentExerciseRef?: Ref<HTMLElement>;
   exercise: WorkoutSessionDraft["routine"]["exercises"][number];
   exerciseIndex: number;
   status: ReturnType<typeof getExerciseStatus>;
   statusMeta: ReturnType<typeof getExerciseStatusMeta>;
   totalSets: number;
-  isCurrent: boolean;
+  isExpanded: boolean;
   loadHistory: ExerciseLoadHistoryRecord | undefined;
   onSelectExercise: (exerciseIndex: number) => void;
 }) {
-  if (isCurrent) {
+  if (isExpanded) {
     return (
       <article
         aria-current="step"
         aria-label={`${exercise.name}: ${status}, ${completedSetsCount} de ${totalSets} series concluidas`}
         className={cn(
-          "w-full rounded-lg border p-3 text-left shadow-sm transition-colors",
+          "exercise-card-open w-full rounded-lg border p-3 text-left shadow-sm transition-colors",
           statusMeta.itemClassName,
         )}
+        ref={currentExerciseRef}
       >
-        <span className="flex items-start gap-3">
+        <div className="flex items-start gap-3">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-background/80 ring-1 ring-border/70">
             <statusMeta.Icon
               className={cn("h-4 w-4", statusMeta.iconClassName)}
@@ -915,9 +932,14 @@ function ExerciseStatusButton({
             />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block break-words text-sm font-semibold leading-5 text-foreground">
+            <button
+              aria-label={`Recolher card de ${exercise.name}`}
+              className="block w-full break-words rounded-sm text-left text-sm font-semibold leading-5 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              onClick={() => onSelectExercise(exerciseIndex)}
+              type="button"
+            >
               {exercise.name}
-            </span>
+            </button>
           </span>
           <span
             className={cn(
@@ -927,7 +949,7 @@ function ExerciseStatusButton({
           >
             {status}
           </span>
-        </span>
+        </div>
         <span className="mt-3 flex items-center justify-between gap-3 rounded-md border border-border/70 bg-background/70 px-3 py-2 text-xs">
           <span className="font-medium text-muted-foreground">
             Carga anterior
@@ -947,7 +969,7 @@ function ExerciseStatusButton({
     <button
       aria-label={`${exercise.name}: ${status}, ${completedSetsCount} de ${totalSets} series concluidas`}
       className={cn(
-        "w-full rounded-lg border p-3 text-left shadow-sm transition-colors",
+        "w-full rounded-lg border p-3 text-left shadow-sm transition-all duration-200 active:scale-[0.99]",
         statusMeta.itemClassName,
       )}
       onClick={() => onSelectExercise(exerciseIndex)}
@@ -981,6 +1003,7 @@ function ExerciseStatusButton({
 function getExerciseStatus(
   draft: WorkoutSessionDraft,
   exerciseIndex: number,
+  selectedExerciseIndex: number | null = draft.currentExerciseIndex,
 ): "Pendente" | "Em progresso" | "Concluído" {
   const exercise = draft.exercises[exerciseIndex];
 
@@ -989,7 +1012,7 @@ function getExerciseStatus(
   }
 
   if (
-    draft.currentExerciseIndex === exerciseIndex ||
+    selectedExerciseIndex === exerciseIndex ||
     exercise.completedSets.some((set) => set.completedAt !== null)
   ) {
     return "Em progresso";

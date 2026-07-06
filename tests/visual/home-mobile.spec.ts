@@ -174,22 +174,35 @@ test("active workout keeps bottom nav hidden and shows integrated rest, finish a
   ).toBeVisible();
   await expect(page.getByLabel("Aumentar RIR")).toHaveCount(0);
   await expect(page.getByRole("navigation")).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "Exibir" })).toBeVisible();
-  await assertNoHorizontalOverflow(page);
-
-  await page.getByRole("button", { name: "Exibir" }).click();
+  await expect(page.getByRole("button", { name: "Exibir" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Ocultar" })).toHaveCount(0);
   await expect(page.getByText("Principal: Pernas")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Ocultar" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /Recolher card de Agachamento livre/ }),
+  ).toBeVisible();
   await assertNoHorizontalOverflow(page);
 
-  await page.getByRole("button", { name: "Ocultar" }).click();
+  await page
+    .getByRole("button", { name: /Recolher card de Agachamento livre/ })
+    .click();
+  await expect(page.getByText("Principal: Pernas")).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: /Concluir s.rie 1/ }),
+  ).toHaveCount(0);
+  await assertNoHorizontalOverflow(page);
+
+  await page.getByRole("button", { name: /Agachamento livre/ }).click();
+  await expect(page.getByText("Principal: Pernas")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /Concluir s.rie 1/ }),
+  ).toBeVisible();
 
   await page.getByRole("button", { name: /Concluir s.rie 1/ }).click();
 
   await expect(
     page.getByRole("button", { name: /Concluir s.rie 2/ }),
   ).toBeVisible();
-  await expect(page.getByText(/0:4/)).toBeVisible();
+  await expect(page.getByText(/0:4/).first()).toBeVisible();
   await expect(page.getByRole("navigation")).toHaveCount(0);
   await assertNoHorizontalOverflow(page);
 
@@ -204,7 +217,10 @@ test("active workout keeps bottom nav hidden and shows integrated rest, finish a
   await page.getByLabel("Aumentar Carga").click();
   await page.getByLabel("Aumentar Reps").click();
   await page.getByLabel("Aumentar Reps").click();
-  await page.getByRole("button", { name: /Concluir exerc.cio/ }).click();
+  await page
+    .getByRole("dialog", { name: "Registrar resultado" })
+    .getByRole("button", { name: "Concluir" })
+    .click();
 
   await expect(page.getByRole("button", { name: "Finalizar rotina" })).toBeVisible();
   await page.getByRole("button", { name: "Finalizar rotina" }).click();
