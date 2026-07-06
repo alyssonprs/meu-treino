@@ -52,13 +52,10 @@
     --secondary: var(--md-sys-color-surface-container-high);
     --secondary-foreground: var(--md-sys-color-on-surface);
     --success: var(--md-sys-color-primary);
-    --success-foreground: var(--md-sys-color-on-primary);
     --info: var(--md-sys-color-secondary);
     --info-foreground: var(--md-sys-color-on-secondary);
     --warning: var(--md-sys-color-tertiary);
-    --warning-foreground: var(--md-sys-color-on-tertiary);
     --destructive: var(--md-sys-color-error);
-    --destructive-foreground: var(--md-sys-color-on-error);
     --ring: var(--md-sys-color-primary);
   }
 
@@ -114,13 +111,10 @@
     --secondary: var(--md-sys-color-surface-container);
     --secondary-foreground: var(--md-sys-color-on-surface);
     --success: 142 71% 39%;
-    --success-foreground: 0 0% 100%;
     --info: var(--md-sys-color-secondary);
     --info-foreground: var(--md-sys-color-on-secondary);
     --warning: var(--md-sys-color-tertiary);
-    --warning-foreground: var(--md-sys-color-on-tertiary);
     --destructive: var(--md-sys-color-error);
-    --destructive-foreground: var(--md-sys-color-on-error);
     --ring: var(--md-sys-color-primary);
   }
 

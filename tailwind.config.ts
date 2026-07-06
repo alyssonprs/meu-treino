@@ -68,13 +68,10 @@ const config = {
         secondary: "hsl(var(--secondary))",
         "secondary-foreground": "hsl(var(--secondary-foreground))",
         success: "hsl(var(--success))",
-        "success-foreground": "hsl(var(--success-foreground))",
         info: "hsl(var(--info))",
         "info-foreground": "hsl(var(--info-foreground))",
         warning: "hsl(var(--warning))",
-        "warning-foreground": "hsl(var(--warning-foreground))",
         destructive: "hsl(var(--destructive))",
-        "destructive-foreground": "hsl(var(--destructive-foreground))",
         ring: "hsl(var(--ring))",
       },
       borderRadius: {

@@ -186,6 +186,8 @@ Arquivos provaveis:
 
 ## Fase 6 - Limpeza e remocao de legado
 
+Status: concluida em `ui/material-3-react-tailwind`.
+
 Done when:
 
 - Classes e tokens legados nao usados sao removidos.
