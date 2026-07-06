@@ -1,6 +1,7 @@
 import { CalendarCheck2, Dumbbell, History, Home, Settings } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
+import { ScreenIdentifier } from "@/components/ScreenIdentifier";
 import type { AppScreen, MainTabScreen, NavItemDefinition } from "./appNavigation";
 
 const mainNavItems: NavItemDefinition[] = [
@@ -16,6 +17,17 @@ const screensWithoutBottomNav: AppScreen[] = [
   "import-preview",
   "import-error",
 ];
+
+const screenIdentifierByScreen: Record<AppScreen, `UX-${string}`> = {
+  "active-workout": "UX-0003",
+  "import-error": "UX-0008",
+  "import-preview": "UX-0007",
+  "workout-finished": "UX-0004",
+  history: "UX-0005",
+  home: "UX-0001",
+  settings: "UX-0006",
+  workout: "UX-0002",
+};
 
 type AppShellProps = {
   activeScreen: AppScreen;
@@ -40,6 +52,7 @@ export function AppShell({
       >
         {activeScreen === "active-workout" ? null : <AppHeader />}
         {children}
+        <ScreenIdentifier code={screenIdentifierByScreen[activeScreen]} />
       </div>
 
       {showBottomNav ? (

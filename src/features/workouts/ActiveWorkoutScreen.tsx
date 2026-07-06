@@ -14,7 +14,6 @@ import {
 } from "lucide-react";
 import { ModalDialog } from "@/components/ModalDialog";
 import { Notice } from "@/components/Notice";
-import { ScreenIdentifier } from "@/components/ScreenIdentifier";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/utils";
 import {
@@ -146,7 +145,6 @@ export function ActiveWorkoutScreen({
   if (!currentExercise || !currentExerciseDraft) {
     return (
       <>
-        <ScreenIdentifier code="UX-0003" className="mt-2" />
         <section className="mt-6 rounded-lg border border-border bg-card p-5">
           <h2 className="text-xl font-semibold">Treino indisponível</h2>
           <Button className="mt-4 w-full" onClick={onBackToDetail} type="button">
@@ -296,7 +294,6 @@ export function ActiveWorkoutScreen({
 
   return (
     <section className="min-h-screen space-y-4 pt-2">
-      <ScreenIdentifier code="UX-0003" />
       <header className="flex items-center justify-between gap-2">
         <Button
           aria-label="Voltar para lista de exercícios"

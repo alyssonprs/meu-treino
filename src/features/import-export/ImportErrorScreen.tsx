@@ -3,7 +3,6 @@ import {
   ArrowLeft,
   RotateCcw,
 } from "lucide-react";
-import { ScreenIdentifier } from "@/components/ScreenIdentifier";
 import { Button } from "@/components/ui/button";
 import { PromptCopyButton } from "./PromptCopyButton";
 import type { ImportStatus } from "./importStatus";
@@ -23,7 +22,6 @@ export function ImportErrorScreen({
 }: ImportErrorScreenProps) {
   return (
     <>
-      <ScreenIdentifier code="UX-0008" className="mt-2" />
       <section className="mt-6 rounded-lg border border-destructive bg-card p-5">
       <div className="flex items-start gap-3">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-destructive">

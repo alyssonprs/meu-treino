@@ -5,7 +5,6 @@ import {
   FileInput,
   RotateCcw,
 } from "lucide-react";
-import { ScreenIdentifier } from "@/components/ScreenIdentifier";
 import { Button } from "@/components/ui/button";
 import type { ImportStatus } from "./importStatus";
 
@@ -40,7 +39,6 @@ export function ImportPreviewScreen({
 
   return (
     <>
-      <ScreenIdentifier code="UX-0007" className="mt-2" />
       <section className="mt-6 rounded-lg border border-border bg-card p-5">
         <div className="flex items-start gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-primary">

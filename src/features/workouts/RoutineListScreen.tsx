@@ -1,5 +1,4 @@
 import { ChevronRight, Dumbbell } from "lucide-react";
-import { ScreenIdentifier } from "@/components/ScreenIdentifier";
 import type { RoutineExecutionSummary } from "@/services/progressService";
 import type { NextRoutineRecommendation } from "@/services/workoutRecommendationService";
 import type { ActiveWorkoutPlanSnapshot } from "@/storage/workoutPlanRepository";
@@ -21,7 +20,6 @@ export function RoutineListScreen({
   if (!activePlan) {
     return (
       <>
-        <ScreenIdentifier code="UX-0002" className="mt-2" />
         <section className="mt-6 rounded-lg border border-border bg-card p-5">
           <p className="text-sm font-medium text-info">Treino</p>
           <h2 className="mt-2 text-2xl font-semibold">Nenhum plano ativo</h2>
@@ -42,7 +40,6 @@ export function RoutineListScreen({
 
   return (
     <section className="mt-4">
-      <ScreenIdentifier code="UX-0002" />
       <div className="space-y-3">
         {routines.map((routine) => {
           const isRecommended = routine.id === nextRecommendation?.routineId;
