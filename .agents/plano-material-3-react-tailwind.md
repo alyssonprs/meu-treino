@@ -62,6 +62,8 @@ controlados, tipagem e composicao, especialmente na tela de treino ativo.
 
 ## Fase 1 - Contrato visual e tokens
 
+Status: concluida em `ui/material-3-react-tailwind`.
+
 Done when:
 
 - `src/theme/tokens.css` define roles Material 3 para tema claro e escuro:
