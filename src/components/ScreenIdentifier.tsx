@@ -11,7 +11,7 @@ export function ScreenIdentifier({
     <div
       aria-label={`Codigo da tela ${code}`}
       className={[
-        "flex justify-end text-[0.625rem] font-semibold uppercase tracking-wide text-muted-foreground/55",
+        "pointer-events-none fixed inset-x-0 bottom-20 z-30 mx-auto flex w-full max-w-md justify-end px-4 text-[0.625rem] font-semibold uppercase tracking-wide text-muted-foreground/55",
         className,
       ].join(" ")}
     >
