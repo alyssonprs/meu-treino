@@ -23,6 +23,20 @@ controlados, tipagem e composicao, especialmente na tela de treino ativo.
 - Os tokens antigos podem permanecer como aliases durante a migracao para evitar
   uma reescrita total em um unico passo.
 
+## Estrategia de branch e validacao
+
+- Executar as alteracoes de implementacao Material 3 em uma branch separada da
+  `master`, criada a partir da `master` atualizada.
+- Nome sugerido da branch: `ui/material-3-react-tailwind`.
+- Nao implementar as fases deste plano diretamente na `master`.
+- Dividir a migracao em commits pequenos e revisaveis dentro dessa branch.
+- Pushar a branch para o remoto para validacao visual e funcional antes de
+  qualquer merge na `master`.
+- So levar as alteracoes para a `master` depois de validacao explicita do usuario.
+- Alteracoes documentais pequenas podem ser registradas na `master` quando forem
+  necessarias para orientar execucoes futuras, mas mudancas de UI/codigo da
+  migracao devem seguir pela branch separada.
+
 ## Fora do escopo
 
 - Alterar dominio, servicos, storage, importacao JSON, PWA, Capacitor ou regras
