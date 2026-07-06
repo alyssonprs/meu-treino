@@ -1,7 +1,6 @@
 import {
   CalendarCheck2,
   ClipboardList,
-  Clock3,
   FileInput,
   History,
   Play,
@@ -20,6 +19,7 @@ import type {
 } from "@/services/progressService";
 import type { NextRoutineRecommendation } from "@/services/workoutRecommendationService";
 import type { ActiveWorkoutPlanSnapshot } from "@/storage/workoutPlanRepository";
+import { RoutineMetrics } from "@/features/workouts/RoutineMetrics";
 import { getRecommendationReasonLabel } from "@/features/workouts/workoutFormatters";
 
 type HomeScreenProps = {
@@ -136,9 +136,6 @@ export function HomeScreen({
         )
       : 1;
   const previousRoutine = getPreviousRoutineLabel(activePlan);
-  const estimatedDuration = getEstimatedRoutineDuration(recommendedRoutine);
-  const restRange = getRoutineRestRangeLabel(recommendedRoutine);
-
   return (
     <>
       <ScreenIdentifier code="UX-0001" className="mt-2" />
@@ -208,19 +205,7 @@ export function HomeScreen({
             {previousRoutine ?? getRecommendationReasonLabel(nextRecommendation.reason)}
           </p>
 
-          <div className="mt-5 grid grid-cols-3 gap-2 rounded-lg border border-border bg-background p-3">
-            <MetricItem
-              icon={Clock3}
-              label="Duração"
-              value={`${estimatedDuration} min`}
-            />
-            <MetricItem
-              icon={CalendarCheck2}
-              label="Volume"
-              value={`${recommendedRoutine.exercises.length} exercícios`}
-            />
-            <MetricItem icon={RefreshCw} label="Descanso" value={restRange} />
-          </div>
+          <RoutineMetrics className="mt-5" routine={recommendedRoutine} />
 
           <Button
             className="mt-5 h-14 w-full gap-3 text-base"
@@ -292,24 +277,6 @@ function BenefitItem({
   );
 }
 
-function MetricItem({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: LucideIcon;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="min-w-0 text-center">
-      <Icon className="mx-auto h-5 w-5 text-info" aria-hidden="true" />
-      <p className="mt-2 text-sm font-semibold leading-5">{value}</p>
-      <p className="mt-1 text-xs text-muted-foreground">{label}</p>
-    </div>
-  );
-}
-
 function SummaryRow({
   icon: Icon,
   label,
@@ -375,42 +342,4 @@ function getLastWorkoutLabel(activePlan: ActiveWorkoutPlanSnapshot) {
   }
 
   return `${lastRoutineLabel.replace("Depois do ", "")} finalizado`;
-}
-
-function getEstimatedRoutineDuration(
-  routine: ActiveWorkoutPlanSnapshot["routines"][number] | null | undefined,
-) {
-  if (!routine) {
-    return 0;
-  }
-
-  const warmupMinutes = routine.warmup.reduce(
-    (total, step) => total + step.duration_minutes,
-    0,
-  );
-  const cooldownMinutes = routine.cooldown.reduce(
-    (total, step) => total + step.duration_minutes,
-    0,
-  );
-  const exerciseMinutes = routine.exercises.reduce((total, exercise) => {
-    const restMinutes = ((exercise.rest_seconds ?? 90) * exercise.sets) / 60;
-
-    return total + restMinutes + exercise.sets * 1.5;
-  }, 0);
-
-  return Math.max(1, Math.round(warmupMinutes + cooldownMinutes + exerciseMinutes));
-}
-
-function getRoutineRestRangeLabel(
-  routine: ActiveWorkoutPlanSnapshot["routines"][number] | null | undefined,
-) {
-  if (!routine || routine.exercises.length === 0) {
-    return "0s";
-  }
-
-  const rests = routine.exercises.map((exercise) => exercise.rest_seconds ?? 90);
-  const min = Math.min(...rests);
-  const max = Math.max(...rests);
-
-  return min === max ? `${min}s` : `${min}-${max}s`;
 }
