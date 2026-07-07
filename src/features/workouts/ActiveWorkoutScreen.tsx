@@ -299,7 +299,7 @@ export function ActiveWorkoutScreen({
           >
             Finalizar rotina
           </Button>
-        ) : areAllSetsCompleted && !isCurrentExerciseRegistered ? (
+        ) : isCurrentExerciseRegistered ? null : areAllSetsCompleted ? (
           <ExerciseResultPrompt
             onOpen={() => setIsResultSheetOpen(true)}
           />
