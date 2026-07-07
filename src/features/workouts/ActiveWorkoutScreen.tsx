@@ -1,4 +1,11 @@
-import { useEffect, useRef, useState, type ReactNode, type Ref } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type ReactNode,
+  type Ref,
+} from "react";
 import {
   ArrowLeft,
   Check,
@@ -503,6 +510,7 @@ function MuscleBadge({
 }
 
 function StepperInput({
+  enterKeyHint,
   inputRef,
   label,
   name,
@@ -510,8 +518,10 @@ function StepperInput({
   value,
   onChange,
   onDecrement,
+  onEnter,
   onIncrement,
 }: {
+  enterKeyHint?: "done" | "next";
   inputRef?: Ref<HTMLInputElement>;
   label: string;
   name: string;
@@ -519,8 +529,18 @@ function StepperInput({
   value: string;
   onChange: (value: string) => void;
   onDecrement: () => void;
+  onEnter?: () => void;
   onIncrement: () => void;
 }) {
+  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.key !== "Enter" || !onEnter) {
+      return;
+    }
+
+    event.preventDefault();
+    onEnter();
+  }
+
   return (
     <div className="grid grid-cols-[3.25rem_1fr_3.25rem] items-center gap-3 rounded-lg border border-md-outline-variant bg-md-surface-container-lowest p-3">
       <Button
@@ -540,9 +560,11 @@ function StepperInput({
           <input
             autoComplete="off"
             className="h-12 w-full min-w-0 rounded-md bg-transparent text-center text-3xl font-semibold tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            enterKeyHint={enterKeyHint}
             inputMode="decimal"
             name={name}
             onChange={(event) => onChange(event.target.value)}
+            onKeyDown={handleKeyDown}
             ref={inputRef}
             type="text"
             value={value}
@@ -699,6 +721,13 @@ function ExerciseResultSheet({
   onUpdateResultValue: (field: EditableResultField, value: string) => void;
 }) {
   const loadInputRef = useRef<HTMLInputElement>(null);
+  const repsInputRef = useRef<HTMLInputElement>(null);
+
+  function saveFromKeyboard() {
+    if (canSaveResult) {
+      onSave();
+    }
+  }
 
   return (
     <ModalDialog
@@ -710,6 +739,7 @@ function ExerciseResultSheet({
     >
       <div className="mt-4 grid gap-3">
         <StepperInput
+          enterKeyHint="next"
           inputRef={loadInputRef}
           label="Carga"
           name="exercise-load-kg"
@@ -717,14 +747,18 @@ function ExerciseResultSheet({
           value={resultValues.loadKg}
           onChange={(value) => onUpdateResultValue("loadKg", value)}
           onDecrement={onDecrementLoad}
+          onEnter={() => repsInputRef.current?.focus()}
           onIncrement={onIncrementLoad}
         />
         <StepperInput
+          enterKeyHint="done"
+          inputRef={repsInputRef}
           label="Reps"
           name="exercise-reps"
           value={resultValues.reps}
           onChange={(value) => onUpdateResultValue("reps", value)}
           onDecrement={onDecrementReps}
+          onEnter={saveFromKeyboard}
           onIncrement={onIncrementReps}
         />
       </div>
