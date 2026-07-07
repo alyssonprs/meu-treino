@@ -27,6 +27,11 @@ import {
   type WorkoutSetDraft,
 } from "@/services/workoutSessionService";
 import type { ExerciseLoadHistoryRecord } from "@/storage/workoutPlanRepository";
+import {
+  playRestCountdownFeedback,
+  playRestFinishedFeedback,
+  prepareRestTimerFeedback,
+} from "@/platform/restTimerFeedback";
 import { getExerciseGuide, type ExerciseGuide } from "./exerciseGuides";
 import { formatLoad, formatTimer } from "./workoutFormatters";
 
@@ -58,6 +63,7 @@ type ActiveWorkoutScreenProps = {
 };
 
 type RestState = {
+  id: number;
   remainingSeconds: number;
   nextSetIndex: number;
   nextSetNumber: number;
@@ -75,6 +81,8 @@ export function ActiveWorkoutScreen({
   onUpdateExerciseResult,
 }: ActiveWorkoutScreenProps) {
   const [restState, setRestState] = useState<RestState | null>(null);
+  const nextRestIdRef = useRef(0);
+  const lastRestFeedbackKeyRef = useRef<string | null>(null);
   const [expandedExerciseIndex, setExpandedExerciseIndex] = useState<
     number | null
   >(draft.currentExerciseIndex);
@@ -152,6 +160,27 @@ export function ActiveWorkoutScreen({
     return () => window.clearTimeout(timeoutId);
   }, [restState]);
 
+  useEffect(() => {
+    if (!restState || restState.remainingSeconds > 3) {
+      return;
+    }
+
+    const feedbackKey = `${restState.id}:${restState.remainingSeconds}`;
+
+    if (lastRestFeedbackKeyRef.current === feedbackKey) {
+      return;
+    }
+
+    lastRestFeedbackKeyRef.current = feedbackKey;
+
+    if (restState.remainingSeconds === 0) {
+      playRestFinishedFeedback();
+      return;
+    }
+
+    playRestCountdownFeedback(restState.remainingSeconds);
+  }, [restState]);
+
   if (!currentExercise || !currentExerciseDraft) {
     return (
       <>
@@ -208,11 +237,14 @@ export function ActiveWorkoutScreen({
     const nextSetIndex = setIndex + 1;
 
     if (nextSetIndex < currentExerciseDraft.completedSets.length) {
+      prepareRestTimerFeedback();
       setRestState({
+        id: nextRestIdRef.current,
         remainingSeconds: currentExercise.rest_seconds ?? 90,
         nextSetIndex,
         nextSetNumber: nextSetIndex + 1,
       });
+      nextRestIdRef.current += 1;
       return;
     }
 
