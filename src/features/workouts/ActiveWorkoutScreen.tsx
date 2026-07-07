@@ -1008,7 +1008,14 @@ function ExercisePreviewThumb({
   guide: ExerciseGuide;
 }) {
   return (
-    <span className="flex h-12 w-14 shrink-0 items-center justify-center overflow-hidden rounded-md bg-background/80 ring-1 ring-border/70">
+    <span
+      className={cn(
+        "flex h-12 w-14 shrink-0 items-center justify-center overflow-hidden rounded-md ring-1 ring-border/70",
+        guide.imageUrl
+          ? "bg-[hsl(var(--exercise-media-canvas))]"
+          : "bg-background/80",
+      )}
+    >
       {guide.imageUrl ? (
         <img
           alt={guide.imageAlt}

@@ -57,6 +57,7 @@
     --warning: var(--md-sys-color-tertiary);
     --destructive: var(--md-sys-color-error);
     --ring: var(--md-sys-color-primary);
+    --exercise-media-canvas: 0 0% 100%;
   }
 
   .light {
@@ -116,6 +117,7 @@
     --warning: var(--md-sys-color-tertiary);
     --destructive: var(--md-sys-color-error);
     --ring: var(--md-sys-color-primary);
+    --exercise-media-canvas: 0 0% 100%;
   }
 
   :root {
