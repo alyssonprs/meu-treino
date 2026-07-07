@@ -2,6 +2,8 @@ import { CalendarCheck2, Dumbbell, History, Home, Settings } from "lucide-react"
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { ScreenIdentifier } from "@/components/ScreenIdentifier";
+import { NavigationBar, NavigationBarItem } from "@/components/ui/navigation-bar";
+import { TopAppBar } from "@/components/ui/top-app-bar";
 import type { AppScreen, MainTabScreen, NavItemDefinition } from "./appNavigation";
 
 const mainNavItems: NavItemDefinition[] = [
@@ -43,11 +45,11 @@ export function AppShell({
   const showBottomNav = !screensWithoutBottomNav.includes(activeScreen);
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="min-h-screen bg-md-background text-md-on-background">
       <div
         className={[
-          "mx-auto flex min-h-screen w-full max-w-md flex-col px-4 pt-4",
-          showBottomNav ? "pb-24" : "pb-6",
+          "mx-auto flex min-h-screen w-full max-w-md flex-col px-4",
+          showBottomNav ? "pb-28" : "pb-6",
         ].join(" ")}
       >
         {activeScreen === "active-workout" ? null : <AppHeader />}
@@ -56,22 +58,20 @@ export function AppShell({
       </div>
 
       {showBottomNav ? (
-        <nav
+        <NavigationBar
           aria-label="Navegação principal"
-          className="fixed inset-x-0 bottom-0 border-t border-border bg-card/95 backdrop-blur"
+          className="fixed inset-x-0 bottom-0 mx-auto max-w-md border-t border-md-outline-variant bg-md-surface-container/95 backdrop-blur"
         >
-          <div className="mx-auto grid h-16 max-w-md grid-cols-4 px-2">
-            {mainNavItems.map((item) => (
-              <NavItem
-                active={activeScreen === item.screen}
-                icon={item.icon}
-                key={item.screen}
-                label={item.label}
-                onClick={() => onNavigate(item.screen)}
-              />
-            ))}
-          </div>
-        </nav>
+          {mainNavItems.map((item) => (
+            <NavItem
+              active={activeScreen === item.screen}
+              icon={item.icon}
+              key={item.screen}
+              label={item.label}
+              onClick={() => onNavigate(item.screen)}
+            />
+          ))}
+        </NavigationBar>
       ) : null}
     </main>
   );
@@ -79,15 +79,24 @@ export function AppShell({
 
 function AppHeader() {
   return (
-    <header className="flex items-center justify-between py-2">
-      <div>
-        <p className="text-sm font-medium text-muted-foreground">Dados locais</p>
-        <h1 className="text-2xl font-semibold">Meu Treino</h1>
-      </div>
-      <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-border bg-card text-primary">
-        <Dumbbell className="h-5 w-5" aria-hidden="true" />
-      </div>
-    </header>
+    <TopAppBar
+      actions={
+        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-md-primary-container text-md-on-primary-container">
+          <Dumbbell className="h-5 w-5" aria-hidden="true" />
+        </span>
+      }
+      className="-mx-4 mb-2 px-4 pt-[max(0.5rem,env(safe-area-inset-top))]"
+      title={
+        <div>
+          <p className="text-label-lg font-medium text-md-on-surface-variant">
+            Dados locais
+          </p>
+          <h1 className="truncate text-title-lg font-medium text-md-on-surface">
+            Meu Treino
+          </h1>
+        </div>
+      }
+    />
   );
 }
 
@@ -100,17 +109,11 @@ type NavItemProps = {
 
 function NavItem({ active, icon: Icon, label, onClick }: NavItemProps) {
   return (
-    <button
-      aria-current={active ? "page" : undefined}
-      className={[
-        "flex min-h-16 flex-col items-center justify-center gap-1 text-xs font-medium",
-        active ? "text-primary" : "text-muted-foreground",
-      ].join(" ")}
+    <NavigationBarItem
+      active={active}
+      icon={<Icon className="h-5 w-5" aria-hidden="true" />}
+      label={label}
       onClick={onClick}
-      type="button"
-    >
-      <Icon className="h-5 w-5" aria-hidden="true" />
-      <span>{label}</span>
-    </button>
+    />
   );
 }

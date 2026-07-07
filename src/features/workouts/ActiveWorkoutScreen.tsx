@@ -12,6 +12,7 @@ import {
 import { ModalDialog } from "@/components/ModalDialog";
 import { Notice } from "@/components/Notice";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { cn } from "@/components/ui/utils";
 import {
   getNextPendingSetIndex,
@@ -147,12 +148,12 @@ export function ActiveWorkoutScreen({
   if (!currentExercise || !currentExerciseDraft) {
     return (
       <>
-        <section className="mt-6 rounded-lg border border-border bg-card p-5">
+        <Card className="mt-6" padding="lg" variant="outlined">
           <h2 className="text-xl font-semibold">Treino indisponível</h2>
           <Button className="mt-4 w-full" onClick={onBackToDetail} type="button">
             Voltar para lista
           </Button>
-        </section>
+        </Card>
       </>
     );
   }
@@ -271,7 +272,7 @@ export function ActiveWorkoutScreen({
         <ExerciseGuidePanel guide={exerciseGuide} />
       ) : null}
 
-      <div className="rounded-md bg-muted p-3">
+      <div className="rounded-md bg-md-surface-container-high p-3">
         <SetProgress
           completedSetsCount={completedSetsCount}
           targetReps={currentExercise.target_reps}
@@ -318,12 +319,12 @@ export function ActiveWorkoutScreen({
           <ArrowLeft className="h-5 w-5" aria-hidden="true" />
         </Button>
         <div className="min-w-0 flex-1 text-center">
-          <p className="text-xs font-medium text-muted-foreground">
+          <p className="text-xs font-medium text-md-on-surface-variant">
             {draft.routine.name}
           </p>
           <h2 className="truncate text-lg font-semibold">Treino em andamento</h2>
         </div>
-        <span className="shrink-0 rounded-md bg-muted px-2 py-1 text-xs font-medium">
+        <span className="shrink-0 rounded-md bg-md-surface-container-high px-2 py-1 text-xs font-medium">
           {registeredExercises}/{draft.exercises.length}
         </span>
       </header>
@@ -437,10 +438,10 @@ function ExerciseGuidePanel({ guide }: { guide: ExerciseGuide }) {
       : guide.imageUrl;
 
   return (
-    <div className="mt-4 rounded-md border border-border bg-muted p-3">
+    <div className="mt-4 rounded-md border border-md-outline-variant bg-md-surface-container-high p-3">
       <div className="space-y-3">
         {mediaUrl ? (
-          <div className="overflow-hidden rounded-md border border-border bg-background">
+          <div className="overflow-hidden rounded-md border border-md-outline-variant bg-md-surface-container-lowest">
             <img
               alt={guide.imageAlt}
               className="aspect-[16/9] w-full object-contain"
@@ -463,7 +464,7 @@ function ExerciseGuidePanel({ guide }: { guide: ExerciseGuide }) {
           <ul className="space-y-2">
             {guide.executionCues.map((cue) => (
               <li
-                className="flex items-start gap-2 text-sm leading-5 text-muted-foreground"
+                className="flex items-start gap-2 text-sm leading-5 text-md-on-surface-variant"
                 key={cue}
               >
                 <Check
@@ -492,8 +493,8 @@ function MuscleBadge({
       className={cn(
         "rounded-md border px-2 py-1 text-xs font-semibold",
         tone === "primary"
-          ? "border-primary/40 bg-primary/15 text-primary"
-          : "border-info/30 bg-info/10 text-info",
+          ? "border-md-primary/40 bg-md-primary/15 text-md-primary"
+          : "border-md-secondary/30 bg-md-secondary-container text-md-on-secondary-container",
       )}
     >
       {label}
@@ -521,7 +522,7 @@ function StepperInput({
   onIncrement: () => void;
 }) {
   return (
-    <div className="grid grid-cols-[3.25rem_1fr_3.25rem] items-center gap-3 rounded-lg border border-border bg-background p-3">
+    <div className="grid grid-cols-[3.25rem_1fr_3.25rem] items-center gap-3 rounded-lg border border-md-outline-variant bg-md-surface-container-lowest p-3">
       <Button
         aria-label={`Diminuir ${label}`}
         className="h-12 w-12 p-0"
@@ -532,7 +533,7 @@ function StepperInput({
         <Minus className="h-5 w-5" aria-hidden="true" />
       </Button>
       <label className="min-w-0 text-center">
-        <span className="text-xs font-medium text-muted-foreground">
+        <span className="text-xs font-medium text-md-on-surface-variant">
           {label}
         </span>
         <div className="mt-1 flex items-baseline justify-center gap-1">
@@ -547,7 +548,7 @@ function StepperInput({
             value={value}
           />
           {suffix ? (
-            <span className="text-sm font-medium text-muted-foreground">
+            <span className="text-sm font-medium text-md-on-surface-variant">
               {suffix}
             </span>
           ) : null}
@@ -579,13 +580,13 @@ function SetProgress({
     <div>
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="text-xs font-medium text-muted-foreground">Séries</p>
+          <p className="text-xs font-medium text-md-on-surface-variant">Séries</p>
           <p className="mt-1 text-sm font-semibold">
             {completedSetsCount}/{totalSets}
           </p>
         </div>
         <div className="text-right">
-          <p className="text-xs font-medium text-muted-foreground">
+          <p className="text-xs font-medium text-md-on-surface-variant">
             Movimentos por série
           </p>
           <p className="mt-1 text-sm font-semibold">{targetReps}</p>
@@ -599,8 +600,8 @@ function SetProgress({
           <span
             className={
               index < completedSetsCount
-                ? "h-2 rounded-full bg-primary"
-                : "h-2 rounded-full bg-border"
+                ? "h-2 rounded-full bg-md-primary"
+                : "h-2 rounded-full bg-md-outline-variant"
             }
             key={index}
           />
@@ -638,7 +639,7 @@ function SetActionPanel({
         <span>Concluir série</span>
         {restState ? (
           <>
-            <span className="absolute right-3 rounded-md bg-primary-foreground/15 px-2 py-1 text-sm font-semibold tabular-nums">
+            <span className="absolute right-3 rounded-md bg-md-on-primary/15 px-2 py-1 text-sm font-semibold tabular-nums">
               {formatTimer(restState.remainingSeconds)}
             </span>
             <span className="sr-only" aria-live="polite">
@@ -653,11 +654,11 @@ function SetActionPanel({
 
 function ExerciseResultPrompt({ onOpen }: { onOpen: () => void }) {
   return (
-    <div className="mt-4 rounded-lg border border-border bg-background p-3">
+    <div className="mt-4 rounded-lg border border-md-outline-variant bg-md-surface-container-lowest p-3">
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
           <h3 className="text-base font-semibold">Séries concluídas</h3>
-          <p className="mt-1 text-xs leading-5 text-muted-foreground">
+          <p className="mt-1 text-xs leading-5 text-md-on-surface-variant">
             Registre carga e reps para fechar o exercício.
           </p>
         </div>

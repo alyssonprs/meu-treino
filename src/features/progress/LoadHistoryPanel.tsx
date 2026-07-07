@@ -1,4 +1,5 @@
 import { TrendingUp } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import type { ExerciseLoadSummary } from "@/services/progressService";
 import { formatLoad } from "@/features/workouts/workoutFormatters";
 
@@ -9,7 +10,7 @@ export function LoadHistoryPanel({
 }) {
   if (summaries.length === 0) {
     return (
-      <section className="mt-5 rounded-lg border border-border bg-card p-4">
+      <Card className="mt-5" variant="outlined">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-info">
             <TrendingUp className="h-5 w-5" aria-hidden="true" />
@@ -22,12 +23,12 @@ export function LoadHistoryPanel({
         <p className="mt-3 text-sm leading-6 text-muted-foreground">
           Finalize um treino para ver última carga, maior carga e evolução.
         </p>
-      </section>
+      </Card>
     );
   }
 
   return (
-    <section className="mt-5 rounded-lg border border-border bg-card p-4">
+    <Card className="mt-5" variant="outlined">
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-info">
           <TrendingUp className="h-5 w-5" aria-hidden="true" />
@@ -66,6 +67,6 @@ export function LoadHistoryPanel({
           </article>
         ))}
       </div>
-    </section>
+    </Card>
   );
 }

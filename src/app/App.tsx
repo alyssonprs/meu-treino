@@ -420,7 +420,7 @@ export function App() {
       setImportStatus(idleImportStatus);
       setWorkoutMessage("Dados de treino apagados deste dispositivo.");
       setActiveScreen("home");
-      window.location.hash = mainTabHashByScreen.home;
+      window.history.replaceState(null, "", mainTabHashByScreen.home);
     } catch {
       setWorkoutMessage("Nao foi possivel apagar os dados locais agora.");
     } finally {

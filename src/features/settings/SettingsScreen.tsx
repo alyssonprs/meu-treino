@@ -11,6 +11,7 @@ import type { LucideIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { Notice } from "@/components/Notice";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { PromptCopyButton } from "@/features/import-export/PromptCopyButton";
 import type { HealthConnectAdapter } from "@/platform/health-connect";
 import type { ActiveWorkoutPlanSnapshot } from "@/storage/workoutPlanRepository";
@@ -83,7 +84,7 @@ export function SettingsScreen({
 
   return (
     <>
-      <section className="mt-6 rounded-lg border border-border bg-card p-5">
+      <Card className="mt-6" padding="lg" variant="outlined">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-info">
             <Settings className="h-5 w-5" aria-hidden="true" />
@@ -103,7 +104,7 @@ export function SettingsScreen({
             <ThemeSegmentedControl />
           </div>
         </div>
-      </section>
+      </Card>
 
       <HealthConnectSettingsCard
         adapter={healthConnectAdapter}
@@ -112,7 +113,7 @@ export function SettingsScreen({
       />
 
       {activePlan ? (
-        <section className="mt-5 rounded-lg border border-border bg-card p-5">
+        <Card className="mt-5" padding="lg" variant="outlined">
           <SectionHeader
             icon={FileInput}
             label="Treino e JSON"
@@ -137,10 +138,10 @@ export function SettingsScreen({
             </Button>
             <PromptCopyButton className="h-12 w-full justify-start gap-3" />
           </div>
-        </section>
+        </Card>
       ) : null}
 
-      <section className="mt-5 rounded-lg border border-border bg-card p-5">
+      <Card className="mt-5" padding="lg" variant="outlined">
         <SectionHeader
           icon={Database}
           label="Dados locais"
@@ -250,16 +251,16 @@ export function SettingsScreen({
             Apagar dados locais
           </Button>
         )}
-      </section>
+      </Card>
 
-      <section className="mt-5 rounded-lg border border-border bg-card p-5">
+      <Card className="mt-5" padding="lg" variant="outlined">
         <SectionHeader icon={Info} label="App" title="Informacoes" />
         <dl className="mt-4 grid gap-3">
           <InfoRow label="Versao" value={appVersion} />
           <InfoRow label="Armazenamento" value="Local no dispositivo" />
           <InfoRow label="Modo" value="PWA offline-first" />
         </dl>
-      </section>
+      </Card>
     </>
   );
 }

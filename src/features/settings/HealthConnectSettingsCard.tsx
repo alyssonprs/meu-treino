@@ -2,6 +2,8 @@ import { Activity, ExternalLink, RefreshCw, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Notice } from "@/components/Notice";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 import { cn } from "@/components/ui/utils";
 import type {
   HealthConnectAdapter,
@@ -182,7 +184,7 @@ export function HealthConnectSettingsCard({
   }
 
   return (
-    <section className="mt-5 rounded-lg border border-border bg-card p-5">
+    <Card className="mt-5" padding="lg" variant="outlined">
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-info">
           <Activity className="h-5 w-5" aria-hidden="true" />
@@ -220,26 +222,15 @@ export function HealthConnectSettingsCard({
       </p>
 
       {isConnected ? (
-        <label className="mt-4 flex items-start gap-3 rounded-md border border-border bg-background p-3">
-          <input
+        <Switch
             checked={autoExportEnabled}
-            className="mt-1 h-5 w-5 accent-primary"
+          className="mt-4 rounded-md border border-md-outline-variant bg-md-surface-container-lowest p-3"
             disabled={isSavingPreference}
+          label="Enviar treinos automaticamente"
             onChange={() => {
               void toggleAutoExport();
             }}
-            type="checkbox"
-          />
-          <span>
-            <span className="block text-sm font-semibold">
-              Enviar treinos automaticamente
-            </span>
-            <span className="mt-1 block text-sm leading-6 text-muted-foreground">
-              A sessao local e salva primeiro. Erros do Health Connect nao
-              impedem o registro do treino no app.
-            </span>
-          </span>
-        </label>
+        />
       ) : null}
 
       <div className="mt-4 grid gap-3">
@@ -295,7 +286,7 @@ export function HealthConnectSettingsCard({
           {message}
         </Notice>
       ) : null}
-    </section>
+    </Card>
   );
 }
 

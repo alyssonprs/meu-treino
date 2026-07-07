@@ -28,7 +28,7 @@ export function RoutineMetrics({ routine, className = "" }: RoutineMetricsProps)
   return (
     <div
       className={[
-        "grid grid-cols-3 gap-2 rounded-lg border border-border bg-background p-3",
+        "grid grid-cols-3 gap-2 rounded-lg border border-md-outline-variant bg-md-surface-container-lowest p-3",
         className,
       ]
         .filter(Boolean)
@@ -54,7 +54,7 @@ function RoutineMetric({
 }) {
   return (
     <div className="min-w-0 text-center">
-      <Icon className="mx-auto h-5 w-5 text-info" aria-hidden="true" />
+      <Icon className="mx-auto h-5 w-5 text-md-secondary" aria-hidden="true" />
       <p className="mt-2 truncate text-sm font-semibold leading-5">{value}</p>
     </div>
   );

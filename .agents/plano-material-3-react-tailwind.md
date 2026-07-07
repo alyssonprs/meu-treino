@@ -62,6 +62,8 @@ controlados, tipagem e composicao, especialmente na tela de treino ativo.
 
 ## Fase 1 - Contrato visual e tokens
 
+Status: concluida em `ui/material-3-react-tailwind`.
+
 Done when:
 
 - `src/theme/tokens.css` define roles Material 3 para tema claro e escuro:
@@ -84,6 +86,8 @@ Arquivos provaveis:
 - `src/theme/theme.tsx`
 
 ## Fase 2 - Primitivos Material 3 em React
+
+Status: concluida em `ui/material-3-react-tailwind`.
 
 Done when:
 
@@ -114,6 +118,8 @@ Arquivos provaveis:
 
 ## Fase 3 - Shell, navegacao e estrutura global
 
+Status: concluida em `ui/material-3-react-tailwind`.
+
 Done when:
 
 - `AppShell` usa top app bar e bottom navigation alinhados a Material 3.
@@ -130,6 +136,8 @@ Arquivos provaveis:
 - `tests/visual/home-mobile.spec.ts`
 
 ## Fase 4 - Home e telas de apoio
+
+Status: concluida em `ui/material-3-react-tailwind`.
 
 Done when:
 
@@ -155,6 +163,8 @@ Arquivos provaveis:
 
 ## Fase 5 - Treino ativo
 
+Status: concluida em `ui/material-3-react-tailwind`.
+
 Done when:
 
 - Tela de treino ativo segue Material 3 sem perder velocidade de uso durante a
@@ -175,6 +185,8 @@ Arquivos provaveis:
 - `src/features/workouts/WorkoutFinishedScreen.tsx`
 
 ## Fase 6 - Limpeza e remocao de legado
+
+Status: concluida em `ui/material-3-react-tailwind`.
 
 Done when:
 
