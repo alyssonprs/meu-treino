@@ -86,7 +86,10 @@ export function createWorkoutSessionDraft({
             typeof loadHistory?.lastLoadKg === "number"
               ? String(loadHistory.lastLoadKg)
               : "",
-          reps: "",
+          reps:
+            typeof loadHistory?.lastReps === "number"
+              ? String(loadHistory.lastReps)
+              : "",
           rir: "",
           notes: "",
           completedAt: null,

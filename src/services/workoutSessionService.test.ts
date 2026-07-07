@@ -11,7 +11,7 @@ import {
 } from "./workoutSessionService";
 
 describe("workoutSessionService", () => {
-  it("prefills set load from previous exercise history", () => {
+  it("prefills load and reps from previous exercise history", () => {
     const snapshot = createSnapshot();
 
     const draft = createWorkoutSessionDraft({
@@ -37,7 +37,7 @@ describe("workoutSessionService", () => {
     });
 
     expect(draft.exercises[0].result.loadKg).toBe("62.5");
-    expect(draft.exercises[0].result.reps).toBe("");
+    expect(draft.exercises[0].result.reps).toBe("8");
     expect(draft.exercises[0].result.rir).toBe("");
   });
 
