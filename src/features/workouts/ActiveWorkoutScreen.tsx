@@ -983,12 +983,7 @@ function ExerciseStatusList({
 
     window.requestAnimationFrame(() => {
       const cardRect = currentExerciseCard.getBoundingClientRect();
-      const detailsInner = currentExerciseCard.querySelector<HTMLElement>(
-        "[data-exercise-card-details-inner]",
-      );
-      const expandedCardHeight =
-        currentExerciseCard.offsetHeight + (detailsInner?.scrollHeight ?? 0);
-      const topInset = Math.max(16, (window.innerHeight - expandedCardHeight) / 2);
+      const topInset = Math.max(16, (window.innerHeight - cardRect.height) / 2);
       const cardPageTop = cardRect.top + window.scrollY;
 
       window.scrollTo({
