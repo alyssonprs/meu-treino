@@ -69,6 +69,8 @@ type RestState = {
   nextSetNumber: number;
 };
 
+const EXERCISE_CARD_TRANSITION_MS = 500;
+
 export function ActiveWorkoutScreen({
   draft,
   loadHistoryByExerciseId,
@@ -86,6 +88,17 @@ export function ActiveWorkoutScreen({
   const [expandedExerciseIndex, setExpandedExerciseIndex] = useState<
     number | null
   >(draft.currentExerciseIndex);
+  const [openingExerciseIndex, setOpeningExerciseIndex] = useState<
+    number | null
+  >(null);
+  const openingExerciseIndexRef = useRef<number | null>(null);
+  const openAlignmentTimeoutRef = useRef<number | null>(null);
+  const [closingExerciseIndex, setClosingExerciseIndex] = useState<
+    number | null
+  >(null);
+  const closingExerciseIndexRef = useRef<number | null>(null);
+  const closeAnimationTimeoutRef = useRef<number | null>(null);
+  const pendingCloseActionRef = useRef<(() => void) | null>(null);
   const [isResultSheetOpen, setIsResultSheetOpen] = useState(false);
   const [showFinishConfirmation, setShowFinishConfirmation] = useState(false);
   const currentExerciseIndex = draft.currentExerciseIndex;
@@ -99,6 +112,9 @@ export function ActiveWorkoutScreen({
     (exercise) => exercise.result.completedAt !== null,
   ).length;
   const hasIncompleteExercises = registeredExercises < draft.exercises.length;
+  const finishActionLabel = hasIncompleteExercises
+    ? "Finalizar"
+    : "Finalizar rotina";
   const nextExerciseIndex = getNextExerciseIndex(draft, currentExerciseIndex);
   const isCurrentExerciseRegistered =
     currentExerciseDraft?.result.completedAt !== null;
@@ -118,8 +134,24 @@ export function ActiveWorkoutScreen({
   });
 
   useEffect(() => {
+    if (openingExerciseIndexRef.current !== null) {
+      return;
+    }
+
     setExpandedExerciseIndex(draft.currentExerciseIndex);
   }, [draft.currentExerciseIndex, draft.routine.id]);
+
+  useEffect(() => {
+    return () => {
+      if (openAlignmentTimeoutRef.current !== null) {
+        window.clearTimeout(openAlignmentTimeoutRef.current);
+      }
+
+      if (closeAnimationTimeoutRef.current !== null) {
+        window.clearTimeout(closeAnimationTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     setRestState(null);
@@ -261,18 +293,106 @@ export function ActiveWorkoutScreen({
   }
 
   function selectExercise(exerciseIndex: number) {
+    if (
+      openingExerciseIndexRef.current !== null ||
+      closingExerciseIndexRef.current !== null
+    ) {
+      return;
+    }
+
     if (expandedExerciseIndex === exerciseIndex) {
       closeCurrentExerciseCard();
       return;
     }
 
-    setExpandedExerciseIndex(exerciseIndex);
+    if (expandedExerciseIndex !== null) {
+      closeExerciseCard(() => {
+        openExerciseCard(exerciseIndex);
+      });
+      return;
+    }
+
+    openExerciseCard(exerciseIndex);
+  }
+
+  function openExerciseCard(exerciseIndex: number) {
+    openingExerciseIndexRef.current = exerciseIndex;
+    setOpeningExerciseIndex(exerciseIndex);
     onSelectExercise(exerciseIndex);
   }
 
+  function completeExerciseCardOpen(exerciseIndex: number) {
+    if (openingExerciseIndexRef.current !== exerciseIndex) {
+      return;
+    }
+
+    if (openAlignmentTimeoutRef.current !== null) {
+      window.clearTimeout(openAlignmentTimeoutRef.current);
+      openAlignmentTimeoutRef.current = null;
+    }
+
+    openingExerciseIndexRef.current = null;
+    setOpeningExerciseIndex(null);
+    setExpandedExerciseIndex(exerciseIndex);
+  }
+
   function closeCurrentExerciseCard() {
-    setExpandedExerciseIndex(null);
+    closeExerciseCard();
+  }
+
+  function closeExerciseCard(afterClose?: () => void) {
+    const exerciseIndexToClose = expandedExerciseIndex;
+
+    if (exerciseIndexToClose === null) {
+      afterClose?.();
+      return;
+    }
+
+    if (openAlignmentTimeoutRef.current !== null) {
+      window.clearTimeout(openAlignmentTimeoutRef.current);
+      openAlignmentTimeoutRef.current = null;
+    }
+
+    openingExerciseIndexRef.current = null;
+    setOpeningExerciseIndex(null);
+    pendingCloseActionRef.current = afterClose ?? null;
+    closingExerciseIndexRef.current = exerciseIndexToClose;
+    setClosingExerciseIndex(exerciseIndexToClose);
     setIsResultSheetOpen(false);
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      completeExerciseCardClose(exerciseIndexToClose);
+      return;
+    }
+
+    if (closeAnimationTimeoutRef.current !== null) {
+      window.clearTimeout(closeAnimationTimeoutRef.current);
+    }
+
+    closeAnimationTimeoutRef.current = window.setTimeout(() => {
+      completeExerciseCardClose(exerciseIndexToClose);
+    }, EXERCISE_CARD_TRANSITION_MS);
+  }
+
+  function completeExerciseCardClose(exerciseIndex: number) {
+    if (closingExerciseIndexRef.current !== exerciseIndex) {
+      return;
+    }
+
+    if (closeAnimationTimeoutRef.current !== null) {
+      window.clearTimeout(closeAnimationTimeoutRef.current);
+      closeAnimationTimeoutRef.current = null;
+    }
+
+    closingExerciseIndexRef.current = null;
+    setClosingExerciseIndex(null);
+    setExpandedExerciseIndex((current) =>
+      current === exerciseIndex ? null : current,
+    );
+
+    const pendingAction = pendingCloseActionRef.current;
+    pendingCloseActionRef.current = null;
+    pendingAction?.();
   }
 
   function saveCurrentExerciseResult() {
@@ -280,20 +400,26 @@ export function ActiveWorkoutScreen({
       return;
     }
 
-    onSaveExerciseResult({
-      exerciseIndex: currentExerciseIndex,
-      values: {
-        ...resultValues,
-        rir: "",
-      },
-    });
+    const exerciseIndexToSave = currentExerciseIndex;
+    const nextExerciseIndexToSelect = nextExerciseIndex;
+    const valuesToSave = {
+      ...resultValues,
+      rir: "",
+    };
 
     setRestState(null);
     setIsResultSheetOpen(false);
 
-    if (nextExerciseIndex !== null) {
-      selectExercise(nextExerciseIndex);
-    }
+    closeExerciseCard(() => {
+      onSaveExerciseResult({
+        exerciseIndex: exerciseIndexToSave,
+        values: valuesToSave,
+      });
+
+      if (nextExerciseIndexToSelect !== null) {
+        openExerciseCard(nextExerciseIndexToSelect);
+      }
+    });
   }
 
   function requestFinishWorkout() {
@@ -377,8 +503,15 @@ export function ActiveWorkoutScreen({
       <ExerciseStatusList
         currentExerciseDetails={currentExerciseDetails}
         draft={draft}
+        closingExerciseIndex={closingExerciseIndex}
         expandedExerciseIndex={expandedExerciseIndex}
         loadHistoryByExerciseId={loadHistoryByExerciseId}
+        onExerciseCloseAnimationEnd={completeExerciseCardClose}
+        onExerciseOpenAligned={completeExerciseCardOpen}
+        onScheduleExerciseOpenAlignment={(timeoutId) => {
+          openAlignmentTimeoutRef.current = timeoutId;
+        }}
+        openingExerciseIndex={openingExerciseIndex}
         onSelectExercise={selectExercise}
       />
 
@@ -432,7 +565,7 @@ export function ActiveWorkoutScreen({
         </Button>
         <Button className="h-12 gap-2" onClick={requestFinishWorkout} type="button">
           <Square className="h-4 w-4" aria-hidden="true" />
-          Finalizar
+          {finishActionLabel}
         </Button>
       </div>
     </section>
@@ -815,20 +948,30 @@ function ExerciseResultSheet({
 function ExerciseStatusList({
   currentExerciseDetails,
   draft,
+  closingExerciseIndex,
   expandedExerciseIndex,
   loadHistoryByExerciseId,
+  onExerciseCloseAnimationEnd,
+  onExerciseOpenAligned,
+  onScheduleExerciseOpenAlignment,
+  openingExerciseIndex,
   onSelectExercise,
 }: {
   currentExerciseDetails: ReactNode;
   draft: WorkoutSessionDraft;
+  closingExerciseIndex: number | null;
   expandedExerciseIndex: number | null;
   loadHistoryByExerciseId: Map<string, ExerciseLoadHistoryRecord>;
+  onExerciseCloseAnimationEnd: (exerciseIndex: number) => void;
+  onExerciseOpenAligned: (exerciseIndex: number) => void;
+  onScheduleExerciseOpenAlignment: (timeoutId: number) => void;
+  openingExerciseIndex: number | null;
   onSelectExercise: (exerciseIndex: number) => void;
 }) {
   const currentExerciseCardRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    if (expandedExerciseIndex === null) {
+    if (openingExerciseIndex === null || closingExerciseIndex !== null) {
       return;
     }
 
@@ -838,18 +981,37 @@ function ExerciseStatusList({
       return;
     }
 
-    const timeoutId = window.setTimeout(() => {
-      window.requestAnimationFrame(() => {
-        currentExerciseCard.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-          inline: "nearest",
-        });
+    window.requestAnimationFrame(() => {
+      const cardRect = currentExerciseCard.getBoundingClientRect();
+      const detailsInner = currentExerciseCard.querySelector<HTMLElement>(
+        "[data-exercise-card-details-inner]",
+      );
+      const expandedCardHeight =
+        currentExerciseCard.offsetHeight + (detailsInner?.scrollHeight ?? 0);
+      const topInset = Math.max(16, (window.innerHeight - expandedCardHeight) / 2);
+      const cardPageTop = cardRect.top + window.scrollY;
+
+      window.scrollTo({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "auto"
+          : "smooth",
+        top: Math.max(0, cardPageTop - topInset),
       });
-    }, 60);
+    });
+
+    const timeoutId = window.setTimeout(() => {
+      onExerciseOpenAligned(openingExerciseIndex);
+    }, EXERCISE_CARD_TRANSITION_MS);
+
+    onScheduleExerciseOpenAlignment(timeoutId);
 
     return () => window.clearTimeout(timeoutId);
-  }, [expandedExerciseIndex]);
+  }, [
+    closingExerciseIndex,
+    onExerciseOpenAligned,
+    onScheduleExerciseOpenAlignment,
+    openingExerciseIndex,
+  ]);
 
   return (
     <div className="space-y-4">
@@ -865,14 +1027,18 @@ function ExerciseStatusList({
           const exerciseDraft = draft.exercises[index];
           const isExpanded =
             expandedExerciseIndex === index && draft.currentExerciseIndex === index;
+          const isClosing = closingExerciseIndex === index;
+          const isOpening = openingExerciseIndex === index;
           const selectedExerciseIndex =
-            expandedExerciseIndex === null ? null : draft.currentExerciseIndex;
+            expandedExerciseIndex === null && openingExerciseIndex === null
+              ? null
+              : draft.currentExerciseIndex;
           const status = getExerciseStatus(draft, index, selectedExerciseIndex);
           const statusMeta = getExerciseStatusMeta(status);
           const completedSetsCount = exerciseDraft.completedSets.filter(
             (set) => set.completedAt !== null,
           ).length;
-          const loadHistory = isExpanded
+          const loadHistory = isExpanded || isOpening
             ? loadHistoryByExerciseId.get(exercise.exerciseId)
             : undefined;
 
@@ -880,12 +1046,17 @@ function ExerciseStatusList({
             <ExerciseStatusButton
               completedSetsCount={completedSetsCount}
               currentExerciseDetails={currentExerciseDetails}
-              currentExerciseRef={isExpanded ? currentExerciseCardRef : undefined}
+              currentExerciseRef={
+                isExpanded || isOpening ? currentExerciseCardRef : undefined
+              }
               exercise={exercise}
               exerciseIndex={index}
+              isClosing={isClosing}
               isExpanded={isExpanded}
+              isOpening={isOpening}
               key={exercise.id}
               loadHistory={loadHistory}
+              onCloseAnimationEnd={onExerciseCloseAnimationEnd}
               onSelectExercise={onSelectExercise}
               status={status}
               statusMeta={statusMeta}
@@ -961,84 +1132,57 @@ function ExerciseStatusButton({
   currentExerciseRef,
   exercise,
   exerciseIndex,
+  isClosing,
+  isExpanded,
+  isOpening,
+  loadHistory,
+  onCloseAnimationEnd,
+  onSelectExercise,
   status,
   statusMeta,
   totalSets,
-  isExpanded,
-  loadHistory,
-  onSelectExercise,
 }: {
   completedSetsCount: number;
   currentExerciseDetails: ReactNode;
   currentExerciseRef?: Ref<HTMLElement>;
   exercise: WorkoutSessionDraft["routine"]["exercises"][number];
   exerciseIndex: number;
+  isClosing: boolean;
+  isExpanded: boolean;
+  isOpening: boolean;
+  loadHistory: ExerciseLoadHistoryRecord | undefined;
+  onCloseAnimationEnd: (exerciseIndex: number) => void;
+  onSelectExercise: (exerciseIndex: number) => void;
   status: ReturnType<typeof getExerciseStatus>;
   statusMeta: ReturnType<typeof getExerciseStatusMeta>;
   totalSets: number;
-  isExpanded: boolean;
-  loadHistory: ExerciseLoadHistoryRecord | undefined;
-  onSelectExercise: (exerciseIndex: number) => void;
 }) {
-  if (isExpanded) {
-    return (
-      <article
-        aria-current="step"
-        aria-label={`${exercise.name}: ${status}, ${completedSetsCount} de ${totalSets} series concluidas`}
-        className={cn(
-          "exercise-card-open w-full rounded-lg border p-3 text-left shadow-sm transition-colors",
-          statusMeta.itemClassName,
-        )}
-        ref={currentExerciseRef}
-      >
-        <div className="flex items-start gap-3">
-          <span className="min-w-0 flex-1">
-            <button
-              aria-label={`Recolher card de ${exercise.name}`}
-              className="block w-full break-words rounded-sm text-left text-base font-semibold leading-6 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              onClick={() => onSelectExercise(exerciseIndex)}
-              type="button"
-            >
-              {exercise.name}
-            </button>
-          </span>
-          <span
-            className={cn(
-              "shrink-0 rounded-md px-2 py-1 text-xs font-semibold",
-              statusMeta.badgeClassName,
-            )}
-          >
-            {status}
-          </span>
-        </div>
-        <span className="mt-3 flex items-center justify-between gap-3 rounded-md border border-border/70 bg-background/70 px-3 py-2 text-xs">
-          <span className="font-medium text-muted-foreground">
-            Carga anterior
-          </span>
-          <span className="min-w-0 truncate font-semibold text-foreground">
-            {loadHistory
-              ? `${formatLoad(loadHistory.lastLoadKg)} kg x ${loadHistory.lastReps}`
-              : "Sem carga anterior"}
-          </span>
-        </span>
-        {currentExerciseDetails}
-      </article>
-    );
-  }
-
   const previewGuide = getExerciseGuide(exercise);
+  const isDetailsOpen = isExpanded && !isClosing;
+  const shouldRenderDetails = isExpanded || isOpening;
 
   return (
-    <button
+    <article
+      aria-current={isExpanded || isOpening ? "step" : undefined}
       aria-label={`${exercise.name}: ${status}, ${completedSetsCount} de ${totalSets} series concluidas`}
       className={cn(
-        "w-full rounded-lg border p-3 text-left shadow-sm transition-all duration-200 active:scale-[0.99]",
+        "w-full overflow-hidden rounded-lg border p-3 text-left shadow-sm transition-[background-color,border-color,box-shadow,transform] duration-500 ease-[cubic-bezier(0.2,0,0,1)]",
+        isDetailsOpen ? "shadow-md" : "active:scale-[0.99]",
         statusMeta.itemClassName,
       )}
-      onClick={() => onSelectExercise(exerciseIndex)}
-      type="button"
+      ref={currentExerciseRef}
     >
-      <span className="flex items-start gap-3">
+      <button
+        aria-expanded={isExpanded}
+        aria-label={
+          isExpanded
+            ? `Recolher card de ${exercise.name}`
+            : `${exercise.name}: ${status}, ${completedSetsCount} de ${totalSets} series concluidas`
+        }
+        className="flex w-full items-start gap-3 rounded-sm text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        onClick={() => onSelectExercise(exerciseIndex)}
+        type="button"
+      >
         <ExercisePreviewThumb
           fallbackIcon={
             <statusMeta.Icon
@@ -1061,8 +1205,45 @@ function ExerciseStatusButton({
         >
           {status}
         </span>
-      </span>
-    </button>
+      </button>
+
+      <div
+        className={cn(
+          "exercise-card-details",
+          isDetailsOpen ? "exercise-card-details-open" : "",
+        )}
+        onTransitionEnd={(event) => {
+          if (
+            isClosing &&
+            event.currentTarget === event.target &&
+            event.propertyName === "grid-template-rows"
+          ) {
+            onCloseAnimationEnd(exerciseIndex);
+          }
+        }}
+      >
+        <div
+          className="exercise-card-details-inner"
+          data-exercise-card-details-inner
+        >
+          {shouldRenderDetails ? (
+            <div className="pt-3">
+              <span className="flex items-center justify-between gap-3 rounded-md border border-border/70 bg-background/70 px-3 py-2 text-xs">
+                <span className="font-medium text-muted-foreground">
+                  Carga anterior
+                </span>
+                <span className="min-w-0 truncate font-semibold text-foreground">
+                  {loadHistory
+                    ? `${formatLoad(loadHistory.lastLoadKg)} kg x ${loadHistory.lastReps}`
+                    : "Sem carga anterior"}
+                </span>
+              </span>
+              {currentExerciseDetails}
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </article>
   );
 }
 
