@@ -12,7 +12,5 @@ Principais referencias:
 - `arquitetura/identidade-visual-opcoes.md`: temas e identidade visual.
 - `arquitetura/deploy-cloudflare.md`: operacao de deploy PWA.
 - `arquitetura/android.md`: preparacao Android com Capacitor.
-- `arquitetura/privacidade.md`: politica de privacidade local-first e Health Connect.
-- `arquitetura/publicacao-google-play.md`: checklist de publicacao futura Android/Google Play.
 
 Planos temporarios, auditorias e registros de execucao ja concluidos nao devem permanecer em `docs`; quando uma decisao precisar persistir, consolide-a em `arquitetura/`.
