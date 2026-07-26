@@ -227,7 +227,6 @@ export function ActiveExerciseScreen({
           ) : (
             <SetActionPanel
               currentSetNumber={(currentSetIndex ?? 0) + 1}
-              isResting={isRestingCurrentExercise}
               onCompleteNextSet={() => {
                 const nextSet = isRestingCurrentExercise
                   ? restTimer?.nextSetIndex
@@ -366,10 +365,9 @@ function SetProgress({ completedSetsCount, targetReps, totalSets }: { completedS
   );
 }
 
-function SetActionPanel({ currentSetNumber, isResting, onCompleteNextSet }: { currentSetNumber: number; isResting: boolean; onCompleteNextSet: () => void }) {
+function SetActionPanel({ currentSetNumber, onCompleteNextSet }: { currentSetNumber: number; onCompleteNextSet: () => void }) {
   return (
     <div className="mt-4">
-      {isResting ? <p className="mb-2 text-center text-xs font-medium text-md-on-surface-variant">Descanso em andamento no timer flutuante.</p> : null}
       <Button aria-label={`Concluir série ${currentSetNumber}`} className="h-14 w-full gap-3 text-base" onClick={onCompleteNextSet} type="button">
         <Check className="h-5 w-5" aria-hidden="true" />
         Concluir série

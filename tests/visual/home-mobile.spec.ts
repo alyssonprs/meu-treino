@@ -179,6 +179,28 @@ test("active workout separates the routine list, exercise page and global rest t
   await expect(
     page.getByRole("button", { name: /Descanso de Agachamento livre/ }),
   ).toBeVisible();
+  const floatingTimer = page.getByRole("button", {
+    name: /Descanso de Agachamento livre/,
+  });
+  const positionBeforeDrag = await floatingTimer.boundingBox();
+  if (!positionBeforeDrag) {
+    throw new Error("Timer flutuante n\u00e3o encontrado para arrastar.");
+  }
+  await page.mouse.move(
+    positionBeforeDrag.x + positionBeforeDrag.width / 2,
+    positionBeforeDrag.y + positionBeforeDrag.height / 2,
+  );
+  await page.mouse.down();
+  await page.mouse.move(
+    positionBeforeDrag.x + positionBeforeDrag.width / 2 - 80,
+    positionBeforeDrag.y + positionBeforeDrag.height / 2 - 140,
+    { steps: 8 },
+  );
+  await page.mouse.up();
+  const positionAfterDrag = await floatingTimer.boundingBox();
+  expect(positionAfterDrag).not.toBeNull();
+  expect(positionAfterDrag?.x).not.toBe(positionBeforeDrag.x);
+  expect(positionAfterDrag?.y).not.toBe(positionBeforeDrag.y);
   await screenshot(page, "13-descanso-global.png");
 
   await page.getByRole("button", { name: "Voltar para lista de exercícios" }).click();

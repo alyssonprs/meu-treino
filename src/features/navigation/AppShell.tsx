@@ -83,18 +83,7 @@ export function AppShell({
           ))}
         </NavigationBar>
       ) : null}
-      {floatingOverlay ? (
-        <div
-          className={[
-            "pointer-events-none fixed inset-x-0 z-40 mx-auto flex w-full max-w-md justify-end px-4",
-            showBottomNav
-              ? "bottom-[calc(5.5rem+env(safe-area-inset-bottom))]"
-              : "bottom-[calc(5.5rem+env(safe-area-inset-bottom))]",
-          ].join(" ")}
-        >
-          <div className="pointer-events-auto">{floatingOverlay}</div>
-        </div>
-      ) : null}
+      {floatingOverlay}
     </main>
   );
 }
