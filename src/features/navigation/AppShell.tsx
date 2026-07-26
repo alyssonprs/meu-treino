@@ -1,4 +1,4 @@
-import { ArrowLeft, CalendarCheck2, Dumbbell, History, Home, Settings } from "lucide-react";
+import { ArrowLeft, CalendarCheck2, History, Home, Settings } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { ScreenIdentifier } from "@/components/ScreenIdentifier";
@@ -25,13 +25,6 @@ const screenIdentifierByScreen: Record<AppScreen, `UX-${string}`> = {
   home: "UX-0001",
   settings: "UX-0006",
   workout: "UX-0002",
-};
-
-const mainScreenLabels: Record<MainTabScreen, string> = {
-  history: "Historico",
-  home: "Inicio",
-  settings: "Ajustes",
-  workout: "Treino",
 };
 
 const mainScreens: AppScreen[] = ["home", "workout", "history", "settings"];
@@ -75,9 +68,7 @@ export function AppShell({
       >
         {isContextual ? (
           <ContextualAppHeader header={contextualHeader ?? getFallbackContextualHeader(activeScreen)} />
-        ) : (
-          <AppHeader activeScreen={activeScreen as MainTabScreen} />
-        )}
+        ) : null}
         {children}
         <ScreenIdentifier
           compact={isContextual}
@@ -109,24 +100,6 @@ export function AppShell({
       ) : null}
       {floatingOverlay}
     </main>
-  );
-}
-
-function AppHeader({ activeScreen }: { activeScreen: MainTabScreen }) {
-  return (
-    <TopAppBar
-      actions={
-        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-md-primary-container text-md-on-primary-container">
-          <Dumbbell className="h-5 w-5" aria-hidden="true" />
-        </span>
-      }
-      className="-mx-4 mb-2 px-4 pt-[max(0.5rem,env(safe-area-inset-top))]"
-      title={
-        <h1 className="truncate text-title-lg font-medium text-md-on-surface">
-          {mainScreenLabels[activeScreen]}
-        </h1>
-      }
-    />
   );
 }
 
