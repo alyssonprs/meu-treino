@@ -122,14 +122,9 @@ function AppHeader({ activeScreen }: { activeScreen: MainTabScreen }) {
       }
       className="-mx-4 mb-2 px-4 pt-[max(0.5rem,env(safe-area-inset-top))]"
       title={
-        <div>
-          <p className="text-label-lg font-medium text-md-on-surface-variant">
-            Meu Treino
-          </p>
-          <h1 className="truncate text-title-lg font-medium text-md-on-surface">
-            {mainScreenLabels[activeScreen]}
-          </h1>
-        </div>
+        <h1 className="truncate text-title-lg font-medium text-md-on-surface">
+          {mainScreenLabels[activeScreen]}
+        </h1>
       }
     />
   );
