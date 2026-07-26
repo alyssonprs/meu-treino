@@ -63,24 +63,23 @@ export function AppShell({
       <div
         className={[
           "mx-auto flex min-h-screen w-full max-w-md flex-col px-4",
-          getContentBottomPadding({ floatingOverlay: Boolean(floatingOverlay), hasBottomAction, showBottomNav }),
+          getContentBottomPadding({ floatingOverlay: Boolean(floatingOverlay), showBottomNav }),
         ].join(" ")}
       >
         {isContextual ? (
           <ContextualAppHeader header={contextualHeader ?? getFallbackContextualHeader(activeScreen)} />
         ) : null}
         {children}
+        {hasBottomAction ? (
+          <div className="mt-6 pb-2">
+            {bottomAction}
+          </div>
+        ) : null}
         <ScreenIdentifier
           compact={isContextual}
           code={screenIdentifierByScreen[activeScreen]}
         />
       </div>
-
-      {hasBottomAction ? (
-        <div className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-md border-t border-md-outline-variant bg-md-background/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur">
-          {bottomAction}
-        </div>
-      ) : null}
 
       {showBottomNav ? (
         <NavigationBar
@@ -159,19 +158,13 @@ function getFallbackContextualHeader(activeScreen: AppScreen): ContextualHeader 
 
 function getContentBottomPadding({
   floatingOverlay,
-  hasBottomAction,
   showBottomNav,
 }: {
   floatingOverlay: boolean;
-  hasBottomAction: boolean;
   showBottomNav: boolean;
 }) {
   if (showBottomNav) {
     return floatingOverlay ? "pb-44" : "pb-28";
-  }
-
-  if (hasBottomAction) {
-    return floatingOverlay ? "pb-40" : "pb-28";
   }
 
   return floatingOverlay ? "pb-20" : "pb-4";
