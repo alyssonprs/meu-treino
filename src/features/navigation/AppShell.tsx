@@ -59,10 +59,10 @@ export function AppShell({
   const isContextual = !showBottomNav;
 
   return (
-    <main className="min-h-screen bg-md-background text-md-on-background">
+    <main className="min-h-dvh bg-md-background text-md-on-background">
       <div
         className={[
-          "mx-auto flex min-h-screen w-full max-w-md flex-col px-4",
+          "mx-auto flex min-h-dvh w-full max-w-md flex-col px-4",
           getContentBottomPadding({ floatingOverlay: Boolean(floatingOverlay), hasBottomAction, showBottomNav }),
         ].join(" ")}
       >
@@ -71,7 +71,6 @@ export function AppShell({
         ) : null}
         {children}
         <ScreenIdentifier
-          compact={isContextual}
           code={screenIdentifierByScreen[activeScreen]}
         />
       </div>

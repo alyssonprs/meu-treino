@@ -121,8 +121,32 @@ export function App() {
     useState(false);
   const [showFinishWorkoutConfirmation, setShowFinishWorkoutConfirmation] =
     useState(false);
+
+  useEffect(() => {
+    const previousScrollRestoration = window.history.scrollRestoration;
+
+    // Each screen is its own destination in the app. Letting the browser restore
+    // a previous position for a hash entry can otherwise open a different screen
+    // halfway down its content.
+    window.history.scrollRestoration = "manual";
+
+    return () => {
+      window.history.scrollRestoration = previousScrollRestoration;
+    };
+  }, []);
+
   useLayoutEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    const scrollToScreenStart = () => {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    };
+
+    scrollToScreenStart();
+
+    // A second reset after the new screen has been painted covers mobile WebViews
+    // that apply their history scroll position after React commits the route.
+    const frameId = window.requestAnimationFrame(scrollToScreenStart);
+
+    return () => window.cancelAnimationFrame(frameId);
   }, [activeScreen]);
 
   useEffect(() => {
