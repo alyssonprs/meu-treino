@@ -30,9 +30,9 @@ const NavigationBarItem = React.forwardRef<
   <button
     aria-current={active ? "page" : undefined}
     className={cn(
-      "flex min-h-16 min-w-16 flex-1 flex-col items-center justify-center gap-1 rounded-lg px-1 text-label-md font-medium text-md-on-surface-variant transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-[var(--md-sys-state-disabled-opacity)]",
+      "flex min-h-16 min-w-16 flex-1 flex-col items-center justify-center gap-1 rounded-2xl px-1 text-label-md font-medium text-md-on-surface-variant transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-[var(--md-sys-state-disabled-opacity)]",
       "hover:bg-md-on-surface/[var(--md-sys-state-hover-opacity)]",
-      active && "text-md-on-secondary-container",
+      active && "bg-md-surface-container-high text-md-on-surface",
       className,
     )}
     ref={ref}

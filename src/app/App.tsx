@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Check, Square } from "lucide-react";
 import { HomeScreen } from "@/features/home/HomeScreen";
 import { ConfirmationDialog } from "@/components/ConfirmationDialog";
@@ -121,16 +121,9 @@ export function App() {
     useState(false);
   const [showFinishWorkoutConfirmation, setShowFinishWorkoutConfirmation] =
     useState(false);
-  const activeScreenRef = useRef(activeScreen);
-  const importOriginRef = useRef(importOrigin);
-
-  useEffect(() => {
-    activeScreenRef.current = activeScreen;
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [activeScreen]);
-
-  useEffect(() => {
-    importOriginRef.current = importOrigin;
-  }, [importOrigin]);
 
   useEffect(() => {
     let isMounted = true;
@@ -161,6 +154,10 @@ export function App() {
   }, []);
 
   useEffect(() => {
+    if (!getScreenFromHash()) {
+      window.history.replaceState({ screen: "home" }, "", mainTabHashByScreen.home);
+    }
+
     function handleHashChange() {
       const nextScreen = getMainTabScreenFromHash();
 
@@ -173,46 +170,21 @@ export function App() {
     }
 
     function handlePopState() {
-      const currentScreen = activeScreenRef.current;
+      const destination = getScreenFromHash();
 
-      function goToMainTab(screen: MainTabScreen) {
-        setActiveScreen(screen);
+      if (destination) {
+        setActiveScreen(destination);
         setSelectedHistoryExerciseDetails(null);
         setWorkoutMessage(null);
         setWorkoutCompletion(null);
-
-        if (window.location.hash !== mainTabHashByScreen[screen]) {
-          window.history.replaceState(null, "", mainTabHashByScreen[screen]);
+        if (destination === "import-preview" || destination === "import-error") {
+          setImportStatus(idleImportStatus);
         }
-      }
-
-      if (currentScreen === "active-exercise") {
-        setActiveScreen("active-workout");
         return;
       }
 
-      if (currentScreen === "active-workout") {
-        goToMainTab("workout");
-        return;
-      }
-
-      if (currentScreen === "history-detail") {
-        goToMainTab("history");
-        return;
-      }
-
-      if (currentScreen === "import-preview" || currentScreen === "import-error") {
-        setImportStatus(idleImportStatus);
-        goToMainTab(importOriginRef.current);
-        return;
-      }
-
-      if (currentScreen === "workout-finished") {
-        goToMainTab("home");
-        return;
-      }
-
-      handleHashChange();
+      setActiveScreen("home");
+      window.history.replaceState({ screen: "home" }, "", mainTabHashByScreen.home);
     }
 
     window.addEventListener("hashchange", handleHashChange);
@@ -350,33 +322,13 @@ export function App() {
   }
 
   function navigateBackFromContext() {
-    const currentScreen = activeScreenRef.current;
-
-    if (currentScreen === "active-exercise") {
-      setActiveScreen("active-workout");
+    if (getScreenFromHash() && window.history.length > 1) {
+      window.history.back();
       return;
     }
 
-    if (currentScreen === "active-workout") {
-      navigateToMainTab("workout");
-      return;
-    }
-
-    if (currentScreen === "history-detail") {
-      setSelectedHistoryExerciseDetails(null);
-      navigateToMainTab("history");
-      return;
-    }
-
-    if (currentScreen === "import-preview" || currentScreen === "import-error") {
-      handleCancelImport();
-      return;
-    }
-
-    if (currentScreen === "workout-finished") {
-      navigateToMainTab("home");
-      return;
-    }
+    setActiveScreen("home");
+    window.history.replaceState({ screen: "home" }, "", mainTabHashByScreen.home);
   }
 
   function requestImportFile(origin: MainTabScreen) {
@@ -864,7 +816,7 @@ export function App() {
         getCompletedWorkoutExerciseCount(activeWorkout) < activeWorkout.exercises.length;
 
       return (
-        <Button className="h-14 w-full gap-2 text-title-sm" onClick={requestFinishWorkout} type="button">
+        <Button className="h-14 w-full gap-2 font-semibold leading-5 text-md-on-primary" onClick={requestFinishWorkout} type="button" variant="filled">
           <Square className="h-5 w-5" aria-hidden="true" />
           {hasIncompleteExercises ? "Finalizar treino" : "Finalizar rotina"}
         </Button>
@@ -894,7 +846,7 @@ export function App() {
       return (
         <Button
           aria-label={`Concluir série ${nextSetIndex + 1}`}
-          className="h-14 w-full gap-3 text-title-sm"
+          className="h-14 w-full gap-3 font-semibold leading-5 text-md-on-primary"
           onClick={() => markWorkoutSetCompleted({ exerciseIndex, setIndex: nextSetIndex })}
           type="button"
         >
@@ -1185,6 +1137,25 @@ function getContextualHash(screen: AppScreen) {
   };
 
   return hashByScreen[screen] ?? window.location.hash;
+}
+
+function getScreenFromHash(): AppScreen | null {
+  const mainScreen = getMainTabScreenFromHash();
+
+  if (mainScreen) {
+    return mainScreen;
+  }
+
+  const contextualScreenByHash: Record<string, AppScreen> = {
+    "#/treino/exercicio": "active-exercise",
+    "#/treino/ativo": "active-workout",
+    "#/historico/exercicio": "history-detail",
+    "#/importar/erro": "import-error",
+    "#/importar/preview": "import-preview",
+    "#/treino/concluido": "workout-finished",
+  };
+
+  return contextualScreenByHash[window.location.hash] ?? null;
 }
 
 function getCompletedWorkoutExerciseCount(workout: WorkoutSessionDraft) {
