@@ -9,7 +9,7 @@ Use para decisoes duraveis de produto, arquitetura, identidade, distribuicao PWA
 Principais referencias:
 
 - `arquitetura/arquitetura-prompt.md`: fonte canonica de produto e arquitetura.
-- `arquitetura/identidade-visual-opcoes.md`: temas e identidade visual.
+- `arquitetura/identidade-visual.md`: temas e identidade visual.
 - `arquitetura/deploy-cloudflare.md`: operacao de deploy PWA.
 - `arquitetura/android.md`: preparacao Android com Capacitor.
 
