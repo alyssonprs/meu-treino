@@ -15,12 +15,14 @@ const mainNavItems: NavItemDefinition[] = [
 
 const screensWithoutBottomNav: AppScreen[] = [
   "active-workout",
+  "active-exercise",
   "workout-finished",
   "import-preview",
   "import-error",
 ];
 
 const screenIdentifierByScreen: Record<AppScreen, `UX-${string}`> = {
+  "active-exercise": "UX-0009",
   "active-workout": "UX-0003",
   "import-error": "UX-0008",
   "import-preview": "UX-0007",
@@ -34,12 +36,14 @@ const screenIdentifierByScreen: Record<AppScreen, `UX-${string}`> = {
 type AppShellProps = {
   activeScreen: AppScreen;
   children: ReactNode;
+  floatingOverlay?: ReactNode;
   onNavigate: (screen: MainTabScreen) => void;
 };
 
 export function AppShell({
   activeScreen,
   children,
+  floatingOverlay,
   onNavigate,
 }: AppShellProps) {
   const showBottomNav = !screensWithoutBottomNav.includes(activeScreen);
@@ -49,10 +53,16 @@ export function AppShell({
       <div
         className={[
           "mx-auto flex min-h-screen w-full max-w-md flex-col px-4",
-          showBottomNav ? "pb-28" : "pb-6",
+          showBottomNav
+            ? floatingOverlay
+              ? "pb-44"
+              : "pb-28"
+            : floatingOverlay
+              ? "pb-32"
+              : "pb-6",
         ].join(" ")}
       >
-        {activeScreen === "active-workout" ? null : <AppHeader />}
+        {screensWithoutBottomNav.includes(activeScreen) ? null : <AppHeader />}
         {children}
         <ScreenIdentifier code={screenIdentifierByScreen[activeScreen]} />
       </div>
@@ -72,6 +82,18 @@ export function AppShell({
             />
           ))}
         </NavigationBar>
+      ) : null}
+      {floatingOverlay ? (
+        <div
+          className={[
+            "pointer-events-none fixed inset-x-0 z-40 mx-auto flex w-full max-w-md justify-end px-4",
+            showBottomNav
+              ? "bottom-[calc(5.5rem+env(safe-area-inset-bottom))]"
+              : "bottom-[calc(5.5rem+env(safe-area-inset-bottom))]",
+          ].join(" ")}
+        >
+          <div className="pointer-events-auto">{floatingOverlay}</div>
+        </div>
       ) : null}
     </main>
   );

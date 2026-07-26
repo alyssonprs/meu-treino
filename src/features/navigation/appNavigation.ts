@@ -8,6 +8,7 @@ export type AppScreen =
   | "import-preview"
   | "import-error"
   | "active-workout"
+  | "active-exercise"
   | "workout-finished";
 
 export type MainTabScreen = Extract<

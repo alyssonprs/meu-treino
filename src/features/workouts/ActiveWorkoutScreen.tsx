@@ -1,426 +1,32 @@
-import {
-  useEffect,
-  useRef,
-  useState,
-  type KeyboardEvent,
-  type ReactNode,
-  type Ref,
-} from "react";
-import {
-  ArrowLeft,
-  Check,
-  Circle,
-  CircleDot,
-  Minus,
-  Plus,
-  Save,
-  Square,
-} from "lucide-react";
+import { ArrowLeft, Check, ChevronRight, Circle, CircleDot, Square } from "lucide-react";
+import { useState, type ReactNode } from "react";
 import { ModalDialog } from "@/components/ModalDialog";
 import { Notice } from "@/components/Notice";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { cn } from "@/components/ui/utils";
-import {
-  getNextPendingSetIndex,
-  type WorkoutSessionDraft,
-  type WorkoutSetDraft,
-} from "@/services/workoutSessionService";
-import type { ExerciseLoadHistoryRecord } from "@/storage/workoutPlanRepository";
-import {
-  playRestCountdownFeedback,
-  playRestFinishedFeedback,
-  prepareRestTimerFeedback,
-} from "@/platform/restTimerFeedback";
+import type { WorkoutSessionDraft } from "@/services/workoutSessionService";
 import { getExerciseGuide, type ExerciseGuide } from "./exerciseGuides";
-import { formatLoad, formatTimer } from "./workoutFormatters";
-
-type EditableResultField = keyof Pick<
-  WorkoutSetDraft,
-  "loadKg" | "reps" | "rir" | "notes"
->;
 
 type ActiveWorkoutScreenProps = {
   draft: WorkoutSessionDraft;
-  loadHistoryByExerciseId: Map<string, ExerciseLoadHistoryRecord>;
   message: string | null;
   onBackToDetail: () => void;
   onFinish: () => void;
-  onMarkSetCompleted: (input: {
-    exerciseIndex: number;
-    setIndex: number;
-  }) => void;
-  onSaveExerciseResult: (input: {
-    exerciseIndex: number;
-    values: Pick<WorkoutSetDraft, "loadKg" | "reps" | "rir" | "notes">;
-  }) => void;
-  onSelectExercise: (exerciseIndex: number) => void;
-  onUpdateExerciseResult: (input: {
-    exerciseIndex: number;
-    field: EditableResultField;
-    value: string;
-  }) => void;
+  onOpenExercise: (exerciseIndex: number) => void;
 };
-
-type RestState = {
-  id: number;
-  remainingSeconds: number;
-  nextSetIndex: number;
-  nextSetNumber: number;
-};
-
-const EXERCISE_CARD_TRANSITION_MS = 500;
 
 export function ActiveWorkoutScreen({
   draft,
-  loadHistoryByExerciseId,
   message,
   onBackToDetail,
   onFinish,
-  onMarkSetCompleted,
-  onSaveExerciseResult,
-  onSelectExercise,
-  onUpdateExerciseResult,
+  onOpenExercise,
 }: ActiveWorkoutScreenProps) {
-  const [restState, setRestState] = useState<RestState | null>(null);
-  const nextRestIdRef = useRef(0);
-  const lastRestFeedbackKeyRef = useRef<string | null>(null);
-  const [expandedExerciseIndex, setExpandedExerciseIndex] = useState<
-    number | null
-  >(draft.currentExerciseIndex);
-  const [openingExerciseIndex, setOpeningExerciseIndex] = useState<
-    number | null
-  >(null);
-  const openingExerciseIndexRef = useRef<number | null>(null);
-  const openAlignmentTimeoutRef = useRef<number | null>(null);
-  const [closingExerciseIndex, setClosingExerciseIndex] = useState<
-    number | null
-  >(null);
-  const closingExerciseIndexRef = useRef<number | null>(null);
-  const closeAnimationTimeoutRef = useRef<number | null>(null);
-  const pendingCloseActionRef = useRef<(() => void) | null>(null);
-  const [isResultSheetOpen, setIsResultSheetOpen] = useState(false);
   const [showFinishConfirmation, setShowFinishConfirmation] = useState(false);
-  const currentExerciseIndex = draft.currentExerciseIndex;
-  const currentExercise = draft.routine.exercises[currentExerciseIndex];
-  const currentExerciseDraft = draft.exercises[currentExerciseIndex];
-  const currentSetIndex = getNextPendingSetIndex(draft, currentExerciseIndex);
-  const completedSetsCount =
-    currentExerciseDraft?.completedSets.filter((set) => set.completedAt !== null)
-      .length ?? 0;
-  const registeredExercises = draft.exercises.filter(
+  const completedExercises = draft.exercises.filter(
     (exercise) => exercise.result.completedAt !== null,
   ).length;
-  const hasIncompleteExercises = registeredExercises < draft.exercises.length;
-  const finishActionLabel = hasIncompleteExercises
-    ? "Finalizar"
-    : "Finalizar rotina";
-  const nextExerciseIndex = getNextExerciseIndex(draft, currentExerciseIndex);
-  const isCurrentExerciseRegistered =
-    currentExerciseDraft?.result.completedAt !== null;
-  const areAllSetsCompleted =
-    currentExerciseDraft !== undefined && currentSetIndex === null;
-  const exerciseGuide = currentExercise
-    ? getExerciseGuide(currentExercise)
-    : null;
-
-  const [resultValues, setResultValues] = useState<
-    Pick<WorkoutSetDraft, "loadKg" | "reps" | "rir" | "notes">
-  >({
-    loadKg: currentExerciseDraft?.result.loadKg ?? "",
-    reps: currentExerciseDraft?.result.reps ?? "",
-    rir: currentExerciseDraft?.result.rir ?? "",
-    notes: currentExerciseDraft?.result.notes ?? "",
-  });
-
-  useEffect(() => {
-    if (openingExerciseIndexRef.current !== null) {
-      return;
-    }
-
-    setExpandedExerciseIndex(draft.currentExerciseIndex);
-  }, [draft.currentExerciseIndex, draft.routine.id]);
-
-  useEffect(() => {
-    return () => {
-      if (openAlignmentTimeoutRef.current !== null) {
-        window.clearTimeout(openAlignmentTimeoutRef.current);
-      }
-
-      if (closeAnimationTimeoutRef.current !== null) {
-        window.clearTimeout(closeAnimationTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    setRestState(null);
-    setIsResultSheetOpen(false);
-    setShowFinishConfirmation(false);
-  }, [currentExerciseIndex]);
-
-  useEffect(() => {
-    setResultValues({
-      loadKg: currentExerciseDraft?.result.loadKg ?? "",
-      reps: currentExerciseDraft?.result.reps ?? "",
-      rir: currentExerciseDraft?.result.rir ?? "",
-      notes: currentExerciseDraft?.result.notes ?? "",
-    });
-  }, [
-    currentExerciseDraft?.result.loadKg,
-    currentExerciseDraft?.result.notes,
-    currentExerciseDraft?.result.reps,
-    currentExerciseDraft?.result.rir,
-  ]);
-
-  useEffect(() => {
-    if (!restState || restState.remainingSeconds <= 0) {
-      return;
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      setRestState((current) =>
-        current
-          ? {
-              ...current,
-              remainingSeconds: Math.max(0, current.remainingSeconds - 1),
-            }
-          : current,
-      );
-    }, 1000);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [restState]);
-
-  useEffect(() => {
-    if (!restState || restState.remainingSeconds > 3) {
-      return;
-    }
-
-    const feedbackKey = `${restState.id}:${restState.remainingSeconds}`;
-
-    if (lastRestFeedbackKeyRef.current === feedbackKey) {
-      return;
-    }
-
-    lastRestFeedbackKeyRef.current = feedbackKey;
-
-    if (restState.remainingSeconds === 0) {
-      playRestFinishedFeedback();
-      return;
-    }
-
-    playRestCountdownFeedback(restState.remainingSeconds);
-  }, [restState]);
-
-  if (!currentExercise || !currentExerciseDraft) {
-    return (
-      <>
-        <Card className="mt-6" padding="lg" variant="outlined">
-          <h2 className="text-xl font-semibold">Treino indisponível</h2>
-          <Button className="mt-4 w-full" onClick={onBackToDetail} type="button">
-            Voltar para lista
-          </Button>
-        </Card>
-      </>
-    );
-  }
-
-  const canSaveResult =
-    areAllSetsCompleted &&
-    !isCurrentExerciseRegistered &&
-    resultValues.loadKg.trim() !== "" &&
-    resultValues.reps.trim() !== "";
-
-  function updateResultValue(field: EditableResultField, value: string) {
-    setResultValues((current) => ({ ...current, [field]: value }));
-    onUpdateExerciseResult({
-      exerciseIndex: currentExerciseIndex,
-      field,
-      value,
-    });
-  }
-
-  function incrementField(field: "loadKg" | "reps", amount: number) {
-    const currentValue = Number(resultValues[field].replace(",", ".") || "0");
-    const nextValue = Math.max(0, currentValue + amount);
-    const formattedValue =
-      field === "loadKg" && !Number.isInteger(nextValue)
-        ? nextValue.toFixed(1)
-        : String(nextValue);
-
-    updateResultValue(field, formattedValue);
-  }
-
-  function markSetCompleted(setIndex: number) {
-    if (
-      setIndex < 0 ||
-      setIndex >= currentExerciseDraft.completedSets.length ||
-      currentExerciseDraft.completedSets[setIndex]?.completedAt !== null
-    ) {
-      return;
-    }
-
-    onMarkSetCompleted({
-      exerciseIndex: currentExerciseIndex,
-      setIndex,
-    });
-
-    const nextSetIndex = setIndex + 1;
-
-    if (nextSetIndex < currentExerciseDraft.completedSets.length) {
-      prepareRestTimerFeedback();
-      setRestState({
-        id: nextRestIdRef.current,
-        remainingSeconds: currentExercise.rest_seconds ?? 90,
-        nextSetIndex,
-        nextSetNumber: nextSetIndex + 1,
-      });
-      nextRestIdRef.current += 1;
-      return;
-    }
-
-    setRestState(null);
-    setIsResultSheetOpen(true);
-  }
-
-  function markCurrentSetCompleted() {
-    if (currentSetIndex === null) {
-      return;
-    }
-
-    markSetCompleted(currentSetIndex);
-  }
-
-  function selectExercise(exerciseIndex: number) {
-    if (
-      openingExerciseIndexRef.current !== null ||
-      closingExerciseIndexRef.current !== null
-    ) {
-      return;
-    }
-
-    if (expandedExerciseIndex === exerciseIndex) {
-      closeCurrentExerciseCard();
-      return;
-    }
-
-    if (expandedExerciseIndex !== null) {
-      closeExerciseCard(() => {
-        openExerciseCard(exerciseIndex);
-      });
-      return;
-    }
-
-    openExerciseCard(exerciseIndex);
-  }
-
-  function openExerciseCard(exerciseIndex: number) {
-    openingExerciseIndexRef.current = exerciseIndex;
-    setOpeningExerciseIndex(exerciseIndex);
-    onSelectExercise(exerciseIndex);
-  }
-
-  function completeExerciseCardOpen(exerciseIndex: number) {
-    if (openingExerciseIndexRef.current !== exerciseIndex) {
-      return;
-    }
-
-    if (openAlignmentTimeoutRef.current !== null) {
-      window.clearTimeout(openAlignmentTimeoutRef.current);
-      openAlignmentTimeoutRef.current = null;
-    }
-
-    openingExerciseIndexRef.current = null;
-    setOpeningExerciseIndex(null);
-    setExpandedExerciseIndex(exerciseIndex);
-  }
-
-  function closeCurrentExerciseCard() {
-    closeExerciseCard();
-  }
-
-  function closeExerciseCard(afterClose?: () => void) {
-    const exerciseIndexToClose = expandedExerciseIndex;
-
-    if (exerciseIndexToClose === null) {
-      afterClose?.();
-      return;
-    }
-
-    if (openAlignmentTimeoutRef.current !== null) {
-      window.clearTimeout(openAlignmentTimeoutRef.current);
-      openAlignmentTimeoutRef.current = null;
-    }
-
-    openingExerciseIndexRef.current = null;
-    setOpeningExerciseIndex(null);
-    pendingCloseActionRef.current = afterClose ?? null;
-    closingExerciseIndexRef.current = exerciseIndexToClose;
-    setClosingExerciseIndex(exerciseIndexToClose);
-    setIsResultSheetOpen(false);
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      completeExerciseCardClose(exerciseIndexToClose);
-      return;
-    }
-
-    if (closeAnimationTimeoutRef.current !== null) {
-      window.clearTimeout(closeAnimationTimeoutRef.current);
-    }
-
-    closeAnimationTimeoutRef.current = window.setTimeout(() => {
-      completeExerciseCardClose(exerciseIndexToClose);
-    }, EXERCISE_CARD_TRANSITION_MS);
-  }
-
-  function completeExerciseCardClose(exerciseIndex: number) {
-    if (closingExerciseIndexRef.current !== exerciseIndex) {
-      return;
-    }
-
-    if (closeAnimationTimeoutRef.current !== null) {
-      window.clearTimeout(closeAnimationTimeoutRef.current);
-      closeAnimationTimeoutRef.current = null;
-    }
-
-    closingExerciseIndexRef.current = null;
-    setClosingExerciseIndex(null);
-    setExpandedExerciseIndex((current) =>
-      current === exerciseIndex ? null : current,
-    );
-
-    const pendingAction = pendingCloseActionRef.current;
-    pendingCloseActionRef.current = null;
-    pendingAction?.();
-  }
-
-  function saveCurrentExerciseResult() {
-    if (!canSaveResult) {
-      return;
-    }
-
-    const exerciseIndexToSave = currentExerciseIndex;
-    const nextExerciseIndexToSelect = nextExerciseIndex;
-    const valuesToSave = {
-      ...resultValues,
-      rir: "",
-    };
-
-    setRestState(null);
-    setIsResultSheetOpen(false);
-
-    closeExerciseCard(() => {
-      onSaveExerciseResult({
-        exerciseIndex: exerciseIndexToSave,
-        values: valuesToSave,
-      });
-
-      if (nextExerciseIndexToSelect !== null) {
-        openExerciseCard(nextExerciseIndexToSelect);
-      }
-    });
-  }
+  const hasIncompleteExercises = completedExercises < draft.exercises.length;
 
   function requestFinishWorkout() {
     if (!hasIncompleteExercises) {
@@ -431,51 +37,11 @@ export function ActiveWorkoutScreen({
     setShowFinishConfirmation(true);
   }
 
-  const currentExerciseDetails = (
-    <div className="mt-4 space-y-4">
-      {exerciseGuide ? (
-        <ExerciseGuidePanel guide={exerciseGuide} />
-      ) : null}
-
-      <div className="rounded-md bg-md-surface-container-high p-3">
-        <SetProgress
-          completedSetsCount={completedSetsCount}
-          targetReps={currentExercise.target_reps}
-          totalSets={currentExerciseDraft.completedSets.length}
-        />
-
-        {restState ? (
-          <SetActionPanel
-            restState={restState}
-            onCompleteNextSet={() => markSetCompleted(restState.nextSetIndex)}
-          />
-        ) : isCurrentExerciseRegistered && nextExerciseIndex === null ? (
-          <Button
-            className="mt-4 h-14 w-full text-base"
-            onClick={requestFinishWorkout}
-            type="button"
-          >
-            Finalizar rotina
-          </Button>
-        ) : isCurrentExerciseRegistered ? null : areAllSetsCompleted ? (
-          <ExerciseResultPrompt
-            onOpen={() => setIsResultSheetOpen(true)}
-          />
-        ) : (
-          <SetActionPanel
-            currentSetNumber={(currentSetIndex ?? 0) + 1}
-            onCompleteNextSet={markCurrentSetCompleted}
-          />
-        )}
-      </div>
-    </div>
-  );
-
   return (
-    <section className="min-h-screen space-y-4 pt-2">
+    <section className="min-h-screen pb-28 pt-2">
       <header className="flex items-center justify-between gap-2">
         <Button
-          aria-label="Voltar para lista de exercícios"
+          aria-label="Voltar para lista de rotinas"
           className="h-11 w-11 shrink-0 p-0"
           onClick={onBackToDetail}
           type="button"
@@ -484,67 +50,86 @@ export function ActiveWorkoutScreen({
           <ArrowLeft className="h-5 w-5" aria-hidden="true" />
         </Button>
         <div className="min-w-0 flex-1 text-center">
-          <p className="text-xs font-medium text-md-on-surface-variant">
+          <p className="truncate text-xs font-medium text-md-on-surface-variant">
             {draft.routine.name}
           </p>
           <h2 className="truncate text-lg font-semibold">Treino em andamento</h2>
         </div>
-        <span className="shrink-0 rounded-md bg-md-surface-container-high px-2 py-1 text-xs font-medium">
-          {registeredExercises}/{draft.exercises.length}
+        <span className="shrink-0 rounded-full bg-md-surface-container-high px-3 py-2 text-xs font-semibold tabular-nums">
+          {completedExercises}/{draft.exercises.length}
         </span>
       </header>
 
-      {message ? (
-        <Notice tone="danger">
-          {message}
-        </Notice>
-      ) : null}
+      {message ? <Notice className="mt-4" tone="danger">{message}</Notice> : null}
 
-      <ExerciseStatusList
-        currentExerciseDetails={currentExerciseDetails}
-        draft={draft}
-        closingExerciseIndex={closingExerciseIndex}
-        expandedExerciseIndex={expandedExerciseIndex}
-        loadHistoryByExerciseId={loadHistoryByExerciseId}
-        onExerciseCloseAnimationEnd={completeExerciseCardClose}
-        onExerciseOpenAligned={completeExerciseCardOpen}
-        onScheduleExerciseOpenAlignment={(timeoutId) => {
-          openAlignmentTimeoutRef.current = timeoutId;
-        }}
-        openingExerciseIndex={openingExerciseIndex}
-        onSelectExercise={selectExercise}
-      />
+      <div className="mt-6 space-y-5">
+        <RoutineStepList label="Aquecimento" steps={draft.routine.warmup} tone="warmup" />
 
-      <ExerciseResultSheet
-        canSaveResult={canSaveResult}
-        isOpen={
-          isResultSheetOpen &&
-          areAllSetsCompleted &&
-          !isCurrentExerciseRegistered
-        }
-        resultValues={resultValues}
-        onClose={() => setIsResultSheetOpen(false)}
-        onDecrementLoad={() => incrementField("loadKg", -2.5)}
-        onDecrementReps={() => incrementField("reps", -1)}
-        onIncrementLoad={() => incrementField("loadKg", 2.5)}
-        onIncrementReps={() => incrementField("reps", 1)}
-        onSave={saveCurrentExerciseResult}
-        onUpdateResultValue={updateResultValue}
-      />
+        <section aria-labelledby="routine-exercises-heading">
+          <RoutineSectionLabel id="routine-exercises-heading">
+            Exercícios da rotina
+          </RoutineSectionLabel>
+          <div className="mt-2 overflow-hidden rounded-xl border border-md-outline-variant bg-md-surface-container">
+            {draft.routine.exercises.map((exercise, exerciseIndex) => {
+              const exerciseDraft = draft.exercises[exerciseIndex];
+              const status = getExerciseStatus(draft, exerciseIndex);
+              const statusMeta = getExerciseStatusMeta(status);
+              const isCurrent = draft.currentExerciseIndex === exerciseIndex;
+
+              return (
+                <button
+                  aria-current={isCurrent ? "step" : undefined}
+                  aria-label={`${exercise.name}: ${status}, ${exerciseDraft.completedSets.filter((set) => set.completedAt !== null).length} de ${exerciseDraft.completedSets.length} séries concluídas`}
+                  className={cn(
+                    "relative flex min-h-[5.5rem] w-full items-center gap-3 px-3 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
+                    exerciseIndex > 0 && "border-t border-md-outline-variant",
+                    isCurrent && "bg-md-secondary-container/40",
+                    "active:bg-md-on-surface/[var(--md-sys-state-pressed-opacity)]",
+                  )}
+                  key={exercise.id}
+                  onClick={() => onOpenExercise(exerciseIndex)}
+                  type="button"
+                >
+                  {isCurrent ? (
+                    <span className="absolute inset-y-3 left-0 w-1 rounded-r-full bg-md-primary" aria-hidden="true" />
+                  ) : null}
+                  <ExercisePreviewThumb fallbackIcon={<statusMeta.Icon className={cn("h-5 w-5", statusMeta.iconClassName)} aria-hidden="true" />} guide={getExerciseGuide(exercise)} />
+                  <span className="min-w-0 flex-1">
+                    <span className="block break-words text-base font-semibold leading-5 text-md-on-surface">
+                      {exercise.name}
+                    </span>
+                    <span className="mt-1 block text-sm text-md-on-surface-variant">
+                      {exercise.sets} séries · {exercise.target_reps} reps
+                    </span>
+                    <span className={cn("mt-1 block text-xs font-semibold", statusMeta.textClassName)}>
+                      {status}
+                    </span>
+                  </span>
+                  <ChevronRight className="h-5 w-5 shrink-0 text-md-on-surface-variant" aria-hidden="true" />
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        <RoutineStepList label="Cooldown" steps={draft.routine.cooldown} tone="cooldown" />
+      </div>
+
+      <div className="sticky bottom-3 z-10 -mx-1 mt-6 bg-md-background/95 px-1 pt-3 backdrop-blur">
+        <Button className="h-14 w-full gap-2 text-base" onClick={requestFinishWorkout} type="button">
+          <Square className="h-5 w-5" aria-hidden="true" />
+          {hasIncompleteExercises ? "Finalizar treino" : "Finalizar rotina"}
+        </Button>
+      </div>
 
       <ModalDialog
-        description="Ainda há exercícios sem registro. Finalize mesmo assim somente se o treino acabou por hoje."
+        description="Ainda há exercícios sem registro. Finalize somente se o treino acabou por hoje."
         isOpen={showFinishConfirmation}
         onClose={() => setShowFinishConfirmation(false)}
         title="Finalizar treino incompleto?"
       >
         <div className="mt-4 grid grid-cols-2 gap-2">
-          <Button
-            className="h-12"
-            onClick={() => setShowFinishConfirmation(false)}
-            type="button"
-            variant="secondary"
-          >
+          <Button className="h-12" onClick={() => setShowFinishConfirmation(false)} type="button" variant="secondary">
             Continuar
           </Button>
           <Button className="h-12" onClick={onFinish} type="button">
@@ -552,527 +137,13 @@ export function ActiveWorkoutScreen({
           </Button>
         </div>
       </ModalDialog>
-
-      <div className="grid grid-cols-2 gap-3 pb-2">
-        <Button
-          className="h-12 gap-2"
-          onClick={onBackToDetail}
-          type="button"
-          variant="secondary"
-        >
-          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-          Lista
-        </Button>
-        <Button className="h-12 gap-2" onClick={requestFinishWorkout} type="button">
-          <Square className="h-4 w-4" aria-hidden="true" />
-          {finishActionLabel}
-        </Button>
-      </div>
     </section>
   );
 }
 
-function ExerciseGuidePanel({ guide }: { guide: ExerciseGuide }) {
-  const primaryLabel = guide.primaryMuscles.join(", ");
-  const secondaryLabel = guide.secondaryMuscles.join(", ");
-  const [isAnimationReady, setIsAnimationReady] = useState(false);
-
-  useEffect(() => {
-    setIsAnimationReady(false);
-
-    if (!guide.animationUrl) {
-      return;
-    }
-
-    const animation = new Image();
-    let isCurrent = true;
-
-    animation.onload = () => {
-      if (isCurrent) {
-        setIsAnimationReady(true);
-      }
-    };
-    animation.onerror = () => {
-      if (isCurrent) {
-        setIsAnimationReady(false);
-      }
-    };
-    animation.src = guide.animationUrl;
-
-    return () => {
-      isCurrent = false;
-    };
-  }, [guide.animationUrl, guide.imageUrl]);
-
-  const mediaUrl =
-    isAnimationReady && guide.animationUrl
-      ? guide.animationUrl
-      : guide.imageUrl;
-
+function RoutineSectionLabel({ children, id }: { children: ReactNode; id?: string }) {
   return (
-    <div className="mt-4 rounded-md border border-md-outline-variant bg-md-surface-container-high p-3">
-      <div className="space-y-3">
-        {mediaUrl ? (
-          <div className="overflow-hidden rounded-md border border-md-outline-variant bg-md-surface-container-lowest">
-            <img
-              alt={guide.imageAlt}
-              className="aspect-[16/9] w-full object-contain"
-              height={360}
-              loading="lazy"
-              src={mediaUrl}
-              width={640}
-            />
-          </div>
-        ) : null}
-
-        <div className="flex flex-wrap gap-2">
-          <MuscleBadge label={`Principal: ${primaryLabel}`} tone="primary" />
-          {secondaryLabel ? (
-            <MuscleBadge label={`Ajuda: ${secondaryLabel}`} tone="secondary" />
-          ) : null}
-        </div>
-
-        {guide.executionCues.length > 0 ? (
-          <ul className="space-y-2">
-            {guide.executionCues.map((cue) => (
-              <li
-                className="flex items-start gap-2 text-sm leading-5 text-md-on-surface-variant"
-                key={cue}
-              >
-                <Check
-                  className="mt-0.5 h-4 w-4 shrink-0 text-primary"
-                  aria-hidden="true"
-                />
-                <span>{cue}</span>
-              </li>
-            ))}
-          </ul>
-        ) : null}
-      </div>
-    </div>
-  );
-}
-
-function MuscleBadge({
-  label,
-  tone,
-}: {
-  label: string;
-  tone: "primary" | "secondary";
-}) {
-  return (
-    <span
-      className={cn(
-        "rounded-md border px-2 py-1 text-xs font-semibold",
-        tone === "primary"
-          ? "border-md-primary/40 bg-md-primary/15 text-md-primary"
-          : "border-md-secondary/30 bg-md-secondary-container text-md-on-secondary-container",
-      )}
-    >
-      {label}
-    </span>
-  );
-}
-
-function StepperInput({
-  enterKeyHint,
-  inputRef,
-  label,
-  name,
-  suffix,
-  value,
-  onChange,
-  onDecrement,
-  onEnter,
-  onIncrement,
-}: {
-  enterKeyHint?: "done" | "next";
-  inputRef?: Ref<HTMLInputElement>;
-  label: string;
-  name: string;
-  suffix?: string;
-  value: string;
-  onChange: (value: string) => void;
-  onDecrement: () => void;
-  onEnter?: () => void;
-  onIncrement: () => void;
-}) {
-  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-    if (event.key !== "Enter" || !onEnter) {
-      return;
-    }
-
-    event.preventDefault();
-    onEnter();
-  }
-
-  return (
-    <div className="grid grid-cols-[3.25rem_1fr_3.25rem] items-center gap-3 rounded-lg border border-md-outline-variant bg-md-surface-container-lowest p-3">
-      <Button
-        aria-label={`Diminuir ${label}`}
-        className="h-12 w-12 p-0"
-        onClick={onDecrement}
-        type="button"
-        variant="secondary"
-      >
-        <Minus className="h-5 w-5" aria-hidden="true" />
-      </Button>
-      <label className="min-w-0 text-center">
-        <span className="text-xs font-medium text-md-on-surface-variant">
-          {label}
-        </span>
-        <div className="mt-1 flex items-baseline justify-center gap-1">
-          <input
-            autoComplete="off"
-            className="h-12 w-full min-w-0 rounded-md bg-transparent text-center text-3xl font-semibold tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            enterKeyHint={enterKeyHint}
-            inputMode="decimal"
-            name={name}
-            onChange={(event) => onChange(event.target.value)}
-            onKeyDown={handleKeyDown}
-            ref={inputRef}
-            type="text"
-            value={value}
-          />
-          {suffix ? (
-            <span className="text-sm font-medium text-md-on-surface-variant">
-              {suffix}
-            </span>
-          ) : null}
-        </div>
-      </label>
-      <Button
-        aria-label={`Aumentar ${label}`}
-        className="h-12 w-12 p-0"
-        onClick={onIncrement}
-        type="button"
-        variant="secondary"
-      >
-        <Plus className="h-5 w-5" aria-hidden="true" />
-      </Button>
-    </div>
-  );
-}
-
-function SetProgress({
-  completedSetsCount,
-  targetReps,
-  totalSets,
-}: {
-  completedSetsCount: number;
-  targetReps: string;
-  totalSets: number;
-}) {
-  return (
-    <div>
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className="text-xs font-medium text-md-on-surface-variant">Séries</p>
-          <p className="mt-1 text-sm font-semibold">
-            {completedSetsCount}/{totalSets}
-          </p>
-        </div>
-        <div className="text-right">
-          <p className="text-xs font-medium text-md-on-surface-variant">
-            Movimentos por série
-          </p>
-          <p className="mt-1 text-sm font-semibold">{targetReps}</p>
-        </div>
-      </div>
-      <div
-        className="mt-3 grid gap-2"
-        style={{ gridTemplateColumns: `repeat(${totalSets}, minmax(0, 1fr))` }}
-      >
-        {Array.from({ length: totalSets }, (_, index) => (
-          <span
-            className={
-              index < completedSetsCount
-                ? "h-2 rounded-full bg-md-primary"
-                : "h-2 rounded-full bg-md-outline-variant"
-            }
-            key={index}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function SetActionPanel({
-  currentSetNumber,
-  restState,
-  onCompleteNextSet,
-}: {
-  currentSetNumber?: number;
-  restState?: RestState;
-  onCompleteNextSet: () => void;
-}) {
-  const ariaLabel = restState
-    ? `Concluir série ${restState.nextSetNumber}`
-    : `Concluir série ${currentSetNumber ?? ""}`.trim();
-
-  return (
-    <div className="mt-4">
-      <Button
-        className={cn(
-          "relative h-14 w-full gap-3 px-4 text-base",
-          restState ? "pr-20" : "",
-        )}
-        aria-label={ariaLabel}
-        onClick={onCompleteNextSet}
-        type="button"
-      >
-        <Check className="h-5 w-5" aria-hidden="true" />
-        <span>Concluir série</span>
-        {restState ? (
-          <>
-            <span className="absolute right-3 rounded-md bg-md-on-primary/15 px-2 py-1 text-sm font-semibold tabular-nums">
-              {formatTimer(restState.remainingSeconds)}
-            </span>
-            <span className="sr-only" aria-live="polite">
-              Descanso restante: {formatTimer(restState.remainingSeconds)}
-            </span>
-          </>
-        ) : null}
-      </Button>
-    </div>
-  );
-}
-
-function ExerciseResultPrompt({ onOpen }: { onOpen: () => void }) {
-  return (
-    <div className="mt-4 rounded-lg border border-md-outline-variant bg-md-surface-container-lowest p-3">
-      <div className="flex items-center justify-between gap-3">
-        <div className="min-w-0">
-          <h3 className="text-base font-semibold">Séries concluídas</h3>
-          <p className="mt-1 text-xs leading-5 text-md-on-surface-variant">
-            Registre carga e reps para fechar o exercício.
-          </p>
-        </div>
-        <Button
-          className="h-12 shrink-0 gap-2 px-3"
-          onClick={onOpen}
-          type="button"
-        >
-          <Save className="h-4 w-4" aria-hidden="true" />
-          Registrar
-        </Button>
-      </div>
-    </div>
-  );
-}
-
-function ExerciseResultSheet({
-  canSaveResult,
-  isOpen,
-  resultValues,
-  onClose,
-  onDecrementLoad,
-  onDecrementReps,
-  onIncrementLoad,
-  onIncrementReps,
-  onSave,
-  onUpdateResultValue,
-}: {
-  canSaveResult: boolean;
-  isOpen: boolean;
-  resultValues: Pick<WorkoutSetDraft, "loadKg" | "reps" | "rir" | "notes">;
-  onClose: () => void;
-  onDecrementLoad: () => void;
-  onDecrementReps: () => void;
-  onIncrementLoad: () => void;
-  onIncrementReps: () => void;
-  onSave: () => void;
-  onUpdateResultValue: (field: EditableResultField, value: string) => void;
-}) {
-  const loadInputRef = useRef<HTMLInputElement>(null);
-  const repsInputRef = useRef<HTMLInputElement>(null);
-
-  function saveFromKeyboard() {
-    if (canSaveResult) {
-      onSave();
-    }
-  }
-
-  return (
-    <ModalDialog
-      description="Uma vez por exercício."
-      initialFocusRef={loadInputRef}
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Registrar resultado"
-    >
-      <div className="mt-4 grid gap-3">
-        <StepperInput
-          enterKeyHint="next"
-          inputRef={loadInputRef}
-          label="Carga"
-          name="exercise-load-kg"
-          suffix="kg"
-          value={resultValues.loadKg}
-          onChange={(value) => onUpdateResultValue("loadKg", value)}
-          onDecrement={onDecrementLoad}
-          onEnter={() => repsInputRef.current?.focus()}
-          onIncrement={onIncrementLoad}
-        />
-        <StepperInput
-          enterKeyHint="done"
-          inputRef={repsInputRef}
-          label="Reps"
-          name="exercise-reps"
-          value={resultValues.reps}
-          onChange={(value) => onUpdateResultValue("reps", value)}
-          onDecrement={onDecrementReps}
-          onEnter={saveFromKeyboard}
-          onIncrement={onIncrementReps}
-        />
-      </div>
-      <div className="mt-4 grid grid-cols-2 gap-2">
-        <Button className="h-12" onClick={onClose} type="button" variant="secondary">
-          Fechar
-        </Button>
-        <Button
-          className="h-12 gap-2"
-          disabled={!canSaveResult}
-          onClick={onSave}
-          type="button"
-        >
-          <Save className="h-5 w-5" aria-hidden="true" />
-          Concluir
-        </Button>
-      </div>
-    </ModalDialog>
-  );
-}
-
-function ExerciseStatusList({
-  currentExerciseDetails,
-  draft,
-  closingExerciseIndex,
-  expandedExerciseIndex,
-  loadHistoryByExerciseId,
-  onExerciseCloseAnimationEnd,
-  onExerciseOpenAligned,
-  onScheduleExerciseOpenAlignment,
-  openingExerciseIndex,
-  onSelectExercise,
-}: {
-  currentExerciseDetails: ReactNode;
-  draft: WorkoutSessionDraft;
-  closingExerciseIndex: number | null;
-  expandedExerciseIndex: number | null;
-  loadHistoryByExerciseId: Map<string, ExerciseLoadHistoryRecord>;
-  onExerciseCloseAnimationEnd: (exerciseIndex: number) => void;
-  onExerciseOpenAligned: (exerciseIndex: number) => void;
-  onScheduleExerciseOpenAlignment: (timeoutId: number) => void;
-  openingExerciseIndex: number | null;
-  onSelectExercise: (exerciseIndex: number) => void;
-}) {
-  const currentExerciseCardRef = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    if (openingExerciseIndex === null || closingExerciseIndex !== null) {
-      return;
-    }
-
-    const currentExerciseCard = currentExerciseCardRef.current;
-
-    if (!currentExerciseCard) {
-      return;
-    }
-
-    window.requestAnimationFrame(() => {
-      const cardRect = currentExerciseCard.getBoundingClientRect();
-      const topInset = Math.max(16, (window.innerHeight - cardRect.height) / 2);
-      const cardPageTop = cardRect.top + window.scrollY;
-
-      window.scrollTo({
-        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-          ? "auto"
-          : "smooth",
-        top: Math.max(0, cardPageTop - topInset),
-      });
-    });
-
-    const timeoutId = window.setTimeout(() => {
-      onExerciseOpenAligned(openingExerciseIndex);
-    }, EXERCISE_CARD_TRANSITION_MS);
-
-    onScheduleExerciseOpenAlignment(timeoutId);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [
-    closingExerciseIndex,
-    onExerciseOpenAligned,
-    onScheduleExerciseOpenAlignment,
-    openingExerciseIndex,
-  ]);
-
-  return (
-    <div className="space-y-4">
-      <RoutineStepList
-        label="Aquecimento"
-        steps={draft.routine.warmup}
-        variant="warmup"
-      />
-
-      <div className="space-y-2">
-        <RoutineSectionLabel>Exercícios da rotina</RoutineSectionLabel>
-        {draft.routine.exercises.map((exercise, index) => {
-          const exerciseDraft = draft.exercises[index];
-          const isExpanded =
-            expandedExerciseIndex === index && draft.currentExerciseIndex === index;
-          const isClosing = closingExerciseIndex === index;
-          const isOpening = openingExerciseIndex === index;
-          const selectedExerciseIndex =
-            expandedExerciseIndex === null && openingExerciseIndex === null
-              ? null
-              : draft.currentExerciseIndex;
-          const status = getExerciseStatus(draft, index, selectedExerciseIndex);
-          const statusMeta = getExerciseStatusMeta(status);
-          const completedSetsCount = exerciseDraft.completedSets.filter(
-            (set) => set.completedAt !== null,
-          ).length;
-          const loadHistory = isExpanded || isOpening
-            ? loadHistoryByExerciseId.get(exercise.exerciseId)
-            : undefined;
-
-          return (
-            <ExerciseStatusButton
-              completedSetsCount={completedSetsCount}
-              currentExerciseDetails={currentExerciseDetails}
-              currentExerciseRef={
-                isExpanded || isOpening ? currentExerciseCardRef : undefined
-              }
-              exercise={exercise}
-              exerciseIndex={index}
-              isClosing={isClosing}
-              isExpanded={isExpanded}
-              isOpening={isOpening}
-              key={exercise.id}
-              loadHistory={loadHistory}
-              onCloseAnimationEnd={onExerciseCloseAnimationEnd}
-              onSelectExercise={onSelectExercise}
-              status={status}
-              statusMeta={statusMeta}
-              totalSets={exerciseDraft.completedSets.length}
-            />
-          );
-        })}
-      </div>
-
-      <RoutineStepList
-        label="Cooldown"
-        steps={draft.routine.cooldown}
-        variant="cooldown"
-      />
-    </div>
-  );
-}
-
-function RoutineSectionLabel({ children }: { children: ReactNode }) {
-  return (
-    <p className="px-1 text-xs font-semibold uppercase tracking-wide text-info">
+    <p className="px-1 text-xs font-semibold uppercase tracking-wide text-md-secondary" id={id}>
       {children}
     </p>
   );
@@ -1081,192 +152,49 @@ function RoutineSectionLabel({ children }: { children: ReactNode }) {
 function RoutineStepList({
   label,
   steps,
-  variant,
+  tone,
 }: {
   label: string;
   steps: WorkoutSessionDraft["routine"]["warmup"];
-  variant: "warmup" | "cooldown";
+  tone: "warmup" | "cooldown";
 }) {
   if (steps.length === 0) {
     return null;
   }
 
   return (
-    <div className="space-y-2">
+    <section>
       <RoutineSectionLabel>{label}</RoutineSectionLabel>
-      {steps.map((step) => (
-        <div
-          className={cn(
-            "rounded-md border p-3 text-sm",
-            variant === "warmup"
-              ? "border-warning/40 bg-warning/10"
-              : "border-info/40 bg-info/10",
-          )}
-          key={step.id}
-        >
-          <div className="flex items-start justify-between gap-3">
-            <p className="font-semibold">{step.activity}</p>
-            <span className="shrink-0 rounded-md bg-background px-2 py-1 text-xs font-medium text-muted-foreground">
+      <div className="mt-2 overflow-hidden rounded-xl border border-md-outline-variant bg-md-surface-container-low">
+        {steps.map((step, index) => (
+          <div
+            className={cn(
+              "flex min-h-14 items-center gap-3 px-4 py-3",
+              index > 0 && "border-t border-md-outline-variant",
+              tone === "warmup" ? "text-md-on-surface" : "text-md-on-surface",
+            )}
+            key={step.id}
+          >
+            <span className={cn("h-2 w-2 shrink-0 rounded-full", tone === "warmup" ? "bg-md-tertiary" : "bg-md-secondary")} aria-hidden="true" />
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-semibold">{step.activity}</span>
+              {step.notes ? <span className="mt-0.5 block truncate text-xs text-md-on-surface-variant">{step.notes}</span> : null}
+            </span>
+            <span className="shrink-0 rounded-full bg-md-surface-container-high px-2 py-1 text-xs font-semibold text-md-on-surface-variant">
               {step.duration_minutes} min
             </span>
           </div>
-          {step.notes ? (
-            <p className="mt-2 text-xs leading-5 text-muted-foreground">
-              {step.notes}
-            </p>
-          ) : null}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function ExerciseStatusButton({
-  completedSetsCount,
-  currentExerciseDetails,
-  currentExerciseRef,
-  exercise,
-  exerciseIndex,
-  isClosing,
-  isExpanded,
-  isOpening,
-  loadHistory,
-  onCloseAnimationEnd,
-  onSelectExercise,
-  status,
-  statusMeta,
-  totalSets,
-}: {
-  completedSetsCount: number;
-  currentExerciseDetails: ReactNode;
-  currentExerciseRef?: Ref<HTMLElement>;
-  exercise: WorkoutSessionDraft["routine"]["exercises"][number];
-  exerciseIndex: number;
-  isClosing: boolean;
-  isExpanded: boolean;
-  isOpening: boolean;
-  loadHistory: ExerciseLoadHistoryRecord | undefined;
-  onCloseAnimationEnd: (exerciseIndex: number) => void;
-  onSelectExercise: (exerciseIndex: number) => void;
-  status: ReturnType<typeof getExerciseStatus>;
-  statusMeta: ReturnType<typeof getExerciseStatusMeta>;
-  totalSets: number;
-}) {
-  const previewGuide = getExerciseGuide(exercise);
-  const isDetailsOpen = isExpanded && !isClosing;
-  const shouldRenderDetails = isExpanded || isOpening;
-
-  return (
-    <article
-      aria-current={isExpanded || isOpening ? "step" : undefined}
-      aria-label={`${exercise.name}: ${status}, ${completedSetsCount} de ${totalSets} series concluidas`}
-      className={cn(
-        "w-full overflow-hidden rounded-lg border p-3 text-left shadow-sm transition-[background-color,border-color,box-shadow,transform] duration-500 ease-[cubic-bezier(0.2,0,0,1)]",
-        isDetailsOpen ? "shadow-md" : "active:scale-[0.99]",
-        statusMeta.itemClassName,
-      )}
-      ref={currentExerciseRef}
-    >
-      <button
-        aria-expanded={isExpanded}
-        aria-label={
-          isExpanded
-            ? `Recolher card de ${exercise.name}`
-            : `${exercise.name}: ${status}, ${completedSetsCount} de ${totalSets} series concluidas`
-        }
-        className="flex w-full items-start gap-3 rounded-sm text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        onClick={() => onSelectExercise(exerciseIndex)}
-        type="button"
-      >
-        <ExercisePreviewThumb
-          fallbackIcon={
-            <statusMeta.Icon
-              className={cn("h-4 w-4", statusMeta.iconClassName)}
-              aria-hidden="true"
-            />
-          }
-          guide={previewGuide}
-        />
-        <span className="min-w-0 flex-1">
-          <span className="block break-words text-sm font-semibold leading-5 text-foreground">
-            {exercise.name}
-          </span>
-        </span>
-        <span
-          className={cn(
-            "shrink-0 rounded-md px-2 py-1 text-xs font-semibold",
-            statusMeta.badgeClassName,
-          )}
-        >
-          {status}
-        </span>
-      </button>
-
-      <div
-        className={cn(
-          "exercise-card-details",
-          isDetailsOpen ? "exercise-card-details-open" : "",
-        )}
-        onTransitionEnd={(event) => {
-          if (
-            isClosing &&
-            event.currentTarget === event.target &&
-            event.propertyName === "grid-template-rows"
-          ) {
-            onCloseAnimationEnd(exerciseIndex);
-          }
-        }}
-      >
-        <div
-          className="exercise-card-details-inner"
-          data-exercise-card-details-inner
-        >
-          {shouldRenderDetails ? (
-            <div className="pt-3">
-              <span className="flex items-center justify-between gap-3 rounded-md border border-border/70 bg-background/70 px-3 py-2 text-xs">
-                <span className="font-medium text-muted-foreground">
-                  Carga anterior
-                </span>
-                <span className="min-w-0 truncate font-semibold text-foreground">
-                  {loadHistory
-                    ? `${formatLoad(loadHistory.lastLoadKg)} kg x ${loadHistory.lastReps}`
-                    : "Sem carga anterior"}
-                </span>
-              </span>
-              {currentExerciseDetails}
-            </div>
-          ) : null}
-        </div>
+        ))}
       </div>
-    </article>
+    </section>
   );
 }
 
-function ExercisePreviewThumb({
-  fallbackIcon,
-  guide,
-}: {
-  fallbackIcon: ReactNode;
-  guide: ExerciseGuide;
-}) {
+function ExercisePreviewThumb({ fallbackIcon, guide }: { fallbackIcon: ReactNode; guide: ExerciseGuide }) {
   return (
-    <span
-      className={cn(
-        "flex h-12 w-14 shrink-0 items-center justify-center overflow-hidden rounded-md ring-1 ring-border/70",
-        guide.imageUrl
-          ? "bg-[hsl(var(--exercise-media-canvas))]"
-          : "bg-background/80",
-      )}
-    >
+    <span className={cn("flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg ring-1 ring-md-outline-variant", guide.imageUrl ? "bg-[hsl(var(--exercise-media-canvas))]" : "bg-md-surface-container-high")}>
       {guide.imageUrl ? (
-        <img
-          alt={guide.imageAlt}
-          className="h-full w-full object-contain"
-          height={96}
-          loading="lazy"
-          src={guide.imageUrl}
-          width={112}
-        />
+        <img alt={guide.imageAlt} className="h-full w-full object-contain" height={112} loading="lazy" src={guide.imageUrl} width={112} />
       ) : (
         fallbackIcon
       )}
@@ -1274,21 +202,14 @@ function ExercisePreviewThumb({
   );
 }
 
-function getExerciseStatus(
-  draft: WorkoutSessionDraft,
-  exerciseIndex: number,
-  selectedExerciseIndex: number | null = draft.currentExerciseIndex,
-): "Pendente" | "Em progresso" | "Concluído" {
+function getExerciseStatus(draft: WorkoutSessionDraft, exerciseIndex: number): "Pendente" | "Em progresso" | "Concluído" {
   const exercise = draft.exercises[exerciseIndex];
 
   if (exercise.result.completedAt !== null) {
     return "Concluído";
   }
 
-  if (
-    selectedExerciseIndex === exerciseIndex ||
-    exercise.completedSets.some((set) => set.completedAt !== null)
-  ) {
+  if (draft.currentExerciseIndex === exerciseIndex || exercise.completedSets.some((set) => set.completedAt !== null)) {
     return "Em progresso";
   }
 
@@ -1297,50 +218,12 @@ function getExerciseStatus(
 
 function getExerciseStatusMeta(status: ReturnType<typeof getExerciseStatus>) {
   if (status === "Concluído") {
-    return {
-      Icon: Check,
-      itemClassName: "border-primary/50 bg-primary/10",
-      iconClassName: "text-primary",
-      badgeClassName: "bg-primary text-primary-foreground",
-    };
+    return { Icon: Check, iconClassName: "text-md-primary", textClassName: "text-md-primary" };
   }
 
   if (status === "Em progresso") {
-    return {
-      Icon: CircleDot,
-      itemClassName: "border-info/60 bg-info/10",
-      iconClassName: "text-info",
-      badgeClassName: "bg-info text-info-foreground",
-    };
+    return { Icon: CircleDot, iconClassName: "text-md-secondary", textClassName: "text-md-secondary" };
   }
 
-  return {
-    Icon: Circle,
-    itemClassName: "border-border bg-muted",
-    iconClassName: "text-muted-foreground",
-    badgeClassName: "bg-background text-muted-foreground",
-  };
-}
-
-function getNextExerciseIndex(
-  draft: WorkoutSessionDraft,
-  currentExerciseIndex: number,
-) {
-  const nextIndex = draft.exercises.findIndex(
-    (exercise, exerciseIndex) =>
-      exerciseIndex > currentExerciseIndex &&
-      exercise.result.completedAt === null,
-  );
-
-  if (nextIndex >= 0) {
-    return nextIndex;
-  }
-
-  const wrappedIndex = draft.exercises.findIndex(
-    (exercise, exerciseIndex) =>
-      exerciseIndex !== currentExerciseIndex &&
-      exercise.result.completedAt === null,
-  );
-
-  return wrappedIndex >= 0 ? wrappedIndex : null;
+  return { Icon: Circle, iconClassName: "text-md-on-surface-variant", textClassName: "text-md-on-surface-variant" };
 }

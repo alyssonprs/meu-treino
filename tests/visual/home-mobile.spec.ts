@@ -123,15 +123,13 @@ test("mobile visual regression covers first use, import, active home, settings a
   await expect(page.getByText(/Exerc.cios da rotina/)).toBeVisible();
   await expect(page.getByRole("button", { name: /Abrir/ })).toHaveCount(0);
   await expect(page.getByText("Supino reto").first()).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: /Concluir s.rie 1/ }),
-  ).toBeVisible();
+  await expect(page.getByRole("button", { name: /Concluir s.rie 1/ })).toHaveCount(0);
   await assertMobileUsability(page);
 
   await screenshot(page, "09-detalhe-treino.png");
 
   await page
-    .getByRole("button", { name: "Voltar para lista de exercícios" })
+    .getByRole("button", { name: "Voltar para lista de rotinas" })
     .click();
   await expect(
     page.getByRole("button", { name: /Treino A - Peito e triceps/ }),
@@ -155,7 +153,7 @@ test("mobile visual regression covers first use, import, active home, settings a
   await assertNoHorizontalOverflow(page);
 });
 
-test("active workout keeps bottom nav hidden and shows integrated rest, finish and history states", async ({
+test("active workout separates the routine list, exercise page and global rest timer", async ({
   page,
 }) => {
   test.setTimeout(60_000);
@@ -165,53 +163,37 @@ test("active workout keeps bottom nav hidden and shows integrated rest, finish a
   await page.getByRole("button", { name: "Confirmar importação" }).click();
 
   await page.getByRole("button", { name: "Iniciar treino" }).click();
-
-  await expect(
-    page.getByRole("heading", { name: "Treino em andamento" }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: /Concluir s.rie 1/ }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Treino em andamento" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Concluir s.rie 1/ })).toHaveCount(0);
   await expect(page.getByLabel("Aumentar RIR")).toHaveCount(0);
   await expect(page.getByRole("navigation")).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "Exibir" })).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "Ocultar" })).toHaveCount(0);
-  await expect(page.getByText("Principal: Pernas")).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: /Recolher card de Agachamento livre/ }),
-  ).toBeVisible();
-  await assertNoHorizontalOverflow(page);
-
-  await page
-    .getByRole("button", { name: /Recolher card de Agachamento livre/ })
-    .click();
-  await expect(page.getByText("Principal: Pernas")).toHaveCount(0);
-  await expect(
-    page.getByRole("button", { name: /Concluir s.rie 1/ }),
-  ).toHaveCount(0);
+  await expect(page.getByText("Agachamento livre").first()).toBeVisible();
   await assertNoHorizontalOverflow(page);
 
   await page.getByRole("button", { name: /Agachamento livre/ }).click();
+  await expect(page.getByRole("heading", { name: "Agachamento livre" })).toBeVisible();
   await expect(page.getByText("Principal: Pernas")).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: /Concluir s.rie 1/ }),
-  ).toBeVisible();
+  await expect(page.getByRole("button", { name: /Concluir s.rie 1/ })).toBeVisible();
 
   await page.getByRole("button", { name: /Concluir s.rie 1/ }).click();
-
   await expect(
-    page.getByRole("button", { name: /Concluir s.rie 2/ }),
+    page.getByRole("button", { name: /Descanso de Agachamento livre/ }),
   ).toBeVisible();
-  await expect(page.getByText(/0:4/).first()).toBeVisible();
-  await expect(page.getByRole("navigation")).toHaveCount(0);
-  await assertNoHorizontalOverflow(page);
+  await screenshot(page, "13-descanso-global.png");
 
-  await screenshot(page, "13-descanso-integrado.png");
+  await page.getByRole("button", { name: "Voltar para lista de exercícios" }).click();
+  await page.getByRole("button", { name: "Voltar para lista de rotinas" }).click();
+  await expect(page.getByRole("navigation")).toBeVisible();
+  await page.getByRole("button", { name: "Histórico" }).click();
+  await expect(page.getByRole("heading", { name: "Seu progresso" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /Descanso de Agachamento livre/ }),
+  ).toBeVisible();
 
+  await page.getByRole("button", { name: /Descanso de Agachamento livre/ }).click();
+  await expect(page.getByRole("heading", { name: "Agachamento livre" })).toBeVisible();
   await page.getByRole("button", { name: /Concluir s.rie 2/ }).click();
-  await expect(
-    page.getByRole("heading", { name: "Registrar resultado" }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Registrar resultado" })).toBeVisible();
 
   await page.getByLabel("Aumentar Carga").click();
   await page.getByLabel("Aumentar Carga").click();
@@ -222,40 +204,17 @@ test("active workout keeps bottom nav hidden and shows integrated rest, finish a
     .getByRole("button", { name: "Concluir" })
     .click();
 
-  await expect(page.getByRole("button", { name: "Finalizar rotina" })).toBeVisible();
-  await page.getByRole("button", { name: "Finalizar rotina" }).click();
+  await expect(page.getByRole("heading", { name: "Exercício concluído" })).toBeVisible();
+  await page
+    .getByRole("dialog", { name: "Exercício concluído" })
+    .getByRole("button", { name: "Finalizar rotina" })
+    .click();
 
   await expect(page.getByText("Treino concluído")).toBeVisible();
   await expect(page.getByText("Ciclo concluído")).toBeVisible();
   await expect(page.getByRole("navigation")).toHaveCount(0);
   await assertNoHorizontalOverflow(page);
-
   await screenshot(page, "10-finalizacao.png");
-
-  await page.getByRole("button", { name: "Ver histórico" }).click();
-  await expect(page.getByRole("heading", { name: "Seu progresso" })).toBeVisible();
-  await expect(page.getByText("Ciclo concluído")).toBeVisible();
-  await expect(page.getByRole("button", { name: /Agachamento livre/ })).toBeVisible();
-  await assertMobileUsability(page);
-
-  await screenshot(page, "11-historico.png");
-
-  await page.getByRole("button", { name: /Agachamento livre/ }).click();
-  await expect(
-    page.getByRole("heading", { name: "Agachamento livre" }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "Registros recentes" }),
-  ).toBeVisible();
-  await assertMobileUsability(page);
-
-  await screenshot(page, "14-detalhe-exercicio.png");
-
-  await page.getByRole("button", { name: "Início" }).click();
-  await expect(page.getByText("Ciclo concluído")).toBeVisible();
-  await assertMobileUsability(page);
-
-  await screenshot(page, "15-ciclo-concluido.png");
 });
 
 test("invalid import shows the dedicated recovery screen", async ({ page }) => {

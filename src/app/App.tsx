@@ -13,7 +13,13 @@ import type {
 } from "@/features/navigation/appNavigation";
 import { ProgressScreen } from "@/features/progress/ProgressScreen";
 import { SettingsScreen } from "@/features/settings/SettingsScreen";
+import { ActiveExerciseScreen } from "@/features/workouts/ActiveExerciseScreen";
 import { ActiveWorkoutScreen } from "@/features/workouts/ActiveWorkoutScreen";
+import { FloatingRestTimer } from "@/features/workouts/FloatingRestTimer";
+import {
+  getRestTimerRemainingSeconds,
+  type ActiveRestTimer,
+} from "@/features/workouts/restTimer";
 import {
   WorkoutFinishedScreen,
   type WorkoutCompletionSummary,
@@ -54,6 +60,11 @@ import {
 } from "@/services/workoutSessionService";
 import { downloadTextFile, readTextFile } from "@/platform/files";
 import { healthConnectAdapter } from "@/platform/health-connect";
+import {
+  playRestCountdownFeedback,
+  playRestFinishedFeedback,
+  prepareRestTimerFeedback,
+} from "@/platform/restTimerFeedback";
 import { pwaWorkoutPlanRepository } from "@/storage/pwa/dexieWorkoutPlanRepository";
 import type {
   ActiveWorkoutPlanSnapshot,
@@ -82,6 +93,10 @@ export function App() {
   const [isLoadingActivePlan, setIsLoadingActivePlan] = useState(true);
   const [activeWorkout, setActiveWorkout] =
     useState<WorkoutSessionDraft | null>(null);
+  const [activeRestTimer, setActiveRestTimer] =
+    useState<ActiveRestTimer | null>(null);
+  const [restTimerNow, setRestTimerNow] = useState(() => Date.now());
+  const lastRestFeedbackKeyRef = useRef<string | null>(null);
   const [workoutLoadHistory, setWorkoutLoadHistory] = useState<
     Map<string, ExerciseLoadHistoryRecord>
   >(new Map());
@@ -188,6 +203,50 @@ export function App() {
   const cycleProgress = activePlan
     ? getCycleProgressSummary(activePlan)
     : null;
+  const restTimerRemainingSeconds = activeRestTimer
+    ? getRestTimerRemainingSeconds(activeRestTimer, restTimerNow)
+    : null;
+  const restTimerExercise =
+    activeRestTimer && activeWorkout
+      ? activeWorkout.routine.exercises[activeRestTimer.exerciseIndex]
+      : null;
+
+  useEffect(() => {
+    if (!activeRestTimer) {
+      return;
+    }
+
+    const updateNow = () => setRestTimerNow(Date.now());
+    updateNow();
+    const intervalId = window.setInterval(updateNow, 500);
+
+    return () => window.clearInterval(intervalId);
+  }, [activeRestTimer]);
+
+  useEffect(() => {
+    if (
+      !activeRestTimer ||
+      restTimerRemainingSeconds === null ||
+      restTimerRemainingSeconds > 3
+    ) {
+      return;
+    }
+
+    const feedbackKey = `${activeRestTimer.endsAt}:${restTimerRemainingSeconds}`;
+
+    if (lastRestFeedbackKeyRef.current === feedbackKey) {
+      return;
+    }
+
+    lastRestFeedbackKeyRef.current = feedbackKey;
+
+    if (restTimerRemainingSeconds === 0) {
+      playRestFinishedFeedback();
+      return;
+    }
+
+    playRestCountdownFeedback(restTimerRemainingSeconds);
+  }, [activeRestTimer, restTimerRemainingSeconds]);
 
   function navigateToMainTab(screen: MainTabScreen) {
     setActiveScreen(screen);
@@ -266,6 +325,9 @@ export function App() {
       });
       const savedPlan = await pwaWorkoutPlanRepository.getActivePlan();
       setActivePlan(savedPlan);
+      setActiveWorkout(null);
+      setActiveRestTimer(null);
+      setWorkoutLoadHistory(new Map());
       setImportStatus(idleImportStatus);
       setActiveScreen("home");
       window.location.hash = mainTabHashByScreen.home;
@@ -327,6 +389,7 @@ export function App() {
     const loadHistoryByExerciseId = createLoadHistoryMap(history);
 
     setWorkoutLoadHistory(loadHistoryByExerciseId);
+    setActiveRestTimer(null);
     setWorkoutMessage(null);
     setActiveWorkout(
       createWorkoutSessionDraft({
@@ -359,6 +422,7 @@ export function App() {
     const updatedPlan = await pwaWorkoutPlanRepository.getActivePlan();
     setActivePlan(updatedPlan);
     setActiveWorkout(null);
+    setActiveRestTimer(null);
     setWorkoutLoadHistory(new Map());
     setWorkoutMessage(null);
     setWorkoutCompletion({
@@ -412,6 +476,7 @@ export function App() {
       await pwaWorkoutPlanRepository.clearAllWorkoutData();
       setActivePlan(null);
       setActiveWorkout(null);
+      setActiveRestTimer(null);
       setWorkoutLoadHistory(new Map());
       setLoadSummaries([]);
       setRecentSessions([]);
@@ -501,6 +566,7 @@ export function App() {
 
       setActivePlan(restoredPlan);
       setActiveWorkout(null);
+      setActiveRestTimer(null);
       setWorkoutLoadHistory(new Map());
       setWorkoutCompletion(null);
       setImportStatus(idleImportStatus);
@@ -525,6 +591,13 @@ export function App() {
     exerciseIndex: number;
     setIndex: number;
   }) {
+    const exercise = activeWorkout?.routine.exercises[exerciseIndex];
+    const exerciseDraft = activeWorkout?.exercises[exerciseIndex];
+    const isValidPendingSet =
+      exerciseDraft?.completedSets[setIndex]?.completedAt === null;
+    const hasNextSet =
+      isValidPendingSet && setIndex + 1 < (exerciseDraft?.completedSets.length ?? 0);
+
     setActiveWorkout((current) => {
       if (!current) {
         return current;
@@ -537,6 +610,44 @@ export function App() {
         completedAt: new Date().toISOString(),
       });
     });
+
+    if (!isValidPendingSet || !exercise) {
+      return;
+    }
+
+    if (!hasNextSet) {
+      setActiveRestTimer(null);
+      return;
+    }
+
+    prepareRestTimerFeedback();
+    setActiveRestTimer({
+      exerciseIndex,
+      nextSetIndex: setIndex + 1,
+      endsAt: Date.now() + (exercise.rest_seconds ?? 90) * 1000,
+    });
+  }
+
+  function openWorkoutExercise(exerciseIndex: number) {
+    setActiveWorkout((current) =>
+      current
+        ? setCurrentExerciseInDraft({ draft: current, exerciseIndex })
+        : current,
+    );
+    setWorkoutMessage(null);
+    setActiveScreen("active-exercise");
+  }
+
+  function openRestTimerExercise() {
+    if (!activeRestTimer) {
+      return;
+    }
+
+    if (getRestTimerRemainingSeconds(activeRestTimer) === 0) {
+      setActiveRestTimer(null);
+    }
+
+    openWorkoutExercise(activeRestTimer.exerciseIndex);
   }
 
   function saveWorkoutExerciseResult({
@@ -546,6 +657,9 @@ export function App() {
     exerciseIndex: number;
     values: Pick<WorkoutSetDraft, "loadKg" | "reps" | "rir" | "notes">;
   }) {
+    setActiveRestTimer((current) =>
+      current?.exerciseIndex === exerciseIndex ? null : current,
+    );
     setActiveWorkout((current) => {
       if (!current) {
         return current;
@@ -563,6 +677,15 @@ export function App() {
   return (
     <AppShell
       activeScreen={activeScreen}
+      floatingOverlay={
+        activeRestTimer && restTimerExercise && restTimerRemainingSeconds !== null ? (
+          <FloatingRestTimer
+            exerciseName={restTimerExercise.name}
+            remainingSeconds={restTimerRemainingSeconds}
+            onOpenExercise={openRestTimerExercise}
+          />
+        ) : undefined
+      }
       onNavigate={navigateToMainTab}
     >
       {renderCurrentScreen()}
@@ -587,7 +710,6 @@ export function App() {
       return (
         <ActiveWorkoutScreen
           draft={activeWorkout}
-          loadHistoryByExerciseId={workoutLoadHistory}
           message={workoutMessage}
           onBackToDetail={() => {
             navigateToMainTab("workout");
@@ -595,15 +717,29 @@ export function App() {
           onFinish={() => {
             void handleFinishWorkout();
           }}
-          onMarkSetCompleted={markWorkoutSetCompleted}
-          onSaveExerciseResult={saveWorkoutExerciseResult}
-          onSelectExercise={(exerciseIndex) => {
-            setActiveWorkout((current) =>
-              current
-                ? setCurrentExerciseInDraft({ draft: current, exerciseIndex })
-                : current,
-            );
+          onOpenExercise={openWorkoutExercise}
+        />
+      );
+    }
+
+    if (activeScreen === "active-exercise" && activeWorkout) {
+      return (
+        <ActiveExerciseScreen
+          draft={activeWorkout}
+          loadHistoryByExerciseId={workoutLoadHistory}
+          message={workoutMessage}
+          restTimer={
+            activeRestTimer?.exerciseIndex === activeWorkout.currentExerciseIndex
+              ? activeRestTimer
+              : null
+          }
+          onBackToList={() => setActiveScreen("active-workout")}
+          onFinish={() => {
+            void handleFinishWorkout();
           }}
+          onMarkSetCompleted={markWorkoutSetCompleted}
+          onOpenExercise={openWorkoutExercise}
+          onSaveExerciseResult={saveWorkoutExerciseResult}
           onUpdateExerciseResult={updateWorkoutExerciseResult}
         />
       );
