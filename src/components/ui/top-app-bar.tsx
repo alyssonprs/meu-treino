@@ -23,7 +23,7 @@ const TopAppBar = React.forwardRef<HTMLElement, TopAppBarProps>(
           {navigationIcon}
         </div>
       ) : null}
-      <div className="min-w-0 flex-1 truncate text-title-lg font-regular">
+      <div className="min-w-0 flex-1 text-title-lg font-regular">
         {title}
       </div>
       {actions ? <div className="flex items-center gap-1">{actions}</div> : null}

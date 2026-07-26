@@ -126,7 +126,7 @@ function ContextualAppHeader({ header }: { header: ContextualHeader }) {
               {header.label}
             </p>
           ) : null}
-          <h1 className="truncate text-title-lg font-medium text-md-on-surface">
+          <h1 className="break-words text-title-lg font-medium text-md-on-surface">
             {header.title}
           </h1>
         </div>
