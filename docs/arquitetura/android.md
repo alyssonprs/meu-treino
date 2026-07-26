@@ -49,6 +49,10 @@ No Android Studio:
 
 Para teste local rapido, use APK debug gerado pelo Android Studio. Para Google Play no futuro, use AAB assinado e mantenha a chave de assinatura fora do repositorio.
 
+## Identificacao da versao instalada
+
+O comando `pnpm run android:apk` incrementa o `versionCode` antes de compilar a interface e injeta esse mesmo valor no build web. Em **Ajustes > Informacoes**, o APK mostra `0.1.0 (build N)`, em que `N` corresponde ao `versionCode` Android. Use esse numero para confirmar se o APK instalado corresponde ao arquivo mais recente gerado.
+
 Antes de publicar na Google Play, seguir `docs/arquitetura/publicacao-google-play.md` e publicar a politica baseada em `docs/arquitetura/privacidade.md` em uma URL HTTPS estavel.
 
 Nao ha configuracao iOS neste projeto nesta fase.

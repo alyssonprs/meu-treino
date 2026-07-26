@@ -75,6 +75,10 @@ import type {
 } from "@/storage/workoutPlanRepository";
 
 const appVersion = "0.1.0";
+const androidBuildCode = import.meta.env.VITE_ANDROID_VERSION_CODE;
+const appVersionLabel = androidBuildCode
+  ? `${appVersion} (build ${androidBuildCode})`
+  : appVersion;
 
 const mainTabHashByScreen: Record<MainTabScreen, string> = {
   history: "#/historico",
@@ -809,7 +813,7 @@ export function App() {
       return (
         <SettingsScreen
           activePlan={activePlan}
-          appVersion={appVersion}
+          appVersion={appVersionLabel}
           healthConnectAdapter={healthConnectAdapter}
           isClearingLocalData={isClearingLocalData}
           getHealthConnectAutoExportEnabled={() =>

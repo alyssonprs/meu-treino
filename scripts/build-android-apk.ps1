@@ -24,13 +24,6 @@ $sdkDir = $androidSdk -replace "\\", "\\"
 "sdk.dir=$sdkDir" | Set-Content -Encoding ASCII -Path $localProperties
 
 Set-Location $projectRoot
-tsc -b
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-vite build
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-cap sync android
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
 $appBuildGradle = Join-Path $projectRoot "android\app\build.gradle"
 $appBuildGradleContent = Get-Content -Raw -Path $appBuildGradle
 $versionCodeMatch = [regex]::Match($appBuildGradleContent, "versionCode\s+(\d+)")
@@ -48,6 +41,15 @@ $updatedBuildGradleContent = [regex]::Replace(
 )
 Set-Content -Encoding ASCII -Path $appBuildGradle -Value ($updatedBuildGradleContent.TrimEnd() + "`r`n")
 Write-Host "Android versionCode atualizado: $currentVersionCode -> $nextVersionCode"
+
+# A interface empacotada recebe o mesmo identificador do APK para exibi-lo em Ajustes.
+$env:VITE_ANDROID_VERSION_CODE = $nextVersionCode
+tsc -b
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+vite build
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+cap sync android
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Set-Location (Join-Path $projectRoot "android")
 .\gradlew.bat assembleDebug
