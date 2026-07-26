@@ -1,8 +1,11 @@
 import * as React from "react";
 import { cn } from "@/components/ui/utils";
 
+export const listItemClassName =
+  "relative flex w-full items-center gap-3 text-md-on-surface";
+
 export const listRowClassName =
-  "relative flex w-full items-center gap-3 text-left text-md-on-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-md-primary active:bg-md-on-surface/[var(--md-sys-state-pressed-opacity)]";
+  `${listItemClassName} text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-md-primary active:bg-md-on-surface/[var(--md-sys-state-pressed-opacity)]`;
 
 export const listCurrentRowClassName = "bg-md-secondary-container/40";
 
@@ -26,4 +29,3 @@ export const ListSurface = React.forwardRef<
   />
 ));
 ListSurface.displayName = "ListSurface";
-

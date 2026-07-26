@@ -10,7 +10,11 @@ import type { LucideIcon } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { Card } from "@/components/ui/card";
 import { LinearProgress } from "@/components/ui/progress";
-import { ListSurface, listRowClassName } from "@/components/ui/list";
+import {
+  ListSurface,
+  listItemClassName,
+  listRowClassName,
+} from "@/components/ui/list";
 import {
   formatLoad,
   formatShortDate,
@@ -106,38 +110,48 @@ export function ProgressScreen({
           <ListSurface className="mt-4">
             {loadSummaries.map((summary) => (
               <button
-                className={`${listRowClassName} min-h-20 px-3 py-3 [&+button]:border-t [&+button]:border-md-outline-variant`}
+                className={`${listRowClassName} min-h-[8.5rem] px-4 py-4 [&+button]:border-t [&+button]:border-md-outline-variant`}
                 key={summary.exerciseId}
                 onClick={() => onOpenExerciseHistory(summary.exerciseId)}
                 type="button"
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <h4 className="text-sm font-semibold">
-                      {summary.exerciseName}
-                    </h4>
-                    <p className="mt-1 text-label-md text-md-on-surface-variant">
-                      Atualizado em {formatShortDate(summary.updatedAt)}
-                    </p>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <h4 className="text-base font-semibold leading-5 text-md-on-surface">
+                        {summary.exerciseName}
+                      </h4>
+                      <p className="mt-1 text-label-md text-md-on-surface-variant">
+                        Atualizado em {formatShortDate(summary.updatedAt)}
+                      </p>
+                    </div>
+                    <ChevronRight
+                      className="mt-0.5 h-5 w-5 shrink-0 text-md-on-surface-variant"
+                      aria-hidden="true"
+                    />
                   </div>
-                  <ChevronRight
-                    className="h-4 w-4 shrink-0 text-md-on-surface-variant"
-                    aria-hidden="true"
-                  />
-                </div>
-                <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
-                  <p>
-                    <span className="text-md-on-surface-variant">Última: </span>
-                    <span className="font-semibold">
-                      {formatLoad(summary.lastLoadKg)} kg x {summary.lastReps}
-                    </span>
-                  </p>
-                  <p>
-                    <span className="text-md-on-surface-variant">Maior: </span>
-                    <span className="font-semibold">
-                      {formatLoad(summary.maxLoadKg)} kg
-                    </span>
-                  </p>
+
+                  <dl className="mt-4 grid grid-cols-2 overflow-hidden rounded-lg border border-md-outline-variant bg-md-surface-container-low">
+                    <div className="px-3 py-2.5">
+                      <dt className="text-label-md font-medium text-md-on-surface-variant">
+                        Última carga
+                      </dt>
+                      <dd className="mt-1 text-base font-semibold tabular-nums text-md-on-surface">
+                        {formatLoad(summary.lastLoadKg)} kg
+                      </dd>
+                      <p className="mt-0.5 text-label-md text-md-on-surface-variant">
+                        {summary.lastReps} reps
+                      </p>
+                    </div>
+                    <div className="border-l border-md-outline-variant px-3 py-2.5">
+                      <dt className="text-label-md font-medium text-md-on-surface-variant">
+                        Maior carga
+                      </dt>
+                      <dd className="mt-1 text-base font-semibold tabular-nums text-md-on-surface">
+                        {formatLoad(summary.maxLoadKg)} kg
+                      </dd>
+                    </div>
+                  </dl>
                 </div>
               </button>
             ))}
@@ -161,28 +175,33 @@ export function ProgressScreen({
             Nenhuma sessao finalizada ainda.
           </p>
         ) : (
-          <div className="mt-4 space-y-3">
+          <ListSurface className="mt-4">
             {recentSessions.map((session) => (
-              <article className="rounded-md bg-md-surface-container-high p-3" key={session.id}>
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <h4 className="text-sm font-semibold">
-                      {session.routineName}
-                    </h4>
-                    <p className="mt-1 text-label-md text-md-on-surface-variant">
-                      {formatShortDate(session.completedAt)}
-                    </p>
+              <article
+                className={`${listItemClassName} min-h-[5.5rem] px-4 py-3 [&+article]:border-t [&+article]:border-md-outline-variant`}
+                key={session.id}
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <h4 className="text-base font-semibold leading-5 text-md-on-surface">
+                        {session.routineName}
+                      </h4>
+                      <p className="mt-1 text-label-md text-md-on-surface-variant">
+                        {formatShortDate(session.completedAt)}
+                      </p>
+                    </div>
+                    <span className="shrink-0 rounded-full bg-md-surface-container-low px-2.5 py-1 text-label-md font-semibold tabular-nums text-md-on-surface">
+                      {session.setsCount} registros
+                    </span>
                   </div>
-                  <span className="shrink-0 rounded-md bg-md-surface-container-low px-2 py-1 text-label-md font-medium">
-                    {session.setsCount} registros
-                  </span>
+                  <p className="mt-3 text-body-md text-md-on-surface-variant">
+                    {session.exercisesCount} exercícios registrados
+                  </p>
                 </div>
-                <p className="mt-3 text-body-md text-md-on-surface-variant">
-                  {session.exercisesCount} exercicios registrados
-                </p>
               </article>
             ))}
-          </div>
+          </ListSurface>
         )}
       </Card>
     </section>

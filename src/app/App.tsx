@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Check, Square } from "lucide-react";
+import { Check, SquareCheckBig } from "lucide-react";
 import { HomeScreen } from "@/features/home/HomeScreen";
 import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { Button } from "@/components/ui/button";
@@ -841,7 +841,7 @@ export function App() {
 
       return (
         <Button className="h-14 w-full gap-2 font-semibold leading-5 text-md-on-primary" onClick={requestFinishWorkout} type="button" variant="filled">
-          <Square className="h-5 w-5" aria-hidden="true" />
+          <SquareCheckBig className="h-5 w-5" aria-hidden="true" />
           {hasIncompleteExercises ? "Finalizar treino" : "Finalizar rotina"}
         </Button>
       );
