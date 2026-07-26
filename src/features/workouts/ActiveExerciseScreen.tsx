@@ -222,7 +222,7 @@ export function ActiveExerciseScreen({
               Finalizar rotina
             </Button>
           )}
-          <Button className="h-12" onClick={onBackToList} type="button" variant="secondary">
+          <Button className="h-12" onClick={onBackToList} type="button" variant="tonal">
             Voltar à lista
           </Button>
         </div>
@@ -285,7 +285,7 @@ function ExerciseGuidePanel({ guide }: { guide: ExerciseGuide }) {
 
 function MuscleBadge({ label, tone }: { label: string; tone: "primary" | "secondary" }) {
   return (
-    <span className={cn("rounded-full border px-2 py-1 text-xs font-semibold", tone === "primary" ? "border-md-primary/40 bg-md-primary/15 text-md-primary" : "border-md-secondary/30 bg-md-secondary-container text-md-on-secondary-container")}>
+    <span className={cn("rounded-full border px-2 py-1 text-xs font-semibold", tone === "primary" ? "border-md-primary/50 bg-md-primary-container text-md-on-primary-container" : "border-md-secondary/30 bg-md-secondary-container text-md-on-secondary-container")}>
       {label}
     </span>
   );
@@ -315,11 +315,11 @@ function SetProgress({ completedSetsCount, targetReps, totalSets }: { completedS
 
 function CompletedExercisePanel({ hasNextExercise, onBackToList, onOpenNextExercise }: { hasNextExercise: boolean; onBackToList: () => void; onOpenNextExercise: () => void }) {
   return (
-    <div className="mt-4 rounded-lg border border-md-primary/30 bg-md-primary/10 p-3">
-      <p className="text-sm font-semibold text-md-on-surface">Exercício concluído</p>
-      <p className="mt-1 text-xs leading-5 text-md-on-surface-variant">O resultado já está registrado nesta rotina.</p>
+    <div className="mt-4 rounded-lg border border-md-primary/50 bg-md-primary-container p-3">
+      <p className="text-sm font-semibold text-md-on-primary-container">Exercício concluído</p>
+      <p className="mt-1 text-xs leading-5 text-md-on-primary-container">O resultado já está registrado nesta rotina.</p>
       <div className="mt-3 grid grid-cols-2 gap-2">
-        <Button className="h-12" onClick={onBackToList} type="button" variant="secondary">Lista</Button>
+        <Button className="h-12" onClick={onBackToList} type="button" variant="tonal">Lista</Button>
         {hasNextExercise ? <Button className="h-12" onClick={onOpenNextExercise} type="button">Próximo</Button> : null}
       </div>
     </div>
@@ -353,15 +353,15 @@ function StepperInput({ enterKeyHint, inputRef, label, name, suffix, value, onCh
 
   return (
     <div className="grid grid-cols-[3.25rem_1fr_3.25rem] items-center gap-3 rounded-lg border border-md-outline-variant bg-md-surface-container-lowest p-3">
-      <Button aria-label={`Diminuir ${label}`} className="h-12 w-12 p-0" onClick={onDecrement} type="button" variant="secondary"><Minus className="h-5 w-5" aria-hidden="true" /></Button>
+      <Button aria-label={`Diminuir ${label}`} className="h-12 w-12 p-0" onClick={onDecrement} type="button" variant="tonal"><Minus className="h-5 w-5" aria-hidden="true" /></Button>
       <label className="min-w-0 text-center">
         <span className="text-xs font-medium text-md-on-surface-variant">{label}</span>
         <div className="mt-1 flex items-baseline justify-center gap-1">
-          <input autoComplete="off" className="h-12 w-full min-w-0 rounded-md bg-transparent text-center text-3xl font-semibold tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" enterKeyHint={enterKeyHint} inputMode="decimal" name={name} onChange={(event) => onChange(event.target.value)} onKeyDown={handleKeyDown} ref={inputRef} type="text" value={value} />
+          <input autoComplete="off" className="h-12 w-full min-w-0 rounded-md bg-transparent text-center text-3xl font-semibold tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-md-primary" enterKeyHint={enterKeyHint} inputMode="decimal" name={name} onChange={(event) => onChange(event.target.value)} onKeyDown={handleKeyDown} ref={inputRef} type="text" value={value} />
           {suffix ? <span className="text-sm font-medium text-md-on-surface-variant">{suffix}</span> : null}
         </div>
       </label>
-      <Button aria-label={`Aumentar ${label}`} className="h-12 w-12 p-0" onClick={onIncrement} type="button" variant="secondary"><Plus className="h-5 w-5" aria-hidden="true" /></Button>
+      <Button aria-label={`Aumentar ${label}`} className="h-12 w-12 p-0" onClick={onIncrement} type="button" variant="tonal"><Plus className="h-5 w-5" aria-hidden="true" /></Button>
     </div>
   );
 }
@@ -377,7 +377,7 @@ function ExerciseResultSheet({ canSaveResult, isOpen, resultValues, onClose, onD
         <StepperInput enterKeyHint="done" inputRef={repsInputRef} label="Reps" name="exercise-reps" value={resultValues.reps} onChange={(value) => onUpdateResultValue("reps", value)} onDecrement={onDecrementReps} onEnter={() => canSaveResult && onSave()} onIncrement={onIncrementReps} />
       </div>
       <div className="mt-4 grid grid-cols-2 gap-2">
-        <Button className="h-12" onClick={onClose} type="button" variant="secondary">Fechar</Button>
+        <Button className="h-12" onClick={onClose} type="button" variant="tonal">Fechar</Button>
         <Button className="h-12 gap-2" disabled={!canSaveResult} onClick={onSave} type="button"><Save className="h-5 w-5" aria-hidden="true" />Concluir</Button>
       </div>
     </ModalDialog>

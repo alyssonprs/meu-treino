@@ -270,7 +270,7 @@ O app deve suportar dois temas selecionaveis, claro e escuro, baseados em roles
 de cor do Material Design 3. A direcao de identidade aprovada pode ser usada
 como seed de cor, mas a estrutura visual vigente deve seguir Material 3.
 
-Plano operacional da migracao: `.agents/plano-material-3-react-tailwind.md`.
+Plano operacional de cores: `.agents/plano-padronizacao-cores-ux-0003.md`.
 
 Regras:
 

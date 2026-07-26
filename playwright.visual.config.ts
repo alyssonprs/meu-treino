@@ -9,7 +9,6 @@ export default defineConfig({
   use: {
     ...devices["Pixel 5"],
     baseURL: "http://127.0.0.1:5176",
-    colorScheme: "dark",
     screenshot: "only-on-failure",
     trace: "retain-on-failure",
   },
@@ -19,4 +18,14 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     timeout: 30_000,
   },
+  projects: [
+    {
+      name: "dark",
+      use: { colorScheme: "dark" },
+    },
+    {
+      name: "light",
+      use: { colorScheme: "light" },
+    },
+  ],
 });

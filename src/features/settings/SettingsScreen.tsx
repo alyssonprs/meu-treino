@@ -188,7 +188,7 @@ export function SettingsScreen({
               disabled={isExportingBackup || isRestoringBackup}
               onClick={() => backupFileInputRef.current?.click()}
               type="button"
-              variant="secondary"
+              variant="tonal"
             >
               <Upload className="h-5 w-5" aria-hidden="true" />
               {isRestoringBackup ? "Restaurando..." : "Restaurar backup"}
@@ -214,7 +214,7 @@ export function SettingsScreen({
           className="mt-4 h-12 w-full justify-start gap-3 border-md-error text-md-error hover:bg-md-error-container"
           onClick={() => setActiveDialog("clear")}
           type="button"
-          variant="secondary"
+          variant="outlined"
         >
           <Trash2 className="h-5 w-5" aria-hidden="true" />
           Apagar dados locais

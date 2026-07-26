@@ -113,7 +113,7 @@ export function ImportPreviewScreen({
           disabled={isSaving}
           onClick={onChooseAnotherFile}
           type="button"
-          variant="secondary"
+          variant="tonal"
         >
           <RotateCcw className="h-5 w-5" aria-hidden="true" />
           Escolher outro JSON
@@ -123,7 +123,7 @@ export function ImportPreviewScreen({
           disabled={isSaving}
           onClick={onCancelImport}
           type="button"
-          variant="ghost"
+          variant="text"
         >
           <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           Voltar

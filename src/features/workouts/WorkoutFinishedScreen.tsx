@@ -144,7 +144,7 @@ export function WorkoutFinishedScreen({
           className="h-14 gap-3 text-base"
           onClick={onGoToHistory}
           type="button"
-          variant="secondary"
+          variant="tonal"
         >
           <History className="h-5 w-5" aria-hidden="true" />
           Ver histórico

@@ -28,7 +28,7 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
           "relative h-8 w-[3.25rem] rounded-full border-2 border-md-outline bg-md-surface-container-highest transition-colors",
           "after:absolute after:left-1 after:top-1/2 after:h-4 after:w-4 after:-translate-y-1/2 after:rounded-full after:bg-md-outline after:transition-all after:content-['']",
           "peer-checked:border-md-primary peer-checked:bg-md-primary peer-checked:after:left-6 peer-checked:after:h-6 peer-checked:after:w-6 peer-checked:after:bg-md-on-primary",
-          "peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-disabled:opacity-[var(--md-sys-state-disabled-opacity)]",
+          "peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-md-primary peer-disabled:opacity-[var(--md-sys-state-disabled-opacity)]",
         )}
         aria-hidden="true"
       />

@@ -80,7 +80,8 @@ Use [docs/arquitetura/arquitetura-prompt.md](docs/arquitetura/arquitetura-prompt
 - Base light and dark themes on Material Design 3 color roles, seeded from the approved identity direction when useful.
 - Store the user's theme preference locally and apply it without restarting the app.
 - Use design tokens/CSS variables for colors instead of hard-coded colors in components.
-- Material 3 migration plan: `.agents/plano-material-3-react-tailwind.md`.
+- O contrato de cores e o plano operacional ficam em `.agents/plano-padronizacao-cores-ux-0003.md`; antes de criar ou alterar telas, consultar o contrato, usar apenas tokens `md-*` e executar `pnpm color:check`.
+- Validar os temas claro e escuro em alterações visuais; não introduzir aliases genéricos ou cores fixas em componentes.
 - In mobile cards with detailed content, do not keep the main content inside a side column next to an icon; use a compact header for the icon/title and let previews, summaries, errors, and action buttons use the full card width.
 
 ## Codex Workflow

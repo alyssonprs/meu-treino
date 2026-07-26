@@ -139,7 +139,7 @@ export function Dialog({
       )}
       <div
         className={cn(
-          "relative max-h-[calc(100dvh-3rem)] w-full max-w-md overflow-y-auto overscroll-contain rounded-xl bg-md-surface-container-high p-6 text-md-on-surface shadow-md-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          "relative max-h-[calc(100dvh-3rem)] w-full max-w-md overflow-y-auto overscroll-contain rounded-xl bg-md-surface-container-high p-6 text-md-on-surface shadow-md-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-md-primary",
           className,
         )}
         ref={dialogRef}

@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/components/ui/utils";
 
 const chipVariants = cva(
-  "inline-flex min-h-8 items-center justify-center gap-1.5 rounded-sm px-3 text-label-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-[var(--md-sys-state-disabled-opacity)]",
+  "inline-flex min-h-8 items-center justify-center gap-1.5 rounded-sm px-3 text-label-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-md-primary disabled:pointer-events-none disabled:opacity-[var(--md-sys-state-disabled-opacity)]",
   {
     variants: {
       variant: {

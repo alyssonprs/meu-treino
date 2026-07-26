@@ -24,7 +24,7 @@ export function PromptCopyButton({ className }: PromptCopyButtonProps) {
             .catch(() => setCopyState("error"));
         }}
         type="button"
-        variant="secondary"
+        variant="tonal"
       >
         <Copy className="h-5 w-5" aria-hidden="true" />
         Copiar prompt para IA

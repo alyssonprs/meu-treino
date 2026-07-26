@@ -39,24 +39,7 @@
     --md-sys-color-inverse-primary: 82 65% 34%;
     --md-sys-color-surface-tint: var(--md-sys-color-primary);
 
-    --background: var(--md-sys-color-background);
-    --foreground: var(--md-sys-color-on-background);
-    --card: var(--md-sys-color-surface-container);
-    --card-foreground: var(--md-sys-color-on-surface);
-    --border: var(--md-sys-color-outline-variant);
-    --muted: var(--md-sys-color-surface-container-high);
-    --muted-foreground: var(--md-sys-color-on-surface-variant);
-    --weak-foreground: var(--md-sys-color-outline);
-    --primary: var(--md-sys-color-primary);
-    --primary-foreground: var(--md-sys-color-on-primary);
-    --secondary: var(--md-sys-color-surface-container-high);
-    --secondary-foreground: var(--md-sys-color-on-surface);
-    --success: var(--md-sys-color-primary);
-    --info: var(--md-sys-color-secondary);
-    --info-foreground: var(--md-sys-color-on-secondary);
-    --warning: var(--md-sys-color-tertiary);
-    --destructive: var(--md-sys-color-error);
-    --ring: var(--md-sys-color-primary);
+    /* Components consume only the explicit Material 3 roles above. */
     --exercise-media-canvas: 0 0% 100%;
   }
 
@@ -99,24 +82,7 @@
     --md-sys-color-inverse-primary: 82 78% 65%;
     --md-sys-color-surface-tint: var(--md-sys-color-primary);
 
-    --background: var(--md-sys-color-background);
-    --foreground: var(--md-sys-color-on-background);
-    --card: var(--md-sys-color-surface-container-lowest);
-    --card-foreground: var(--md-sys-color-on-surface);
-    --border: var(--md-sys-color-outline-variant);
-    --muted: var(--md-sys-color-surface-container);
-    --muted-foreground: var(--md-sys-color-on-surface-variant);
-    --weak-foreground: var(--md-sys-color-outline);
-    --primary: var(--md-sys-color-primary);
-    --primary-foreground: var(--md-sys-color-on-primary);
-    --secondary: var(--md-sys-color-surface-container);
-    --secondary-foreground: var(--md-sys-color-on-surface);
-    --success: 142 71% 39%;
-    --info: var(--md-sys-color-secondary);
-    --info-foreground: var(--md-sys-color-on-secondary);
-    --warning: var(--md-sys-color-tertiary);
-    --destructive: var(--md-sys-color-error);
-    --ring: var(--md-sys-color-primary);
+    /* Keep light and dark semantic roles equivalent; do not add aliases. */
     --exercise-media-canvas: 0 0% 100%;
   }
 

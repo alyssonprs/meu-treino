@@ -147,7 +147,7 @@ export function FloatingRestTimer({
     >
       <TimerReset className="h-5 w-5 shrink-0" aria-hidden="true" />
       <span className="min-w-0 truncate text-sm font-semibold">{exerciseName}</span>
-      <span className="shrink-0 rounded-full bg-md-on-surface/10 px-2 py-1 text-sm font-bold tabular-nums">
+      <span className="shrink-0 rounded-full bg-md-on-surface/[var(--md-sys-state-hover-opacity)] px-2 py-1 text-sm font-bold tabular-nums">
         {label}
       </span>
       {isFinished ? <span className="sr-only" aria-live="polite">Descanso concluído.</span> : null}

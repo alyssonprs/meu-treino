@@ -12,11 +12,6 @@ export type ThemePreference = "dark" | "light";
 
 const defaultTheme: ThemePreference = "dark";
 const themeStorageKey = "meu-treino:theme";
-const themeColorByPreference: Record<ThemePreference, string> = {
-  dark: "#0F1115",
-  light: "#F6F8FA",
-};
-
 type ThemeContextValue = {
   theme: ThemePreference;
   setTheme: (theme: ThemePreference) => void;
@@ -92,9 +87,15 @@ function applyTheme(theme: ThemePreference) {
   root.classList.add(theme);
   root.style.colorScheme = theme;
 
-  document
-    .querySelector('meta[name="theme-color"]')
-    ?.setAttribute("content", themeColorByPreference[theme]);
+  const background = getComputedStyle(root)
+    .getPropertyValue("--md-sys-color-background")
+    .trim();
+
+  if (background) {
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute("content", `hsl(${background})`);
+  }
 }
 
 function isThemePreference(value: string | null): value is ThemePreference {

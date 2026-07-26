@@ -3,6 +3,14 @@ import { mkdir } from "node:fs/promises";
 
 const auditDir = "test-results/auditoria-entrega";
 
+test.beforeEach(async ({ page }, testInfo) => {
+  if (testInfo.project.name === "light") {
+    await page.addInitScript(() => {
+      window.localStorage.setItem("meu-treino:theme", "light");
+    });
+  }
+});
+
 const cycleCompletePlan = {
   workout_plan: {
     plan_id: "plano-ciclo-curto",
@@ -47,7 +55,9 @@ test("mobile visual regression covers first use, import, active home, settings a
 }) => {
   await page.goto("/");
 
-  await expect(page.getByRole("heading", { name: "Inicio" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Seu treino", exact: true }),
+  ).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Importe seu treino para começar" }),
   ).toBeVisible();
@@ -131,6 +141,8 @@ test("mobile visual regression covers first use, import, active home, settings a
   await page
     .getByRole("button", { name: "Voltar para lista de rotinas" })
     .click();
+  await expect(page.getByRole("button", { name: "Ver plano" })).toBeVisible();
+  await page.getByRole("button", { name: "Ver plano" }).click();
   await expect(
     page.getByRole("button", { name: /Treino A - Peito e triceps/ }),
   ).toBeVisible();
@@ -208,7 +220,10 @@ test("active workout separates the routine list, exercise page and global rest t
   await expect(page.getByRole("heading", { name: "Treino em andamento" })).toBeVisible();
   await page.goBack();
   await expect(page.getByRole("navigation")).toBeVisible();
-  await page.getByRole("button", { name: "Histórico" }).click();
+  await page
+    .getByRole("navigation", { name: "Navegação principal" })
+    .getByRole("button", { name: "Histórico" })
+    .click();
   await expect(page).toHaveURL(/#\/historico$/);
   await expect(page.getByRole("heading", { name: "Seu progresso" })).toBeVisible();
   await expect(
@@ -353,9 +368,10 @@ async function confirmPlanImport(page: Page) {
 }
 
 async function screenshot(page: Page, fileName: string) {
-  await mkdir(auditDir, { recursive: true });
+  const projectDir = `${auditDir}/${test.info().project.name}`;
+  await mkdir(projectDir, { recursive: true });
   await page.screenshot({
-    path: `${auditDir}/${fileName}`,
+    path: `${projectDir}/${fileName}`,
     fullPage: true,
   });
 }

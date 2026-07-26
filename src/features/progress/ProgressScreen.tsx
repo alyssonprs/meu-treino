@@ -10,6 +10,7 @@ import type { LucideIcon } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { Card } from "@/components/ui/card";
 import { LinearProgress } from "@/components/ui/progress";
+import { ListSurface, listRowClassName } from "@/components/ui/list";
 import {
   formatLoad,
   formatShortDate,
@@ -102,10 +103,10 @@ export function ProgressScreen({
             Finalize um treino para ver cargas e abrir o detalhe por exercicio.
           </p>
         ) : (
-          <div className="mt-4 space-y-3">
+          <ListSurface className="mt-4">
             {loadSummaries.map((summary) => (
               <button
-                className="w-full rounded-md bg-md-surface-container-high p-3 text-left transition-colors hover:bg-md-surface-container-highest focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className={`${listRowClassName} min-h-20 px-3 py-3 [&+button]:border-t [&+button]:border-md-outline-variant`}
                 key={summary.exerciseId}
                 onClick={() => onOpenExerciseHistory(summary.exerciseId)}
                 type="button"
@@ -140,7 +141,7 @@ export function ProgressScreen({
                 </div>
               </button>
             ))}
-          </div>
+          </ListSurface>
         )}
       </Card>
 

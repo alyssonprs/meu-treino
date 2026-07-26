@@ -1,6 +1,12 @@
 import { Check, ChevronRight, Circle, CircleDot } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/components/ui/utils";
+import {
+  ListSurface,
+  listCurrentRowClassName,
+  listRowClassName,
+  listStatusClassName,
+} from "@/components/ui/list";
 import type { WorkoutSessionDraft } from "@/services/workoutSessionService";
 import { getExerciseGuide, type ExerciseGuide } from "./exerciseGuides";
 
@@ -22,7 +28,7 @@ export function ActiveWorkoutScreen({
           <RoutineSectionLabel id="routine-exercises-heading">
             Exercícios da rotina
           </RoutineSectionLabel>
-          <div className="mt-2 overflow-hidden rounded-xl border border-md-outline-variant bg-md-surface-container">
+          <ListSurface className="mt-2">
             {draft.routine.exercises.map((exercise, exerciseIndex) => {
               const exerciseDraft = draft.exercises[exerciseIndex];
               const status = getExerciseStatus(draft, exerciseIndex);
@@ -34,10 +40,10 @@ export function ActiveWorkoutScreen({
                   aria-current={isCurrent ? "step" : undefined}
                   aria-label={`${exercise.name}: ${status}, ${exerciseDraft.completedSets.filter((set) => set.completedAt !== null).length} de ${exerciseDraft.completedSets.length} séries concluídas`}
                   className={cn(
-                    "relative flex min-h-[5.5rem] w-full items-center gap-3 px-3 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
+                    listRowClassName,
+                    "min-h-[5.5rem] px-3 py-3",
                     exerciseIndex > 0 && "border-t border-md-outline-variant",
-                    isCurrent && "bg-md-secondary-container/40",
-                    "active:bg-md-on-surface/[var(--md-sys-state-pressed-opacity)]",
+                    isCurrent && listCurrentRowClassName,
                   )}
                   key={exercise.id}
                   onClick={() => onOpenExercise(exerciseIndex)}
@@ -62,7 +68,7 @@ export function ActiveWorkoutScreen({
                 </button>
               );
             })}
-          </div>
+          </ListSurface>
         </section>
 
         <RoutineStepList label="Cooldown" steps={draft.routine.cooldown} tone="cooldown" />
@@ -96,7 +102,7 @@ function RoutineStepList({
   return (
     <section>
       <RoutineSectionLabel>{label}</RoutineSectionLabel>
-      <div className="mt-2 overflow-hidden rounded-xl border border-md-outline-variant bg-md-surface-container-low">
+      <ListSurface className="mt-2 bg-md-surface-container-low">
         {steps.map((step, index) => (
           <div
             className={cn(
@@ -116,7 +122,7 @@ function RoutineStepList({
             </span>
           </div>
         ))}
-      </div>
+      </ListSurface>
     </section>
   );
 }
@@ -149,12 +155,12 @@ function getExerciseStatus(draft: WorkoutSessionDraft, exerciseIndex: number): "
 
 function getExerciseStatusMeta(status: ReturnType<typeof getExerciseStatus>) {
   if (status === "Concluído") {
-    return { Icon: Check, iconClassName: "text-md-primary", textClassName: "text-md-primary" };
+    return { Icon: Check, iconClassName: listStatusClassName.completed, textClassName: listStatusClassName.completed };
   }
 
   if (status === "Em progresso") {
-    return { Icon: CircleDot, iconClassName: "text-md-secondary", textClassName: "text-md-secondary" };
+    return { Icon: CircleDot, iconClassName: listStatusClassName["in-progress"], textClassName: listStatusClassName["in-progress"] };
   }
 
-  return { Icon: Circle, iconClassName: "text-md-on-surface-variant", textClassName: "text-md-on-surface-variant" };
+  return { Icon: Circle, iconClassName: listStatusClassName.pending, textClassName: listStatusClassName.pending };
 }

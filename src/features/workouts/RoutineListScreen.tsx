@@ -2,6 +2,11 @@ import { ChevronRight, Dumbbell } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { Card } from "@/components/ui/card";
 import { Chip } from "@/components/ui/chip";
+import {
+  ListSurface,
+  listCurrentRowClassName,
+  listRowClassName,
+} from "@/components/ui/list";
 import type { RoutineExecutionSummary } from "@/services/progressService";
 import type { NextRoutineRecommendation } from "@/services/workoutRecommendationService";
 import type { ActiveWorkoutPlanSnapshot } from "@/storage/workoutPlanRepository";
@@ -31,7 +36,7 @@ export function RoutineListScreen({
         />
         <Card padding="lg" variant="outlined">
           <h3 className="text-title-lg font-medium">Nenhum plano ativo</h3>
-          <p className="mt-3 text-sm leading-6 text-muted-foreground">
+          <p className="mt-3 text-sm leading-6 text-md-on-surface-variant">
             Importe um JSON na tela Início para listar as rotinas do plano.
           </p>
         </Card>
@@ -54,7 +59,7 @@ export function RoutineListScreen({
         title="Rotinas do plano"
         description={activePlan.plan.name}
       />
-      <div className="space-y-3">
+      <ListSurface>
         {routines.map((routine) => {
           const isRecommended = routine.id === nextRecommendation?.routineId;
           const executionSummary = routineExecutionById.get(routine.id);
@@ -62,14 +67,17 @@ export function RoutineListScreen({
           return (
             <button
               className={[
-                "w-full rounded-lg border bg-md-surface-container-lowest p-4 text-left text-md-on-surface transition-colors hover:bg-md-surface-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                isRecommended ? "border-md-primary shadow-md-1" : "border-md-outline-variant",
+                listRowClassName,
+                "min-h-[5.5rem] px-4 py-4",
+                routine.order > 1 ? "border-t border-md-outline-variant" : "",
+                isRecommended ? listCurrentRowClassName : "",
               ].join(" ")}
               key={routine.id}
               onClick={() => onOpenRoutine(routine.id)}
               type="button"
             >
-              <div className="flex items-start gap-3">
+              {isRecommended ? <span className="absolute inset-y-3 left-0 w-1 rounded-r-full bg-md-primary" aria-hidden="true" /> : null}
+              <div className="flex min-w-0 flex-1 items-start gap-3">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-md-secondary-container text-md-on-secondary-container">
                   <Dumbbell className="h-5 w-5" aria-hidden="true" />
                 </div>
@@ -87,7 +95,7 @@ export function RoutineListScreen({
                   </p>
                 </div>
                 <ChevronRight
-                  className="mt-3 h-5 w-5 shrink-0 text-muted-foreground"
+                  className="mt-3 h-5 w-5 shrink-0 text-md-on-surface-variant"
                   aria-hidden="true"
                 />
               </div>
@@ -96,7 +104,7 @@ export function RoutineListScreen({
             </button>
           );
         })}
-      </div>
+      </ListSurface>
     </section>
   );
 }

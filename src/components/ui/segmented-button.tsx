@@ -60,7 +60,7 @@ export function SegmentedButton<TValue extends string>({
             <span
               className={cn(
                 "pointer-events-none flex min-h-10 min-w-12 items-center justify-center gap-2 border-l border-md-outline px-4 text-label-lg font-medium text-md-on-surface transition-colors first:border-l-0",
-                "peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-inset peer-focus-visible:ring-ring",
+                "peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-inset peer-focus-visible:ring-md-primary",
                 "peer-disabled:opacity-[var(--md-sys-state-disabled-opacity)]",
                 isSelected
                   ? "bg-md-secondary-container text-md-on-secondary-container"

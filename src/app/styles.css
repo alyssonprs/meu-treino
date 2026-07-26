@@ -6,11 +6,11 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-md-outline-variant;
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-md-background text-md-on-background antialiased;
     margin: 0;
     min-width: 320px;
     min-height: 100vh;

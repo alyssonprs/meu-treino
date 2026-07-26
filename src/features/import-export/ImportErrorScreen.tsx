@@ -29,14 +29,14 @@ export function ImportErrorScreen({
           <AlertCircle className="h-5 w-5" aria-hidden="true" />
         </div>
         <div className="min-w-0">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-md-on-surface-variant">
             {importStatus.fileName ?? "Arquivo selecionado"}
           </p>
           <p className="mt-1 text-title-md font-medium text-md-on-surface">Falha de validação</p>
         </div>
       </div>
 
-      <p className="mt-4 text-sm leading-6 text-muted-foreground">
+      <p className="mt-4 text-sm leading-6 text-md-on-surface-variant">
         O arquivo não segue o modelo esperado pelo app. Confira o detalhe
         técnico abaixo, tente importar outro JSON ou copie o prompt para gerar
         um plano compatível.
@@ -49,7 +49,7 @@ export function ImportErrorScreen({
             key={`${error.path}-${error.message}`}
           >
             <span className="font-medium">{error.path}:</span>{" "}
-            <span className="text-muted-foreground">{error.message}</span>
+            <span className="text-md-on-surface-variant">{error.message}</span>
           </li>
         ))}
       </ul>
@@ -68,7 +68,7 @@ export function ImportErrorScreen({
           className="h-12 w-full gap-2"
           onClick={onCancelImport}
           type="button"
-          variant="ghost"
+          variant="text"
         >
           <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           Voltar

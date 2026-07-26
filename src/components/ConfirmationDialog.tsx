@@ -81,7 +81,7 @@ export function ConfirmationDialog({
             onClick={handleCancel}
             ref={cancelButtonRef}
             type="button"
-            variant="secondary"
+            variant="tonal"
           >
             {cancelLabel}
           </Button>

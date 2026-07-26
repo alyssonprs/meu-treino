@@ -257,7 +257,7 @@ export function HealthConnectSettingsCard({
               void openSettings();
             }}
             type="button"
-            variant={isConnected ? "secondary" : "default"}
+            variant={isConnected ? "tonal" : "filled"}
           >
             <ExternalLink className="h-5 w-5" aria-hidden="true" />
             {isConnected ? "Gerenciar permissoes" : "Abrir Health Connect"}
@@ -271,7 +271,7 @@ export function HealthConnectSettingsCard({
             void refreshStatus(adapter, setStatus, setLoadState, setMessage);
           }}
           type="button"
-          variant="ghost"
+          variant="text"
         >
           <RefreshCw className="h-5 w-5" aria-hidden="true" />
           Atualizar status

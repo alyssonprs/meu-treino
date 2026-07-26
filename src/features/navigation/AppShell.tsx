@@ -115,7 +115,7 @@ function ContextualAppHeader({ header }: { header: ContextualHeader }) {
             className="h-11 w-11 p-0"
             onClick={header.onBack}
             type="button"
-            variant="ghost"
+            variant="text"
           >
             <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           </Button>

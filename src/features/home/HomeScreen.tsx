@@ -65,7 +65,7 @@ export function HomeScreen({
           </div>
 
           <div className="mt-5 space-y-3">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-md-on-surface-variant">
               {isLoadingActivePlan ? "Carregando..." : "Primeiro uso"}
             </p>
             <h2 className="text-3xl font-semibold leading-tight">
@@ -73,7 +73,7 @@ export function HomeScreen({
                 ? "Carregando seu treino"
                 : "Importe seu treino para começar"}
             </h2>
-            <p className="text-base leading-7 text-muted-foreground">
+            <p className="text-base leading-7 text-md-on-surface-variant">
               {isLoadingActivePlan
                 ? "Buscando os dados salvos neste dispositivo."
                 : "Escolha um JSON de treino. Para criar um novo plano com IA, copie o prompt pronto e cole no agente de sua preferencia."}
@@ -155,7 +155,7 @@ export function HomeScreen({
         </div>
         <div className="mt-5 flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-normal text-muted-foreground">
+            <p className="text-xs font-semibold uppercase tracking-normal text-md-on-surface-variant">
               Plano ativo
             </p>
             <h2 className="mt-2 text-3xl font-semibold leading-tight">
@@ -172,7 +172,7 @@ export function HomeScreen({
         {cycleProgress ? (
           <div className="mt-6">
             <div className="flex items-end justify-between gap-3">
-              <p className="text-sm text-muted-foreground">Ciclo atual</p>
+              <p className="text-sm text-md-on-surface-variant">Ciclo atual</p>
               <p className="text-lg font-semibold">
                 {cycleProgress.completedSessions} de{" "}
                 {cycleProgress.plannedSessions} treinos
@@ -183,9 +183,9 @@ export function HomeScreen({
               className="mt-4 h-3"
               value={cycleProgress.percentage}
             />
-            <p className="mt-4 text-base leading-7 text-muted-foreground">
+            <p className="mt-4 text-base leading-7 text-md-on-surface-variant">
               Você está na{" "}
-              <span className="font-semibold text-info">
+              <span className="font-semibold text-md-secondary">
                 semana {weekNumber}
               </span>{" "}
               de {activePlan.plan.estimatedDurationWeeks} ·{" "}
@@ -203,13 +203,13 @@ export function HomeScreen({
 
       {nextRecommendation && recommendedRoutine ? (
         <Card className="border-md-primary" padding="lg" variant="outlined">
-          <p className="inline-flex rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
+          <p className="inline-flex rounded-full bg-md-secondary-container px-3 py-1 text-sm font-semibold text-md-on-secondary-container">
             Próximo treino
           </p>
           <h3 className="mt-5 text-3xl font-semibold leading-tight">
             {nextRecommendation.routineName}
           </h3>
-          <p className="mt-2 text-base text-muted-foreground">
+          <p className="mt-2 text-base text-md-on-surface-variant">
             {previousRoutine ?? getRecommendationReasonLabel(nextRecommendation.reason)}
           </p>
 
