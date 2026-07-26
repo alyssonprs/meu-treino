@@ -77,30 +77,32 @@ export function RoutineListScreen({
               type="button"
             >
               {isRecommended ? <span className="absolute inset-y-3 left-0 w-1 rounded-r-full bg-md-primary" aria-hidden="true" /> : null}
-              <div className="flex min-w-0 flex-1 items-start gap-3">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-md-secondary-container text-md-on-secondary-container">
-                  <Dumbbell className="h-5 w-5" aria-hidden="true" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="text-lg font-semibold">{routine.name}</h3>
-                    {isRecommended ? (
-                      <Chip as="span" variant="selected">
-                        Recomendado
-                      </Chip>
-                    ) : null}
+              <div className="min-w-0 flex-1">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-md-secondary-container text-md-on-secondary-container">
+                    <Dumbbell className="h-5 w-5" aria-hidden="true" />
                   </div>
-                  <p className="mt-1 text-sm font-medium text-md-secondary">
-                    {getRoutineExecutionLabel(executionSummary)}
-                  </p>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="text-lg font-semibold">{routine.name}</h3>
+                      {isRecommended ? (
+                        <Chip as="span" variant="selected">
+                          Recomendado
+                        </Chip>
+                      ) : null}
+                    </div>
+                    <p className="mt-1 text-sm font-medium text-md-secondary">
+                      {getRoutineExecutionLabel(executionSummary)}
+                    </p>
+                  </div>
+                  <ChevronRight
+                    className="mt-3 h-5 w-5 shrink-0 text-md-on-surface-variant"
+                    aria-hidden="true"
+                  />
                 </div>
-                <ChevronRight
-                  className="mt-3 h-5 w-5 shrink-0 text-md-on-surface-variant"
-                  aria-hidden="true"
-                />
-              </div>
 
-              <RoutineMetrics className="mt-4" routine={routine} />
+                <RoutineMetrics className="mt-4" routine={routine} />
+              </div>
             </button>
           );
         })}
