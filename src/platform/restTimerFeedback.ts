@@ -26,16 +26,21 @@ export function playRestCountdownFeedback(remainingSeconds: number) {
     return;
   }
 
-  playTone({ frequency, durationMs: 120, volume: 0.08 });
+  playTone({ frequency, durationMs: 150, volume: 0.14 });
   vibrate([35]);
 }
 
 export function playRestFinishedFeedback() {
-  playTone({ frequency: 988, durationMs: 180, volume: 0.1 });
+  // Use a longer, three-note signal so it remains noticeable in a noisy gym.
+  // Keep the gain below 1 to avoid clipping on phone speakers.
+  playTone({ frequency: 784, durationMs: 260, volume: 0.24 });
   globalThis.setTimeout(() => {
-    playTone({ frequency: 1319, durationMs: 240, volume: 0.1 });
-  }, 190);
-  vibrate([120, 60, 180]);
+    playTone({ frequency: 988, durationMs: 260, volume: 0.24 });
+  }, 280);
+  globalThis.setTimeout(() => {
+    playTone({ frequency: 1319, durationMs: 520, volume: 0.28 });
+  }, 560);
+  vibrate([180, 80, 180, 80, 320]);
 }
 
 function playTone({

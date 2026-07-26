@@ -283,10 +283,25 @@ export function App() {
     }
 
     const updateNow = () => setRestTimerNow(Date.now());
+    const updateNowWhenAppReturns = () => {
+      // Android can pause WebView timers while the app is in the background.
+      // The countdown itself is based on endsAt, so refresh immediately when
+      // the app becomes visible again instead of waiting for setInterval.
+      updateNow();
+    };
+
     updateNow();
     const intervalId = window.setInterval(updateNow, 500);
+    document.addEventListener("visibilitychange", updateNowWhenAppReturns);
+    window.addEventListener("pageshow", updateNowWhenAppReturns);
+    window.addEventListener("focus", updateNowWhenAppReturns);
 
-    return () => window.clearInterval(intervalId);
+    return () => {
+      window.clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", updateNowWhenAppReturns);
+      window.removeEventListener("pageshow", updateNowWhenAppReturns);
+      window.removeEventListener("focus", updateNowWhenAppReturns);
+    };
   }, [activeRestTimer]);
 
   useEffect(() => {
