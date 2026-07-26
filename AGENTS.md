@@ -69,7 +69,7 @@ Use [docs/arquitetura/arquitetura-prompt.md](docs/arquitetura/arquitetura-prompt
 - Keep the first screen useful, not a marketing landing page.
 - Use the approved identity assets in `assets/identity` when configuring app branding, PWA icons, Android adaptive icons, splash screens, and any explicit brand/logo display.
 - Do not generate or introduce new brand icons when the existing `assets/identity` files cover the need.
-- The only source of truth for interface behavior is the implementation already present in the project. Do not use removed design documents as product contracts.
+- Treat the implementation together with `docs/arquitetura/identidade-visual.md` as the current interface contract. When a newer user decision changes that contract, update both as part of the relevant execution. Do not use removed design documents as product contracts.
 - Base the first version on a guided model: the home screen should focus on the next recommended workout.
 - Use an active-workout experience focused on fast exercise logging, rest timer, and few distractions.
 - In the active workout screen, keep the final entry block focused on the current exercise with load and reps only. The UI may show per-set completion controls and rest between sets, but should not ask for load/reps per set.

@@ -49,7 +49,7 @@ controlados, tipagem e composicao, especialmente na tela de treino ativo.
 
 - `AGENTS.md`
 - `docs/arquitetura/arquitetura-prompt.md`
-- `docs/arquitetura/identidade-visual-opcoes.md`
+- `docs/arquitetura/identidade-visual.md`
 - `src/theme/tokens.css`
 - `tailwind.config.ts`
 - `src/app/styles.css`
@@ -201,7 +201,7 @@ Arquivos provaveis:
 
 - `AGENTS.md`
 - `docs/arquitetura/arquitetura-prompt.md`
-- `docs/arquitetura/identidade-visual-opcoes.md`
+- `docs/arquitetura/identidade-visual.md`
 - `src/theme/tokens.css`
 - `tailwind.config.ts`
 

@@ -77,7 +77,7 @@ Regras:
 - Reutilizar esses arquivos antes de gerar ou desenhar novos assets de marca.
 - Usar esses arquivos no `manifest.webmanifest`, na configuracao PWA e na configuracao Android/Capacitor quando aplicavel.
 - Nao usar os assets de marca como substitutos para icones internos de interface; a UI deve continuar usando `lucide-react` para navegacao, botoes e acoes.
-- Se a identidade visual mudar, atualizar `assets/identity`, este documento e `docs/arquitetura/identidade-visual-opcoes.md`.
+- Se a identidade visual mudar, atualizar `assets/identity`, este documento e `docs/arquitetura/identidade-visual.md`.
 
 ### Separacao em camadas
 
@@ -250,7 +250,7 @@ A primeira versao deve seguir o modelo **Guiado**:
 - A orientacao visual da tela de execucao deve ficar recolhida por padrao para nao competir com o treino; quando aberta, deve priorizar musculo principal, musculos auxiliares em cor mais fria, movimento do exercicio quando houver asset e ate 3 dicas curtas.
 - A evolucao do guia visual deve seguir `.agents/plano-incorporacao-biblioteca-exercicios.md`: usar somente assets especificos validados por exercicio ou alias confiavel; `movement_pattern` permanece para dicas e classificacao, nao como imagem generica.
 - Toda midia de exercicio usada a partir de bibliotecas externas deve ser importada para este repositorio e servida como asset local. O app nao deve acessar GitHub, raw.githubusercontent.com, CDN ou qualquer URL remota de midia durante a execucao.
-- A unica fonte da verdade para o comportamento de interface e a implementacao ja existente no projeto. Documentos de desenho removidos nao devem ser usados como contrato de produto.
+- A implementacao existente e `docs/arquitetura/identidade-visual.md` formam o contrato vigente de interface. Quando uma nova decisao do usuario alterar esse contrato, atualizar a implementacao e o documento. Documentos de desenho removidos nao devem ser usados como contrato de produto.
 
 ## Experiencia mobile
 
