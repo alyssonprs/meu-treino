@@ -68,13 +68,13 @@ test("mobile visual regression covers first use, import, active home, settings a
     page.getByRole("heading", { name: "Preview do JSON" }),
   ).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "Confirmar importação" }),
+    page.getByRole("button", { name: "Importar plano" }),
   ).toBeVisible();
   await assertMobileUsability(page);
 
   await screenshot(page, "06-preview-json.png");
 
-  await page.getByRole("button", { name: "Confirmar importação" }).click();
+  await confirmPlanImport(page);
 
   await expect(page.getByText("Próximo treino")).toBeVisible();
   await expect(page.getByText("Treino A - Peito e triceps")).toBeVisible();
@@ -160,7 +160,7 @@ test("active workout separates the routine list, exercise page and global rest t
 
   await page.goto("/");
   await importPlanFromObject(page, cycleCompletePlan, "ciclo-curto.json");
-  await page.getByRole("button", { name: "Confirmar importação" }).click();
+  await confirmPlanImport(page);
 
   await page.getByRole("button", { name: "Iniciar treino" }).click();
   await expect(page.getByRole("heading", { name: "Treino em andamento" })).toBeVisible();
@@ -174,6 +174,7 @@ test("active workout separates the routine list, exercise page and global rest t
   await expect(page.getByRole("heading", { name: "Agachamento livre" })).toBeVisible();
   await expect(page.getByText("Principal: Pernas")).toBeVisible();
   await expect(page.getByRole("button", { name: /Concluir s.rie 1/ })).toBeVisible();
+  await screenshot(page, "14-exercicio-ativo.png");
 
   await page.getByRole("button", { name: /Concluir s.rie 1/ }).click();
   await expect(
@@ -261,22 +262,30 @@ test("invalid import shows the dedicated recovery screen", async ({ page }) => {
 test("settings clears local workout data after confirmation", async ({ page }) => {
   await page.goto("/");
   await importModelPlan(page);
-  await page.getByRole("button", { name: "Confirmar importação" }).click();
+  await confirmPlanImport(page);
   await expect(page.getByRole("button", { name: "Iniciar treino" })).toBeVisible();
 
   await page.getByRole("button", { name: "Ajustes" }).click();
   await page.getByRole("button", { name: "Apagar dados locais" }).click();
   await expect(
-    page.getByText("Apagar todos os dados de treino?"),
+    page.getByRole("heading", { name: "Apagar todos os dados?" }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Confirmar limpeza" }).click();
+  await screenshot(page, "15-ajustes-confirmacao-limpeza.png");
+  await page.getByRole("button", { name: "Apagar dados", exact: true }).click();
 
   await expect(
     page.getByRole("heading", { name: "Importe seu treino para começar" }),
   ).toBeVisible();
   await expect(
+    page.getByRole("dialog", { name: "Atualização concluída" }),
+  ).toBeVisible();
+  await expect(
     page.getByText("Dados de treino apagados deste dispositivo."),
   ).toBeVisible();
+  await page
+    .getByRole("dialog", { name: "Atualização concluída" })
+    .getByRole("button", { name: "Entendi" })
+    .click();
   await assertMobileUsability(page);
 });
 
@@ -308,7 +317,15 @@ async function replacePlanFromSettings(page: Page) {
   await expect(
     page.getByRole("heading", { name: "Preview do JSON" }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Confirmar importação" }).click();
+  await confirmPlanImport(page);
+}
+
+async function confirmPlanImport(page: Page) {
+  await page.getByRole("button", { name: "Importar plano" }).click();
+  await page
+    .getByRole("dialog", { name: "Importar este plano?" })
+    .getByRole("button", { name: "Importar plano" })
+    .click();
 }
 
 async function screenshot(page: Page, fileName: string) {

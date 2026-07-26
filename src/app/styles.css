@@ -19,6 +19,9 @@
       ui-sans-serif,
       system-ui,
       sans-serif;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: hsl(var(--md-sys-color-primary) / 0.18);
+    touch-action: manipulation;
   }
 
   button,

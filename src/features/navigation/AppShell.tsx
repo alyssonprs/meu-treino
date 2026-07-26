@@ -21,6 +21,11 @@ const screensWithoutBottomNav: AppScreen[] = [
   "import-error",
 ];
 
+const screensWithContextualHeader: AppScreen[] = [
+  "active-workout",
+  "active-exercise",
+];
+
 const screenIdentifierByScreen: Record<AppScreen, `UX-${string}`> = {
   "active-exercise": "UX-0009",
   "active-workout": "UX-0003",
@@ -58,13 +63,16 @@ export function AppShell({
               ? "pb-44"
               : "pb-28"
             : floatingOverlay
-              ? "pb-32"
-              : "pb-6",
+              ? "pb-20"
+              : "pb-2",
         ].join(" ")}
       >
-        {screensWithoutBottomNav.includes(activeScreen) ? null : <AppHeader />}
+        {screensWithContextualHeader.includes(activeScreen) ? null : <AppHeader />}
         {children}
-        <ScreenIdentifier code={screenIdentifierByScreen[activeScreen]} />
+        <ScreenIdentifier
+          compact={screensWithoutBottomNav.includes(activeScreen)}
+          code={screenIdentifierByScreen[activeScreen]}
+        />
       </div>
 
       {showBottomNav ? (

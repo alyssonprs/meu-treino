@@ -5,6 +5,8 @@ import {
   FileInput,
   RotateCcw,
 } from "lucide-react";
+import { useState } from "react";
+import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import type { ImportStatus } from "./importStatus";
@@ -27,6 +29,7 @@ export function ImportPreviewScreen({
   onCancelImport,
   onChooseAnotherFile,
 }: ImportPreviewScreenProps) {
+  const [showImportConfirmation, setShowImportConfirmation] = useState(false);
   const isSaving = importStatus.state === "saving";
   const preview = importStatus.preview;
   const summaryItems = [
@@ -99,11 +102,11 @@ export function ImportPreviewScreen({
         <Button
           className="h-12 w-full gap-2"
           disabled={isSaving}
-          onClick={onActivatePlan}
+          onClick={() => setShowImportConfirmation(true)}
           type="button"
         >
           <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
-          {isSaving ? "Importando..." : "Confirmar importação"}
+          {isSaving ? "Importando…" : "Importar plano"}
         </Button>
         <Button
           className="h-12 w-full gap-2"
@@ -127,6 +130,18 @@ export function ImportPreviewScreen({
         </Button>
         </div>
       </Card>
+      <ConfirmationDialog
+        cancelLabel="Cancelar"
+        confirmLabel="Importar plano"
+        isOpen={showImportConfirmation}
+        onCancel={() => setShowImportConfirmation(false)}
+        onConfirm={onActivatePlan}
+        title="Importar este plano?"
+        tone="warning"
+      >
+        O progresso da sequência atual será reiniciado. O histórico de cargas
+        já salvo continuará disponível neste dispositivo.
+      </ConfirmationDialog>
     </>
   );
 }

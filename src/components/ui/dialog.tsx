@@ -118,7 +118,7 @@ export function Dialog({
       aria-describedby={description ? descriptionId : undefined}
       aria-labelledby={titleId}
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-md-scrim/50 px-4 py-6 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex touch-manipulation items-center justify-center overscroll-contain bg-md-scrim/50 px-4 py-6 backdrop-blur-sm"
       role="dialog"
     >
       <button
@@ -129,7 +129,7 @@ export function Dialog({
       />
       <div
         className={cn(
-          "relative w-full max-w-md rounded-xl bg-md-surface-container-high p-6 text-md-on-surface shadow-md-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          "relative max-h-[calc(100dvh-3rem)] w-full max-w-md overflow-y-auto overscroll-contain rounded-xl bg-md-surface-container-high p-6 text-md-on-surface shadow-md-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
           className,
         )}
         ref={dialogRef}

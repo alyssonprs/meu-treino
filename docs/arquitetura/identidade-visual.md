@@ -33,6 +33,152 @@ migracao para componentes, shapes, tipografia, navegacao e estados do Material 3
 
 Plano operacional: `.agents/plano-material-3-react-tailwind.md`.
 
+## Padrões de usabilidade e navegação
+
+Estes padrões são obrigatórios para todas as interfaces do app. Eles existem
+para que uma nova tela pareça parte do mesmo produto, inclusive durante o uso
+rápido na academia.
+
+### Estrutura de tela
+
+- Toda tela é renderizada dentro de `AppShell`, com conteúdo em uma coluna de
+  até `max-w-md`, margem lateral de 16 px e identificação da interface no
+  rodapé técnico.
+- Telas principais (`Início`, `Treino`, `Histórico` e `Ajustes`) usam o mesmo
+  header global de marca, um `PageHeader` no início do conteúdo e a barra de
+  navegação inferior fixa.
+- Telas de tarefa ou detalhe usam uma barra contextual no topo com voltar,
+  título e progresso/ação de apoio. Elas não exibem a navegação inferior para
+  evitar que o usuário abandone uma tarefa por engano.
+- Uma tela de tarefa que tenha ação principal deve mantê-la em rodapé
+  contextual fixo, respeitando a área segura do dispositivo. Não usar
+  `min-h-screen` dentro de um shell que já ocupa a altura da janela, pois isso
+  cria espaço vazio antes do rodapé.
+- O conteúdo começa após o header e termina antes do footer contextual ou da
+  navegação inferior. Espaçamentos entre blocos usam 20 px; dentro de cards,
+  usar 12, 16 ou 20 px conforme a densidade.
+
+### Navegação
+
+- A navegação inferior contém exatamente quatro destinos de primeiro nível:
+  `Início`, `Treino`, `Histórico` e `Ajustes`. O item ativo usa indicador em
+  pill e `aria-current="page"`.
+- `Início` mostra o próximo treino recomendado; `Treino` lista todas as
+  rotinas; `Histórico` mostra progresso e cargas; `Ajustes` concentra tema,
+  importação, backup e integrações locais.
+- Cartões, linhas e atalhos que abrem uma tela devem ser botões ou links reais,
+  ter alvo de toque mínimo de 48 px e foco visível.
+- A sequência é `Treino` → lista da rotina (UX-0003) → exercício ativo
+  (UX-0009). Voltar em UX-0009 retorna à lista da rotina; voltar em UX-0003
+  retorna à lista de rotinas. A barra inferior não é mostrada nessa sequência.
+- Resultado de ação, importação e conclusão devem oferecer uma saída explícita
+  no próprio diálogo ou na tela seguinte; nunca depender somente do gesto de
+  voltar do navegador.
+
+### Avisos, confirmações e erros
+
+- Resultados de ações, avisos que exigem ciência e confirmações aparecem em
+  `ConfirmationDialog`, sobre a tela atual. O diálogo tem título objetivo,
+  ícone e cor semântica, texto curto e um botão de confirmação explícito.
+- Ações destrutivas ou que substituem dados têm os botões `Cancelar` e uma
+  ação nomeada pelo efeito, como `Apagar dados`, `Restaurar backup` ou
+  `Importar plano`. O foco inicial fica em `Cancelar`.
+- Não usar `window.confirm`, toast, banner temporário ou confirmação inline
+  para essas ações. Status persistentes que ajudam a leitura do conteúdo — por
+  exemplo, a situação do ciclo dentro do cartão de progresso — podem ficar na
+  tela, mas não substituem um retorno de ação.
+- O diálogo fecha por `Escape`, toque no fundo ou botão secundário quando a
+  ação é cancelável; o foco retorna ao controle que o abriu.
+
+### Componentes e cores
+
+- `PageHeader` é o cabeçalho de conteúdo das telas principais: ícone em
+  `secondary-container`, label em `secondary`, título em `on-surface` e
+  descrição em `on-surface-variant`.
+- Usar `Card` para agrupamentos: `outlined` para blocos de conteúdo e listas,
+  `filled` para informação secundária e `elevated` somente quando a elevação
+  comunica prioridade. Não criar variações locais de borda, raio ou sombra.
+- A cor comunica papel, não preferência: `primary` para ação e conclusão,
+  `secondary` para navegação e informação, `tertiary` para atenção e `error`
+  para falha ou destruição. Usar apenas tokens `md-*` ou aliases derivados
+  deles; não introduzir hexadecimais em componentes.
+- Cards de lista devem ter superfície, borda, ícone, texto secundário e foco
+  iguais entre listas de rotinas, exercícios e histórico. O conteúdo detalhado
+  ocupa a largura inteira do card após o cabeçalho compacto.
+
+## Padrões de usabilidade e navegação
+
+Estes padrões são obrigatórios para todas as interfaces do app. Eles existem
+para que uma nova tela pareça parte do mesmo produto, inclusive durante o uso
+rápido na academia.
+
+### Estrutura de tela
+
+- Toda tela é renderizada dentro de `AppShell`, com conteúdo em uma coluna de
+  até `max-w-md`, margem lateral de 16 px e identificação da interface no
+  rodapé técnico.
+- Telas principais (`Início`, `Treino`, `Histórico` e `Ajustes`) usam o mesmo
+  header global de marca, um `PageHeader` no início do conteúdo e a barra de
+  navegação inferior fixa.
+- Telas de tarefa ou detalhe usam uma barra contextual no topo com voltar,
+  título e progresso/ação de apoio. Elas não exibem a navegação inferior para
+  evitar que o usuário abandone uma tarefa por engano.
+- Uma tela de tarefa que tenha ação principal deve mantê-la em rodapé
+  contextual fixo, respeitando a área segura do dispositivo. Não usar
+  `min-h-screen` dentro de um shell que já ocupa a altura da janela, pois isso
+  cria espaço vazio antes do rodapé.
+- O conteúdo começa após o header e termina antes do footer contextual ou da
+  navegação inferior. Espaçamentos entre blocos usam 20 px; dentro de cards,
+  usar 12, 16 ou 20 px conforme a densidade.
+
+### Navegação
+
+- A navegação inferior contém exatamente quatro destinos de primeiro nível:
+  `Início`, `Treino`, `Histórico` e `Ajustes`. O item ativo usa indicador em
+  pill e `aria-current="page"`.
+- `Início` mostra o próximo treino recomendado; `Treino` lista todas as
+  rotinas; `Histórico` mostra progresso e cargas; `Ajustes` concentra tema,
+  importação, backup e integrações locais.
+- Cartões, linhas e atalhos que abrem uma tela devem ser botões ou links reais,
+  ter alvo de toque mínimo de 48 px e foco visível.
+- A sequência é `Treino` → lista da rotina (UX-0003) → exercício ativo
+  (UX-0009). Voltar em UX-0009 retorna à lista da rotina; voltar em UX-0003
+  retorna à lista de rotinas. A barra inferior não é mostrada nessa sequência.
+- Resultado de ação, importação e conclusão devem oferecer uma saída explícita
+  no próprio diálogo ou na tela seguinte; nunca depender somente do gesto de
+  voltar do navegador.
+
+### Avisos, confirmações e erros
+
+- Resultados de ações, avisos que exigem ciência e confirmações aparecem em
+  `ConfirmationDialog`, sobre a tela atual. O diálogo tem título objetivo,
+  ícone e cor semântica, texto curto e um botão de confirmação explícito.
+- Ações destrutivas ou que substituem dados têm os botões `Cancelar` e uma
+  ação nomeada pelo efeito, como `Apagar dados`, `Restaurar backup` ou
+  `Importar plano`. O foco inicial fica em `Cancelar`.
+- Não usar `window.confirm`, toast, banner temporário ou confirmação inline
+  para essas ações. Status persistentes que ajudam a leitura do conteúdo — por
+  exemplo, a situação do ciclo dentro do cartão de progresso — podem ficar na
+  tela, mas não substituem um retorno de ação.
+- O diálogo fecha por `Escape`, toque no fundo ou botão secundário quando a
+  ação é cancelável; o foco retorna ao controle que o abriu.
+
+### Componentes e cores
+
+- `PageHeader` é o cabeçalho de conteúdo das telas principais: ícone em
+  `secondary-container`, label em `secondary`, título em `on-surface` e
+  descrição em `on-surface-variant`.
+- Usar `Card` para agrupamentos: `outlined` para blocos de conteúdo e listas,
+  `filled` para informação secundária e `elevated` somente quando a elevação
+  comunica prioridade. Não criar variações locais de borda, raio ou sombra.
+- A cor comunica papel, não preferência: `primary` para ação e conclusão,
+  `secondary` para navegação e informação, `tertiary` para atenção e `error`
+  para falha ou destruição. Usar apenas tokens `md-*` ou aliases derivados
+  deles; não introduzir hexadecimais em componentes.
+- Cards de lista devem ter superfície, borda, ícone, texto secundário e foco
+  iguais entre listas de rotinas, exercícios e histórico. O conteúdo detalhado
+  ocupa a largura inteira do card após o cabeçalho compacto.
+
 ### Tema claro
 
 Base Material 3 em tema claro para ambientes iluminados e leitura clara.

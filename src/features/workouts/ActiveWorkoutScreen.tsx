@@ -1,15 +1,14 @@
 import { ArrowLeft, Check, ChevronRight, Circle, CircleDot, Square } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { ModalDialog } from "@/components/ModalDialog";
-import { Notice } from "@/components/Notice";
 import { Button } from "@/components/ui/button";
+import { TopAppBar } from "@/components/ui/top-app-bar";
 import { cn } from "@/components/ui/utils";
 import type { WorkoutSessionDraft } from "@/services/workoutSessionService";
 import { getExerciseGuide, type ExerciseGuide } from "./exerciseGuides";
 
 type ActiveWorkoutScreenProps = {
   draft: WorkoutSessionDraft;
-  message: string | null;
   onBackToDetail: () => void;
   onFinish: () => void;
   onOpenExercise: (exerciseIndex: number) => void;
@@ -17,7 +16,6 @@ type ActiveWorkoutScreenProps = {
 
 export function ActiveWorkoutScreen({
   draft,
-  message,
   onBackToDetail,
   onFinish,
   onOpenExercise,
@@ -38,29 +36,36 @@ export function ActiveWorkoutScreen({
   }
 
   return (
-    <section className="min-h-screen pb-28 pt-2">
-      <header className="flex items-center justify-between gap-2">
-        <Button
-          aria-label="Voltar para lista de rotinas"
-          className="h-11 w-11 shrink-0 p-0"
-          onClick={onBackToDetail}
-          type="button"
-          variant="ghost"
-        >
-          <ArrowLeft className="h-5 w-5" aria-hidden="true" />
-        </Button>
-        <div className="min-w-0 flex-1 text-center">
-          <p className="truncate text-xs font-medium text-md-on-surface-variant">
-            {draft.routine.name}
-          </p>
-          <h2 className="truncate text-lg font-semibold">Treino em andamento</h2>
-        </div>
-        <span className="shrink-0 rounded-full bg-md-surface-container-high px-3 py-2 text-xs font-semibold tabular-nums">
-          {completedExercises}/{draft.exercises.length}
-        </span>
-      </header>
-
-      {message ? <Notice className="mt-4" tone="danger">{message}</Notice> : null}
+    <section className="pb-2 pt-1">
+      <TopAppBar
+        actions={
+          <span className="shrink-0 rounded-full bg-md-surface-container-high px-3 py-2 text-xs font-semibold tabular-nums">
+            {completedExercises}/{draft.exercises.length}
+          </span>
+        }
+        className="-mx-4 px-4"
+        navigationIcon={
+          <Button
+            aria-label="Voltar para lista de rotinas"
+            className="h-11 w-11 p-0"
+            onClick={onBackToDetail}
+            type="button"
+            variant="ghost"
+          >
+            <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+          </Button>
+        }
+        title={
+          <div className="min-w-0 text-center">
+            <p className="truncate text-label-md font-medium text-md-on-surface-variant">
+              {draft.routine.name}
+            </p>
+            <h2 className="truncate text-title-lg font-medium">
+              Treino em andamento
+            </h2>
+          </div>
+        }
+      />
 
       <div className="mt-6 space-y-5">
         <RoutineStepList label="Aquecimento" steps={draft.routine.warmup} tone="warmup" />
@@ -115,7 +120,7 @@ export function ActiveWorkoutScreen({
         <RoutineStepList label="Cooldown" steps={draft.routine.cooldown} tone="cooldown" />
       </div>
 
-      <div className="sticky bottom-3 z-10 -mx-1 mt-6 bg-md-background/95 px-1 pt-3 backdrop-blur">
+      <div className="sticky bottom-0 z-10 -mx-4 mt-6 bg-md-background/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur">
         <Button className="h-14 w-full gap-2 text-base" onClick={requestFinishWorkout} type="button">
           <Square className="h-5 w-5" aria-hidden="true" />
           {hasIncompleteExercises ? "Finalizar treino" : "Finalizar rotina"}

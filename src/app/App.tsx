@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { HomeScreen } from "@/features/home/HomeScreen";
+import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import {
   idleImportStatus,
   type ImportStatus,
@@ -689,6 +690,15 @@ export function App() {
       onNavigate={navigateToMainTab}
     >
       {renderCurrentScreen()}
+      <ConfirmationDialog
+        confirmLabel="Entendi"
+        isOpen={workoutMessage !== null}
+        onConfirm={() => setWorkoutMessage(null)}
+        title={isPositiveWorkoutMessage(workoutMessage) ? "Atualização concluída" : "Não foi possível concluir"}
+        tone={isPositiveWorkoutMessage(workoutMessage) ? "success" : "danger"}
+      >
+        {workoutMessage ?? ""}
+      </ConfirmationDialog>
       <input
         accept="application/json,.json"
         className="sr-only"
@@ -710,7 +720,6 @@ export function App() {
       return (
         <ActiveWorkoutScreen
           draft={activeWorkout}
-          message={workoutMessage}
           onBackToDetail={() => {
             navigateToMainTab("workout");
           }}
@@ -727,7 +736,6 @@ export function App() {
         <ActiveExerciseScreen
           draft={activeWorkout}
           loadHistoryByExerciseId={workoutLoadHistory}
-          message={workoutMessage}
           restTimer={
             activeRestTimer?.exerciseIndex === activeWorkout.currentExerciseIndex
               ? activeRestTimer
@@ -851,7 +859,6 @@ export function App() {
         isLoadingActivePlan={isLoadingActivePlan}
         loadSummaries={loadSummaries}
         nextRecommendation={nextRecommendation}
-        workoutMessage={workoutMessage}
         onChooseImportFile={() => fileInputRef.current?.click()}
         onGoToHistory={() => navigateToMainTab("history")}
         onOpenWorkoutList={() => navigateToMainTab("workout")}
@@ -873,6 +880,14 @@ export function App() {
       repository: pwaWorkoutPlanRepository,
     });
   }
+}
+
+function isPositiveWorkoutMessage(message: string | null) {
+  return (
+    message?.includes("com sucesso") ||
+    message?.startsWith("Dados de treino apagados") ||
+    false
+  );
 }
 
 function getMainTabScreenFromHash(): MainTabScreen | null {

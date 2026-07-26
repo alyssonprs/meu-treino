@@ -9,7 +9,8 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useRef, useState } from "react";
-import { Notice } from "@/components/Notice";
+import { ConfirmationDialog } from "@/components/ConfirmationDialog";
+import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { PromptCopyButton } from "@/features/import-export/PromptCopyButton";
@@ -50,7 +51,10 @@ export function SettingsScreen({
   setHealthConnectAutoExportEnabled,
 }: SettingsScreenProps) {
   const backupFileInputRef = useRef<HTMLInputElement>(null);
-  const [showClearConfirmation, setShowClearConfirmation] = useState(false);
+  const [activeDialog, setActiveDialog] = useState<
+    "clear" | "feedback" | "restore" | null
+  >(null);
+  const [pendingBackupFile, setPendingBackupFile] = useState<File | null>(null);
   const [isExportingBackup, setIsExportingBackup] = useState(false);
   const [isRestoringBackup, setIsRestoringBackup] = useState(false);
   const [backupFeedback, setBackupFeedback] =
@@ -62,6 +66,7 @@ export function SettingsScreen({
 
     try {
       setBackupFeedback(await onExportLocalBackup());
+      setActiveDialog("feedback");
     } finally {
       setIsExportingBackup(false);
     }
@@ -73,6 +78,7 @@ export function SettingsScreen({
 
     try {
       setBackupFeedback(await onRestoreLocalBackupFile(file));
+      setActiveDialog("feedback");
     } finally {
       setIsRestoringBackup(false);
 
@@ -82,18 +88,31 @@ export function SettingsScreen({
     }
   }
 
+  async function confirmRestoreBackup() {
+    if (!pendingBackupFile) {
+      return;
+    }
+
+    setActiveDialog(null);
+    await handleRestoreBackup(pendingBackupFile);
+    setPendingBackupFile(null);
+  }
+
+  async function confirmClearLocalData() {
+    await onClearLocalData();
+    setActiveDialog(null);
+  }
+
   return (
     <>
-      <Card className="mt-6" padding="lg" variant="outlined">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-info">
-            <Settings className="h-5 w-5" aria-hidden="true" />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-info">Ajustes</p>
-            <h2 className="text-2xl font-semibold">Preferencias locais</h2>
-          </div>
-        </div>
+      <section className="mt-4 space-y-5">
+      <PageHeader
+        icon={Settings}
+        label="Ajustes"
+        title="Preferências locais"
+      />
+
+      <Card padding="lg" variant="outlined">
 
         <div className="mt-5">
           <h3 className="font-medium">Tema do app</h3>
@@ -176,21 +195,6 @@ export function SettingsScreen({
               {isRestoringBackup ? "Restaurando..." : "Restaurar backup"}
             </Button>
           </div>
-          {backupFeedback ? (
-            <Notice
-              className="mt-4"
-              tone={backupFeedback.success ? "success" : "danger"}
-              title={backupFeedback.message}
-            >
-              {backupFeedback.details?.length ? (
-                <ul className="mt-2 list-disc space-y-1 pl-5 text-muted-foreground">
-                  {backupFeedback.details.map((detail) => (
-                    <li key={detail}>{detail}</li>
-                  ))}
-                </ul>
-              ) : null}
-            </Notice>
-          ) : null}
           <input
             accept="application/json,.json"
             className="sr-only"
@@ -198,7 +202,8 @@ export function SettingsScreen({
               const file = event.target.files?.[0];
 
               if (file) {
-                void handleRestoreBackup(file);
+                setPendingBackupFile(file);
+                setActiveDialog("restore");
               }
             }}
             ref={backupFileInputRef}
@@ -206,51 +211,15 @@ export function SettingsScreen({
           />
         </div>
 
-        {showClearConfirmation ? (
-          <div className="mt-4 rounded-lg border border-destructive bg-background p-4">
-            <p className="font-semibold text-destructive">
-              Apagar todos os dados de treino?
-            </p>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Isso remove plano ativo, progresso, historico de treinos e cargas
-              salvas neste dispositivo.
-            </p>
-            <div className="mt-4 grid gap-2">
-              <Button
-                className="h-12 gap-2 bg-destructive text-white hover:brightness-95"
-                disabled={isClearingLocalData}
-                onClick={() => {
-                  void onClearLocalData().then(() =>
-                    setShowClearConfirmation(false),
-                  );
-                }}
-                type="button"
-              >
-                <Trash2 className="h-5 w-5" aria-hidden="true" />
-                {isClearingLocalData ? "Apagando..." : "Confirmar limpeza"}
-              </Button>
-              <Button
-                className="h-12"
-                disabled={isClearingLocalData}
-                onClick={() => setShowClearConfirmation(false)}
-                type="button"
-                variant="secondary"
-              >
-                Cancelar
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <Button
-            className="mt-4 h-12 w-full justify-start gap-3 border-destructive text-destructive hover:bg-muted"
-            onClick={() => setShowClearConfirmation(true)}
-            type="button"
-            variant="secondary"
-          >
-            <Trash2 className="h-5 w-5" aria-hidden="true" />
-            Apagar dados locais
-          </Button>
-        )}
+        <Button
+          className="mt-4 h-12 w-full justify-start gap-3 border-md-error text-md-error hover:bg-md-error-container"
+          onClick={() => setActiveDialog("clear")}
+          type="button"
+          variant="secondary"
+        >
+          <Trash2 className="h-5 w-5" aria-hidden="true" />
+          Apagar dados locais
+        </Button>
       </Card>
 
       <Card className="mt-5" padding="lg" variant="outlined">
@@ -261,6 +230,66 @@ export function SettingsScreen({
           <InfoRow label="Modo" value="PWA offline-first" />
         </dl>
       </Card>
+
+      </section>
+
+      <ConfirmationDialog
+        cancelLabel="Cancelar"
+        confirmLabel="Restaurar backup"
+        isDestructive
+        isOpen={activeDialog === "restore"}
+        onCancel={() => {
+          setPendingBackupFile(null);
+          setActiveDialog(null);
+          if (backupFileInputRef.current) {
+            backupFileInputRef.current.value = "";
+          }
+        }}
+        onConfirm={() => {
+          void confirmRestoreBackup();
+        }}
+        title="Restaurar este backup?"
+        tone="warning"
+      >
+        Os dados atuais deste dispositivo serão substituídos pelo conteúdo de
+        <span className="font-medium text-md-on-surface"> {pendingBackupFile?.name ?? "o arquivo selecionado"}</span>.
+      </ConfirmationDialog>
+
+      <ConfirmationDialog
+        cancelLabel="Cancelar"
+        confirmLabel={isClearingLocalData ? "Apagando…" : "Apagar dados"}
+        isDestructive
+        isOpen={activeDialog === "clear"}
+        onCancel={() => setActiveDialog(null)}
+        onConfirm={() => {
+          void confirmClearLocalData();
+        }}
+        title="Apagar todos os dados?"
+        tone="danger"
+      >
+        Isso remove o plano ativo, o progresso, o histórico de treinos e as
+        cargas salvas neste dispositivo.
+      </ConfirmationDialog>
+
+      <ConfirmationDialog
+        confirmLabel="Entendi"
+        isOpen={activeDialog === "feedback" && backupFeedback !== null}
+        onConfirm={() => {
+          setBackupFeedback(null);
+          setActiveDialog(null);
+        }}
+        title={backupFeedback?.success ? "Ação concluída" : "Não foi possível concluir"}
+        tone={backupFeedback?.success ? "success" : "danger"}
+      >
+        <p>{backupFeedback?.message}</p>
+        {backupFeedback?.details?.length ? (
+          <ul className="mt-3 list-disc space-y-1 pl-5">
+            {backupFeedback.details.map((detail) => (
+              <li key={detail}>{detail}</li>
+            ))}
+          </ul>
+        ) : null}
+      </ConfirmationDialog>
     </>
   );
 }

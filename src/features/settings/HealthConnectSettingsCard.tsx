@@ -1,6 +1,6 @@
 import { Activity, ExternalLink, RefreshCw, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Notice } from "@/components/Notice";
+import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -278,14 +278,15 @@ export function HealthConnectSettingsCard({
         </Button>
       </div>
 
-      {message ? (
-        <Notice
-          className="mt-3"
-          tone={loadState === "error" ? "danger" : "info"}
-        >
-          {message}
-        </Notice>
-      ) : null}
+      <ConfirmationDialog
+        confirmLabel="Entendi"
+        isOpen={message !== null}
+        onConfirm={() => setMessage(null)}
+        title={loadState === "error" ? "Não foi possível concluir" : "Health Connect"}
+        tone={loadState === "error" ? "danger" : "info"}
+      >
+        {message ?? ""}
+      </ConfirmationDialog>
     </Card>
   );
 }

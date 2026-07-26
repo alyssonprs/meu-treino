@@ -3,17 +3,18 @@ import {
   ClipboardList,
   FileInput,
   History,
+  Home,
   Play,
   RefreshCw,
   ShieldCheck,
   TrendingUp,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { Notice } from "@/components/Notice";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Chip } from "@/components/ui/chip";
 import { LinearProgress } from "@/components/ui/progress";
+import { PageHeader } from "@/components/PageHeader";
 import { PromptCopyButton } from "@/features/import-export/PromptCopyButton";
 import type {
   CycleProgressSummary,
@@ -30,7 +31,6 @@ type HomeScreenProps = {
   isLoadingActivePlan: boolean;
   loadSummaries: ExerciseLoadSummary[];
   nextRecommendation: NextRoutineRecommendation | null;
-  workoutMessage: string | null;
   onChooseImportFile: () => void;
   onGoToHistory: () => void;
   onOpenWorkoutList: () => void;
@@ -43,7 +43,6 @@ export function HomeScreen({
   isLoadingActivePlan,
   loadSummaries,
   nextRecommendation,
-  workoutMessage,
   onChooseImportFile,
   onGoToHistory,
   onOpenWorkoutList,
@@ -52,7 +51,14 @@ export function HomeScreen({
   if (!activePlan) {
     return (
       <>
-        <Card className="mt-6" padding="lg" variant="outlined">
+        <section className="mt-4 space-y-5">
+        <PageHeader
+          icon={Home}
+          label="Início"
+          title="Seu treino"
+          description="Dados e progresso ficam neste dispositivo."
+        />
+        <Card padding="lg" variant="outlined">
           <div className="flex items-center gap-2 text-label-lg font-medium text-md-secondary">
             <ShieldCheck className="h-4 w-4" aria-hidden="true" />
             Dados locais
@@ -88,7 +94,7 @@ export function HomeScreen({
           </div>
         </Card>
 
-        <Card className="mt-5" variant="outlined">
+        <Card variant="outlined">
           <div className="grid gap-3">
             <BenefitItem
               description="Treino e cargas ficam neste dispositivo."
@@ -105,11 +111,7 @@ export function HomeScreen({
           </div>
         </Card>
 
-        {workoutMessage ? (
-          <Notice className="mt-5">
-            {workoutMessage}
-          </Notice>
-        ) : null}
+        </section>
       </>
     );
   }
@@ -139,7 +141,14 @@ export function HomeScreen({
   const previousRoutine = getPreviousRoutineLabel(activePlan);
   return (
     <>
-      <Card className="mt-6" padding="lg" variant="outlined">
+      <section className="mt-4 space-y-5">
+      <PageHeader
+        icon={Home}
+        label="Início"
+        title="Seu treino"
+        description="O próximo passo do seu plano aparece aqui."
+      />
+      <Card padding="lg" variant="outlined">
         <div className="flex items-center gap-2 text-label-lg font-medium text-md-secondary">
           <ShieldCheck className="h-4 w-4" aria-hidden="true" />
           Plano ativo
@@ -186,14 +195,14 @@ export function HomeScreen({
         ) : null}
 
         {cycleProgress?.isComplete ? (
-          <Notice className="mt-4">
+          <p className="mt-4 rounded-md bg-md-primary-container p-3 text-body-md text-md-on-primary-container">
             Ciclo concluído. Copie o prompt e gere um novo treino.
-          </Notice>
+          </p>
         ) : null}
       </Card>
 
       {nextRecommendation && recommendedRoutine ? (
-        <Card className="mt-5 border-md-primary" padding="lg" variant="outlined">
+        <Card className="border-md-primary" padding="lg" variant="outlined">
           <p className="inline-flex rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
             Próximo treino
           </p>
@@ -217,7 +226,7 @@ export function HomeScreen({
         </Card>
       ) : null}
 
-      <Card className="mt-5" variant="outlined">
+      <Card variant="outlined">
         <div className="divide-y divide-border">
           <SummaryRow
             icon={CalendarCheck2}
@@ -241,7 +250,7 @@ export function HomeScreen({
         </div>
       </Card>
 
-      <div className="mt-5 grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3">
         <ShortcutButton
           icon={ClipboardList}
           label="Ver plano"
@@ -250,11 +259,7 @@ export function HomeScreen({
         <ShortcutButton icon={History} label="Histórico" onClick={onGoToHistory} />
       </div>
 
-      {workoutMessage ? (
-        <Notice className="mt-5">
-          {workoutMessage}
-        </Notice>
-      ) : null}
+      </section>
     </>
   );
 }

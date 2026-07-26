@@ -7,9 +7,9 @@ import {
 } from "react";
 import { ArrowLeft, Check, Minus, Plus, Save } from "lucide-react";
 import { ModalDialog } from "@/components/ModalDialog";
-import { Notice } from "@/components/Notice";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { TopAppBar } from "@/components/ui/top-app-bar";
 import { cn } from "@/components/ui/utils";
 import {
   getNextPendingSetIndex,
@@ -29,7 +29,6 @@ type EditableResultField = keyof Pick<
 type ActiveExerciseScreenProps = {
   draft: WorkoutSessionDraft;
   loadHistoryByExerciseId: Map<string, ExerciseLoadHistoryRecord>;
-  message: string | null;
   restTimer: ActiveRestTimer | null;
   onBackToList: () => void;
   onFinish: () => void;
@@ -49,7 +48,6 @@ type ActiveExerciseScreenProps = {
 export function ActiveExerciseScreen({
   draft,
   loadHistoryByExerciseId,
-  message,
   restTimer,
   onBackToList,
   onFinish,
@@ -173,58 +171,71 @@ export function ActiveExerciseScreen({
   }
 
   return (
-    <section className="min-h-screen pb-24 pt-2">
-      <header className="flex items-center justify-between gap-2">
-        <Button
-          aria-label="Voltar para lista de exercícios"
-          className="h-11 w-11 shrink-0 p-0"
-          onClick={onBackToList}
-          type="button"
-          variant="ghost"
-        >
-          <ArrowLeft className="h-5 w-5" aria-hidden="true" />
-        </Button>
-        <div className="min-w-0 flex-1 text-center">
-          <p className="truncate text-xs font-medium text-md-on-surface-variant">
-            {draft.routine.name}
-          </p>
-          <h2 className="truncate text-lg font-semibold">{currentExercise.name}</h2>
-        </div>
-        <span className="shrink-0 rounded-full bg-md-surface-container-high px-3 py-2 text-xs font-semibold tabular-nums">
-          {currentExerciseIndex + 1}/{draft.exercises.length}
-        </span>
-      </header>
+    <section className="flex min-h-[calc(100dvh-4.5rem)] flex-col pb-2 pt-1">
+      <TopAppBar
+        actions={
+          <span className="shrink-0 rounded-full bg-md-surface-container-high px-3 py-2 text-xs font-semibold tabular-nums">
+            {currentExerciseIndex + 1}/{draft.exercises.length}
+          </span>
+        }
+        className="-mx-4 px-4"
+        navigationIcon={
+          <Button
+            aria-label="Voltar para lista de exercícios"
+            className="h-11 w-11 p-0"
+            onClick={onBackToList}
+            type="button"
+            variant="ghost"
+          >
+            <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+          </Button>
+        }
+        title={
+          <div className="min-w-0 text-center">
+            <p className="truncate text-label-md font-medium text-md-on-surface-variant">
+              {draft.routine.name}
+            </p>
+            <h2 className="truncate text-title-lg font-medium">
+              {currentExercise.name}
+            </h2>
+          </div>
+        }
+      />
 
-      {message ? <Notice className="mt-4" tone="danger">{message}</Notice> : null}
+      <div className="mt-5 flex flex-1 flex-col">
+        <div className="space-y-4">
+          <div className="rounded-xl border border-md-outline-variant bg-md-surface-container-low p-3">
+            <div className="flex items-center justify-between gap-3 text-xs">
+              <span className="font-medium text-md-on-surface-variant">Carga anterior</span>
+              <span className="min-w-0 truncate font-semibold text-md-on-surface">
+                {loadHistory ? `${formatLoad(loadHistory.lastLoadKg)} kg × ${loadHistory.lastReps}` : "Sem carga anterior"}
+              </span>
+            </div>
+          </div>
 
-      <div className="mt-5 space-y-4">
-        <div className="rounded-xl border border-md-outline-variant bg-md-surface-container-low p-3">
-          <div className="flex items-center justify-between gap-3 text-xs">
-            <span className="font-medium text-md-on-surface-variant">Carga anterior</span>
-            <span className="min-w-0 truncate font-semibold text-md-on-surface">
-              {loadHistory ? `${formatLoad(loadHistory.lastLoadKg)} kg × ${loadHistory.lastReps}` : "Sem carga anterior"}
-            </span>
+          {exerciseGuide ? <ExerciseGuidePanel guide={exerciseGuide} /> : null}
+
+          <div className="rounded-xl bg-md-surface-container-high p-4">
+            <SetProgress
+              completedSetsCount={completedSetsCount}
+              targetReps={currentExercise.target_reps}
+              totalSets={currentExerciseDraft.completedSets.length}
+            />
+
+            {isCurrentExerciseRegistered ? (
+              <CompletedExercisePanel
+                hasNextExercise={nextExerciseIndex !== null}
+                onBackToList={onBackToList}
+                onOpenNextExercise={openNextExercise}
+              />
+            ) : areAllSetsCompleted ? (
+              <ExerciseResultPrompt onOpen={() => setIsResultSheetOpen(true)} />
+            ) : null}
           </div>
         </div>
 
-        {exerciseGuide ? <ExerciseGuidePanel guide={exerciseGuide} /> : null}
-
-        <div className="rounded-xl bg-md-surface-container-high p-4">
-          <SetProgress
-            completedSetsCount={completedSetsCount}
-            targetReps={currentExercise.target_reps}
-            totalSets={currentExerciseDraft.completedSets.length}
-          />
-
-          {isCurrentExerciseRegistered ? (
-            <CompletedExercisePanel
-              hasNextExercise={nextExerciseIndex !== null}
-              onBackToList={onBackToList}
-              onOpenNextExercise={openNextExercise}
-            />
-          ) : areAllSetsCompleted ? (
-            <ExerciseResultPrompt onOpen={() => setIsResultSheetOpen(true)} />
-          ) : (
+        {!isCurrentExerciseRegistered && !areAllSetsCompleted ? (
+          <div className="sticky bottom-0 mt-auto -mx-4 bg-md-background/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-4 backdrop-blur">
             <SetActionPanel
               currentSetNumber={(currentSetIndex ?? 0) + 1}
               onCompleteNextSet={() => {
@@ -237,8 +248,8 @@ export function ActiveExerciseScreen({
                 }
               }}
             />
-          )}
-        </div>
+          </div>
+        ) : null}
       </div>
 
       <ExerciseResultSheet

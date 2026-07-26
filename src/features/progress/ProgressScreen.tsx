@@ -9,6 +9,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { LinearProgress } from "@/components/ui/progress";
@@ -91,18 +92,14 @@ export function ProgressScreen({
   }
 
   return (
-    <section className="mt-6 space-y-5">
+    <section className="mt-4 space-y-5">
+      <PageHeader
+        icon={History}
+        label="Histórico"
+        title="Seu progresso"
+        description="Acompanhe as sessões concluídas e a evolução das cargas."
+      />
       <Card padding="lg" variant="outlined">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-secondary text-info">
-            <History className="h-5 w-5" aria-hidden="true" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-sm font-medium text-info">Histórico</p>
-            <h2 className="text-2xl font-semibold">Seu progresso</h2>
-          </div>
-        </div>
-
         {cycleProgress ? (
           <div className="mt-5">
             <div className="flex items-end justify-between gap-3">
@@ -158,7 +155,7 @@ export function ProgressScreen({
           <div className="mt-4 space-y-3">
             {loadSummaries.map((summary) => (
               <button
-                className="w-full rounded-md bg-muted p-3 text-left"
+                className="w-full rounded-md bg-md-surface-container-high p-3 text-left transition-colors hover:bg-md-surface-container-highest focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 key={summary.exerciseId}
                 onClick={() => setSelectedExerciseId(summary.exerciseId)}
                 type="button"
