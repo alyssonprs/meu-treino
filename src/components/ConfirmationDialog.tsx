@@ -16,6 +16,7 @@ type ConfirmationDialogProps = {
   confirmLabel: string;
   isDestructive?: boolean;
   isOpen: boolean;
+  isPending?: boolean;
   onCancel?: () => void;
   onConfirm: () => void;
   title: string;
@@ -42,6 +43,7 @@ export function ConfirmationDialog({
   confirmLabel,
   isDestructive = false,
   isOpen,
+  isPending = false,
   onCancel,
   onConfirm,
   title,
@@ -54,9 +56,11 @@ export function ConfirmationDialog({
 
   return (
     <ModalDialog
+      dismissible={!isPending}
       initialFocusRef={cancelLabel ? cancelButtonRef : confirmButtonRef}
       isOpen={isOpen}
       onClose={handleCancel}
+      role="alertdialog"
       title={title}
     >
       <div className="mt-4 flex items-start gap-3">
@@ -73,6 +77,7 @@ export function ConfirmationDialog({
         {cancelLabel ? (
           <Button
             className="h-12"
+            disabled={isPending}
             onClick={handleCancel}
             ref={cancelButtonRef}
             type="button"
@@ -89,7 +94,12 @@ export function ConfirmationDialog({
               ? "bg-md-error text-md-on-error hover:bg-md-error/90"
               : "",
           ].join(" ")}
-          onClick={onConfirm}
+          disabled={isPending}
+          onClick={() => {
+            if (!isPending) {
+              onConfirm();
+            }
+          }}
           ref={confirmButtonRef}
           type="button"
         >

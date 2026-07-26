@@ -1,73 +1,21 @@
-import { ArrowLeft, Check, ChevronRight, Circle, CircleDot, Square } from "lucide-react";
-import { useState, type ReactNode } from "react";
-import { ModalDialog } from "@/components/ModalDialog";
-import { Button } from "@/components/ui/button";
-import { TopAppBar } from "@/components/ui/top-app-bar";
+import { Check, ChevronRight, Circle, CircleDot } from "lucide-react";
+import type { ReactNode } from "react";
 import { cn } from "@/components/ui/utils";
 import type { WorkoutSessionDraft } from "@/services/workoutSessionService";
 import { getExerciseGuide, type ExerciseGuide } from "./exerciseGuides";
 
 type ActiveWorkoutScreenProps = {
   draft: WorkoutSessionDraft;
-  onBackToDetail: () => void;
-  onFinish: () => void;
   onOpenExercise: (exerciseIndex: number) => void;
 };
 
 export function ActiveWorkoutScreen({
   draft,
-  onBackToDetail,
-  onFinish,
   onOpenExercise,
 }: ActiveWorkoutScreenProps) {
-  const [showFinishConfirmation, setShowFinishConfirmation] = useState(false);
-  const completedExercises = draft.exercises.filter(
-    (exercise) => exercise.result.completedAt !== null,
-  ).length;
-  const hasIncompleteExercises = completedExercises < draft.exercises.length;
-
-  function requestFinishWorkout() {
-    if (!hasIncompleteExercises) {
-      onFinish();
-      return;
-    }
-
-    setShowFinishConfirmation(true);
-  }
-
   return (
     <section className="pb-2 pt-1">
-      <TopAppBar
-        actions={
-          <span className="shrink-0 rounded-full bg-md-surface-container-high px-3 py-2 text-xs font-semibold tabular-nums">
-            {completedExercises}/{draft.exercises.length}
-          </span>
-        }
-        className="-mx-4 px-4"
-        navigationIcon={
-          <Button
-            aria-label="Voltar para lista de rotinas"
-            className="h-11 w-11 p-0"
-            onClick={onBackToDetail}
-            type="button"
-            variant="ghost"
-          >
-            <ArrowLeft className="h-5 w-5" aria-hidden="true" />
-          </Button>
-        }
-        title={
-          <div className="min-w-0 text-center">
-            <p className="truncate text-label-md font-medium text-md-on-surface-variant">
-              {draft.routine.name}
-            </p>
-            <h2 className="truncate text-title-lg font-medium">
-              Treino em andamento
-            </h2>
-          </div>
-        }
-      />
-
-      <div className="mt-6 space-y-5">
+      <div className="space-y-5">
         <RoutineStepList label="Aquecimento" steps={draft.routine.warmup} tone="warmup" />
 
         <section aria-labelledby="routine-exercises-heading">
@@ -120,28 +68,6 @@ export function ActiveWorkoutScreen({
         <RoutineStepList label="Cooldown" steps={draft.routine.cooldown} tone="cooldown" />
       </div>
 
-      <div className="sticky bottom-0 z-10 -mx-4 mt-6 bg-md-background/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur">
-        <Button className="h-14 w-full gap-2 text-base" onClick={requestFinishWorkout} type="button">
-          <Square className="h-5 w-5" aria-hidden="true" />
-          {hasIncompleteExercises ? "Finalizar treino" : "Finalizar rotina"}
-        </Button>
-      </div>
-
-      <ModalDialog
-        description="Ainda há exercícios sem registro. Finalize somente se o treino acabou por hoje."
-        isOpen={showFinishConfirmation}
-        onClose={() => setShowFinishConfirmation(false)}
-        title="Finalizar treino incompleto?"
-      >
-        <div className="mt-4 grid grid-cols-2 gap-2">
-          <Button className="h-12" onClick={() => setShowFinishConfirmation(false)} type="button" variant="secondary">
-            Continuar
-          </Button>
-          <Button className="h-12" onClick={onFinish} type="button">
-            Finalizar
-          </Button>
-        </div>
-      </ModalDialog>
     </section>
   );
 }

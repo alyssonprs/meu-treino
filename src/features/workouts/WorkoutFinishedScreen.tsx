@@ -6,7 +6,6 @@ import {
   Home,
   Repeat2,
 } from "lucide-react";
-import { Notice } from "@/components/Notice";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { LinearProgress } from "@/components/ui/progress";
@@ -54,12 +53,12 @@ export function WorkoutFinishedScreen({
           </div>
           <div className="min-w-0">
             <p className="text-sm font-medium text-md-primary">
-              Treino concluído
+              Sessão salva
             </p>
             <h2 className="mt-1 text-2xl font-semibold">
               {completion.routineName}
             </h2>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            <p className="mt-2 text-body-md leading-6 text-md-on-surface-variant">
               Sessão salva neste dispositivo.
             </p>
           </div>
@@ -80,18 +79,20 @@ export function WorkoutFinishedScreen({
       </div>
 
       {completion.healthConnectExport ? (
-        <Notice
-          title="Health Connect"
-          tone={getHealthConnectExportTone(completion.healthConnectExport.status)}
-        >
-          {completion.healthConnectExport.message}
-        </Notice>
+        <Card padding="sm" variant="filled">
+          <p className={`text-label-lg font-medium ${getHealthConnectExportToneClass(completion.healthConnectExport.status)}`}>
+            Health Connect
+          </p>
+          <p className="mt-1 text-body-md leading-6 text-md-on-surface-variant">
+            {completion.healthConnectExport.message}
+          </p>
+        </Card>
       ) : null}
 
       <Card variant="outlined">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-sm font-medium text-info">Progresso do ciclo</p>
+            <p className="text-label-lg font-medium text-md-secondary">Progresso do ciclo</p>
             <h3 className="mt-1 text-xl font-semibold">
               {cycleProgress
                 ? `${cycleProgress.completedSessions} de ${cycleProgress.plannedSessions}`
@@ -99,7 +100,7 @@ export function WorkoutFinishedScreen({
             </h3>
           </div>
           {cycleProgress ? (
-            <span className="rounded-md bg-muted px-2 py-1 text-sm font-semibold tabular-nums">
+            <span className="rounded-md bg-md-surface-container-high px-2 py-1 text-label-lg font-medium tabular-nums">
               {cycleProgress.percentage}%
             </span>
           ) : null}
@@ -112,7 +113,7 @@ export function WorkoutFinishedScreen({
               className="mt-4 h-2"
               value={cycleProgress.percentage}
             />
-            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+            <p className="mt-3 text-body-md leading-6 text-md-on-surface-variant">
               {cycleProgress.isComplete
                 ? "Ciclo concluído. Baixe o modelo e gere um novo treino."
                 : `${cycleProgress.remainingSessions} treinos restantes neste ciclo.`}
@@ -122,14 +123,14 @@ export function WorkoutFinishedScreen({
       </Card>
 
       <Card variant="outlined">
-        <p className="flex items-center gap-2 text-sm font-medium text-info">
+        <p className="flex items-center gap-2 text-label-lg font-medium text-md-secondary">
           <Repeat2 className="h-4 w-4" aria-hidden="true" />
           Próxima recomendação
         </p>
         <h3 className="mt-2 text-xl font-semibold">
           {nextRecommendation?.routineName ?? "Treino atualizado"}
         </h3>
-        <p className="mt-2 text-sm leading-6 text-muted-foreground">
+        <p className="mt-2 text-body-md leading-6 text-md-on-surface-variant">
           A tela inicial já vai abrir com a próxima rotina pela ordem do plano.
         </p>
       </Card>
@@ -153,18 +154,18 @@ export function WorkoutFinishedScreen({
   );
 }
 
-function getHealthConnectExportTone(
+function getHealthConnectExportToneClass(
   status: WorkoutHealthConnectExport["status"],
 ) {
   if (status === "exported") {
-    return "success";
+    return "text-md-primary";
   }
 
   if (status === "failed" || status === "permission-missing") {
-    return "warning";
+    return "text-md-tertiary";
   }
 
-  return "info";
+  return "text-md-secondary";
 }
 
 function SummaryMetric({
@@ -178,9 +179,9 @@ function SummaryMetric({
 }) {
   return (
     <Card variant="outlined">
-      <Icon className="h-5 w-5 text-info" aria-hidden="true" />
+      <Icon className="h-5 w-5 text-md-secondary" aria-hidden="true" />
       <p className="mt-3 text-3xl font-semibold tabular-nums">{value}</p>
-      <p className="mt-1 text-sm text-muted-foreground">{label}</p>
+      <p className="mt-1 text-body-md text-md-on-surface-variant">{label}</p>
     </Card>
   );
 }

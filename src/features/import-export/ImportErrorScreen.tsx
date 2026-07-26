@@ -32,7 +32,7 @@ export function ImportErrorScreen({
           <p className="text-sm text-muted-foreground">
             {importStatus.fileName ?? "Arquivo selecionado"}
           </p>
-          <h2 className="mt-1 text-2xl font-semibold">JSON não importado</h2>
+          <p className="mt-1 text-title-md font-medium text-md-on-surface">Falha de validação</p>
         </div>
       </div>
 
@@ -71,7 +71,7 @@ export function ImportErrorScreen({
           variant="ghost"
         >
           <ArrowLeft className="h-5 w-5" aria-hidden="true" />
-          Voltar ao inicio
+          Voltar
         </Button>
       </div>
       </Card>

@@ -50,7 +50,7 @@ export function ImportPreviewScreen({
           </div>
           <div className="min-w-0">
             <p className="text-body-md text-md-on-surface-variant">{importStatus.fileName}</p>
-            <h2 className="mt-1 text-headline-sm font-medium">Preview do JSON</h2>
+            <p className="mt-1 text-title-md font-medium text-md-on-surface">Arquivo validado</p>
           </div>
         </div>
 
@@ -126,7 +126,7 @@ export function ImportPreviewScreen({
           variant="ghost"
         >
           <ArrowLeft className="h-5 w-5" aria-hidden="true" />
-          Voltar ao inicio
+          Voltar
         </Button>
         </div>
       </Card>
@@ -134,6 +134,7 @@ export function ImportPreviewScreen({
         cancelLabel="Cancelar"
         confirmLabel="Importar plano"
         isOpen={showImportConfirmation}
+        isPending={isSaving}
         onCancel={() => setShowImportConfirmation(false)}
         onConfirm={onActivatePlan}
         title="Importar este plano?"

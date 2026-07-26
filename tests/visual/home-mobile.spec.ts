@@ -47,7 +47,7 @@ test("mobile visual regression covers first use, import, active home, settings a
 }) => {
   await page.goto("/");
 
-  await expect(page.getByRole("heading", { name: "Meu Treino" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Inicio" })).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Importe seu treino para começar" }),
   ).toBeVisible();
@@ -204,10 +204,12 @@ test("active workout separates the routine list, exercise page and global rest t
   expect(positionAfterDrag?.y).not.toBe(positionBeforeDrag.y);
   await screenshot(page, "13-descanso-global.png");
 
-  await page.getByRole("button", { name: "Voltar para lista de exercícios" }).click();
-  await page.getByRole("button", { name: "Voltar para lista de rotinas" }).click();
+  await page.goBack();
+  await expect(page.getByRole("heading", { name: "Treino em andamento" })).toBeVisible();
+  await page.goBack();
   await expect(page.getByRole("navigation")).toBeVisible();
   await page.getByRole("button", { name: "Histórico" }).click();
+  await expect(page).toHaveURL(/#\/historico$/);
   await expect(page.getByRole("heading", { name: "Seu progresso" })).toBeVisible();
   await expect(
     page.getByRole("button", { name: /Descanso de Agachamento livre/ }),
@@ -268,7 +270,7 @@ test("settings clears local workout data after confirmation", async ({ page }) =
   await page.getByRole("button", { name: "Ajustes" }).click();
   await page.getByRole("button", { name: "Apagar dados locais" }).click();
   await expect(
-    page.getByRole("heading", { name: "Apagar todos os dados?" }),
+    page.getByRole("heading", { name: "Apagar todos os dados de treino?" }),
   ).toBeVisible();
   await screenshot(page, "15-ajustes-confirmacao-limpeza.png");
   await page.getByRole("button", { name: "Apagar dados", exact: true }).click();
@@ -277,16 +279,38 @@ test("settings clears local workout data after confirmation", async ({ page }) =
     page.getByRole("heading", { name: "Importe seu treino para começar" }),
   ).toBeVisible();
   await expect(
-    page.getByRole("dialog", { name: "Atualização concluída" }),
+    page.getByRole("alertdialog", { name: "Atualização concluída" }),
   ).toBeVisible();
   await expect(
     page.getByText("Dados de treino apagados deste dispositivo."),
   ).toBeVisible();
   await page
-    .getByRole("dialog", { name: "Atualização concluída" })
+    .getByRole("alertdialog", { name: "Atualização concluída" })
     .getByRole("button", { name: "Entendi" })
     .click();
   await assertMobileUsability(page);
+});
+
+test("import preview returns to settings when started from settings", async ({ page }) => {
+  await page.goto("/");
+  await importModelPlan(page);
+  await confirmPlanImport(page);
+
+  await page.getByRole("button", { name: "Ajustes" }).click();
+  const fileChooserPromise = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: "Substituir treino atual" }).click();
+  const fileChooser = await fileChooserPromise;
+  await fileChooser.setFiles("src/assets/meu-treino-modelo.json");
+
+  await expect(page.getByRole("heading", { name: "Preview do JSON" })).toBeVisible();
+  await page.getByRole("button", { name: "Voltar", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: /Prefer.ncias locais/ }),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Ajustes" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
 });
 
 async function importModelPlan(page: Page) {
@@ -323,7 +347,7 @@ async function replacePlanFromSettings(page: Page) {
 async function confirmPlanImport(page: Page) {
   await page.getByRole("button", { name: "Importar plano" }).click();
   await page
-    .getByRole("dialog", { name: "Importar este plano?" })
+    .getByRole("alertdialog", { name: "Importar este plano?" })
     .getByRole("button", { name: "Importar plano" })
     .click();
 }

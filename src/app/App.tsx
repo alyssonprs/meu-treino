@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
+import { Check, Square } from "lucide-react";
 import { HomeScreen } from "@/features/home/HomeScreen";
 import { ConfirmationDialog } from "@/components/ConfirmationDialog";
+import { Button } from "@/components/ui/button";
 import {
   idleImportStatus,
   type ImportStatus,
@@ -12,7 +14,11 @@ import type {
   AppScreen,
   MainTabScreen,
 } from "@/features/navigation/appNavigation";
-import { ProgressScreen } from "@/features/progress/ProgressScreen";
+import { mainTabHashByScreen } from "@/features/navigation/appNavigation";
+import {
+  ExerciseHistoryScreen,
+  ProgressScreen,
+} from "@/features/progress/ProgressScreen";
 import { SettingsScreen } from "@/features/settings/SettingsScreen";
 import { ActiveExerciseScreen } from "@/features/workouts/ActiveExerciseScreen";
 import { ActiveWorkoutScreen } from "@/features/workouts/ActiveWorkoutScreen";
@@ -53,6 +59,7 @@ import { getNextRecommendedRoutineFromSnapshot } from "@/services/workoutRecomme
 import {
   createWorkoutSessionDraft,
   finishWorkoutSession,
+  getNextPendingSetIndex,
   markWorkoutSetCompletedInDraft,
   saveExerciseResultInDraft,
   setCurrentExerciseInDraft,
@@ -75,17 +82,6 @@ import type {
 } from "@/storage/workoutPlanRepository";
 
 const appVersion = "0.1.0";
-const androidBuildCode = import.meta.env.VITE_ANDROID_VERSION_CODE;
-const appVersionLabel = androidBuildCode
-  ? `${appVersion} (build ${androidBuildCode})`
-  : appVersion;
-
-const mainTabHashByScreen: Record<MainTabScreen, string> = {
-  history: "#/historico",
-  home: "#/",
-  settings: "#/ajustes",
-  workout: "#/treino",
-};
 
 export function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -117,7 +113,24 @@ export function App() {
     useState<WorkoutCompletionSummary | null>(null);
   const [importStatus, setImportStatus] =
     useState<ImportStatus>(idleImportStatus);
+  const [importOrigin, setImportOrigin] = useState<MainTabScreen>("home");
   const [isClearingLocalData, setIsClearingLocalData] = useState(false);
+  const [selectedHistoryExerciseDetails, setSelectedHistoryExerciseDetails] =
+    useState<ExerciseHistoryDetails | null>(null);
+  const [isLoadingHistoryExerciseDetails, setIsLoadingHistoryExerciseDetails] =
+    useState(false);
+  const [showFinishWorkoutConfirmation, setShowFinishWorkoutConfirmation] =
+    useState(false);
+  const activeScreenRef = useRef(activeScreen);
+  const importOriginRef = useRef(importOrigin);
+
+  useEffect(() => {
+    activeScreenRef.current = activeScreen;
+  }, [activeScreen]);
+
+  useEffect(() => {
+    importOriginRef.current = importOrigin;
+  }, [importOrigin]);
 
   useEffect(() => {
     let isMounted = true;
@@ -153,14 +166,62 @@ export function App() {
 
       if (nextScreen) {
         setActiveScreen(nextScreen);
+        setSelectedHistoryExerciseDetails(null);
         setWorkoutMessage(null);
         setWorkoutCompletion(null);
       }
     }
 
-    window.addEventListener("hashchange", handleHashChange);
+    function handlePopState() {
+      const currentScreen = activeScreenRef.current;
 
-    return () => window.removeEventListener("hashchange", handleHashChange);
+      function goToMainTab(screen: MainTabScreen) {
+        setActiveScreen(screen);
+        setSelectedHistoryExerciseDetails(null);
+        setWorkoutMessage(null);
+        setWorkoutCompletion(null);
+
+        if (window.location.hash !== mainTabHashByScreen[screen]) {
+          window.history.replaceState(null, "", mainTabHashByScreen[screen]);
+        }
+      }
+
+      if (currentScreen === "active-exercise") {
+        setActiveScreen("active-workout");
+        return;
+      }
+
+      if (currentScreen === "active-workout") {
+        goToMainTab("workout");
+        return;
+      }
+
+      if (currentScreen === "history-detail") {
+        goToMainTab("history");
+        return;
+      }
+
+      if (currentScreen === "import-preview" || currentScreen === "import-error") {
+        setImportStatus(idleImportStatus);
+        goToMainTab(importOriginRef.current);
+        return;
+      }
+
+      if (currentScreen === "workout-finished") {
+        goToMainTab("home");
+        return;
+      }
+
+      handleHashChange();
+    }
+
+    window.addEventListener("hashchange", handleHashChange);
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange);
+      window.removeEventListener("popstate", handlePopState);
+    };
   }, []);
 
   useEffect(() => {
@@ -253,14 +314,59 @@ export function App() {
     playRestCountdownFeedback(restTimerRemainingSeconds);
   }, [activeRestTimer, restTimerRemainingSeconds]);
 
-  function navigateToMainTab(screen: MainTabScreen) {
+  function navigateToMainTab(
+    screen: MainTabScreen,
+    options: { replace?: boolean } = {},
+  ) {
     setActiveScreen(screen);
+    setSelectedHistoryExerciseDetails(null);
     setWorkoutMessage(null);
     setWorkoutCompletion(null);
 
     if (window.location.hash !== mainTabHashByScreen[screen]) {
-      window.location.hash = mainTabHashByScreen[screen];
+      const method = options.replace ? "replaceState" : "pushState";
+      window.history[method](null, "", mainTabHashByScreen[screen]);
     }
+  }
+
+  function openContextualScreen(screen: AppScreen) {
+    setActiveScreen(screen);
+    window.history.pushState({ screen }, "", getContextualHash(screen));
+  }
+
+  function navigateBackFromContext() {
+    const currentScreen = activeScreenRef.current;
+
+    if (currentScreen === "active-exercise") {
+      setActiveScreen("active-workout");
+      return;
+    }
+
+    if (currentScreen === "active-workout") {
+      navigateToMainTab("workout");
+      return;
+    }
+
+    if (currentScreen === "history-detail") {
+      setSelectedHistoryExerciseDetails(null);
+      navigateToMainTab("history");
+      return;
+    }
+
+    if (currentScreen === "import-preview" || currentScreen === "import-error") {
+      handleCancelImport();
+      return;
+    }
+
+    if (currentScreen === "workout-finished") {
+      navigateToMainTab("home");
+      return;
+    }
+  }
+
+  function requestImportFile(origin: MainTabScreen) {
+    setImportOrigin(origin);
+    fileInputRef.current?.click();
   }
 
   async function handleImportFile(file: File) {
@@ -277,7 +383,7 @@ export function App() {
           preview: null,
           errors: result.errors,
         });
-        setActiveScreen("import-error");
+        openContextualScreen("import-error");
         return;
       }
 
@@ -287,7 +393,7 @@ export function App() {
         preview: result.preview,
         errors: [],
       });
-      setActiveScreen("import-preview");
+      openContextualScreen("import-preview");
     } catch {
       setImportStatus({
         state: "error",
@@ -300,7 +406,7 @@ export function App() {
           },
         ],
       });
-      setActiveScreen("import-error");
+      openContextualScreen("import-error");
     } finally {
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
@@ -334,8 +440,7 @@ export function App() {
       setActiveRestTimer(null);
       setWorkoutLoadHistory(new Map());
       setImportStatus(idleImportStatus);
-      setActiveScreen("home");
-      window.location.hash = mainTabHashByScreen.home;
+      navigateToMainTab("home", { replace: true });
     } catch {
       setImportStatus({
         state: "error",
@@ -348,6 +453,7 @@ export function App() {
           },
         ],
       });
+      openContextualScreen("import-error");
     }
   }
 
@@ -367,8 +473,7 @@ export function App() {
 
   function handleCancelImport() {
     setImportStatus(idleImportStatus);
-    setActiveScreen("home");
-    window.location.hash = mainTabHashByScreen.home;
+    navigateToMainTab(importOrigin);
   }
 
   async function handleStartRoutineExercise(
@@ -384,7 +489,7 @@ export function App() {
         setCurrentExerciseInDraft({ draft: activeWorkout, exerciseIndex }),
       );
       setWorkoutMessage(null);
-      setActiveScreen("active-workout");
+      openContextualScreen("active-workout");
       return;
     }
 
@@ -405,7 +510,7 @@ export function App() {
         initialExerciseIndex: exerciseIndex,
       }),
     );
-    setActiveScreen("active-workout");
+    openContextualScreen("active-workout");
   }
 
   async function handleFinishWorkout() {
@@ -441,7 +546,7 @@ export function App() {
         message: "Verificando exportacao para Health Connect.",
       },
     });
-    setActiveScreen("workout-finished");
+    openContextualScreen("workout-finished");
 
     void exportCompletedWorkoutToHealthConnect({
       sessionId: result.sessionId,
@@ -488,9 +593,8 @@ export function App() {
       setRoutineExecutionSummaries([]);
       setWorkoutCompletion(null);
       setImportStatus(idleImportStatus);
+      navigateToMainTab("home", { replace: true });
       setWorkoutMessage("Dados de treino apagados deste dispositivo.");
-      setActiveScreen("home");
-      window.history.replaceState(null, "", mainTabHashByScreen.home);
     } catch {
       setWorkoutMessage("Nao foi possivel apagar os dados locais agora.");
     } finally {
@@ -640,7 +744,7 @@ export function App() {
         : current,
     );
     setWorkoutMessage(null);
-    setActiveScreen("active-exercise");
+    openContextualScreen("active-exercise");
   }
 
   function openRestTimerExercise() {
@@ -653,6 +757,139 @@ export function App() {
     }
 
     openWorkoutExercise(activeRestTimer.exerciseIndex);
+  }
+
+  function requestFinishWorkout() {
+    if (!activeWorkout) {
+      return;
+    }
+
+    const completedExercises = getCompletedWorkoutExerciseCount(activeWorkout);
+
+    if (completedExercises < activeWorkout.exercises.length) {
+      setShowFinishWorkoutConfirmation(true);
+      return;
+    }
+
+    void handleFinishWorkout();
+  }
+
+  function getCurrentContextualHeader() {
+    if (activeScreen === "active-workout" && activeWorkout) {
+      return {
+        backLabel: "Voltar para lista de rotinas",
+        label: activeWorkout.routine.name,
+        meta: (
+          <span className="shrink-0 rounded-full bg-md-surface-container-high px-3 py-2 text-label-md font-medium tabular-nums text-md-on-surface-variant">
+            {getCompletedWorkoutExerciseCount(activeWorkout)}/{activeWorkout.exercises.length}
+          </span>
+        ),
+        onBack: () => navigateBackFromContext(),
+        title: "Treino em andamento",
+      };
+    }
+
+    if (activeScreen === "active-exercise" && activeWorkout) {
+      const exercise =
+        activeWorkout.routine.exercises[activeWorkout.currentExerciseIndex];
+
+      return {
+        backLabel: "Voltar para lista de exercícios",
+        label: activeWorkout.routine.name,
+        meta: (
+          <span className="shrink-0 rounded-full bg-md-surface-container-high px-3 py-2 text-label-md font-medium tabular-nums text-md-on-surface-variant">
+            {activeWorkout.currentExerciseIndex + 1}/{activeWorkout.exercises.length}
+          </span>
+        ),
+        onBack: () => navigateBackFromContext(),
+        title: exercise?.name ?? "Exercício",
+      };
+    }
+
+    if (activeScreen === "import-preview") {
+      return {
+        backLabel: "Voltar para origem da importação",
+        label: "Importação",
+        onBack: () => navigateBackFromContext(),
+        title: "Preview do JSON",
+      };
+    }
+
+    if (activeScreen === "import-error") {
+      return {
+        backLabel: "Voltar para origem da importação",
+        label: "Importação",
+        onBack: () => navigateBackFromContext(),
+        title: "JSON não importado",
+      };
+    }
+
+    if (activeScreen === "history-detail") {
+      return {
+        backLabel: "Voltar para histórico",
+        label: "Histórico",
+        onBack: () => navigateBackFromContext(),
+        title: selectedHistoryExerciseDetails?.exerciseName ?? "Detalhe do exercício",
+      };
+    }
+
+    if (activeScreen === "workout-finished") {
+      return {
+        label: "Resultado",
+        title: "Treino concluído",
+      };
+    }
+
+    return undefined;
+  }
+
+  function getCurrentBottomAction() {
+    if (activeScreen === "active-workout" && activeWorkout) {
+      const hasIncompleteExercises =
+        getCompletedWorkoutExerciseCount(activeWorkout) < activeWorkout.exercises.length;
+
+      return (
+        <Button className="h-14 w-full gap-2 text-title-sm" onClick={requestFinishWorkout} type="button">
+          <Square className="h-5 w-5" aria-hidden="true" />
+          {hasIncompleteExercises ? "Finalizar treino" : "Finalizar rotina"}
+        </Button>
+      );
+    }
+
+    if (activeScreen === "active-exercise" && activeWorkout) {
+      const exerciseIndex = activeWorkout.currentExerciseIndex;
+      const exerciseDraft = activeWorkout.exercises[exerciseIndex];
+      const currentSetIndex = getNextPendingSetIndex(activeWorkout, exerciseIndex);
+      const isRegistered = exerciseDraft?.result.completedAt !== null;
+      const areAllSetsCompleted = exerciseDraft !== undefined && currentSetIndex === null;
+
+      if (!exerciseDraft || isRegistered || areAllSetsCompleted) {
+        return undefined;
+      }
+
+      const nextSetIndex =
+        activeRestTimer?.exerciseIndex === exerciseIndex
+          ? activeRestTimer.nextSetIndex
+          : currentSetIndex;
+
+      if (nextSetIndex === null || nextSetIndex === undefined) {
+        return undefined;
+      }
+
+      return (
+        <Button
+          aria-label={`Concluir série ${nextSetIndex + 1}`}
+          className="h-14 w-full gap-3 text-title-sm"
+          onClick={() => markWorkoutSetCompleted({ exerciseIndex, setIndex: nextSetIndex })}
+          type="button"
+        >
+          <Check className="h-5 w-5" aria-hidden="true" />
+          Concluir série
+        </Button>
+      );
+    }
+
+    return undefined;
   }
 
   function saveWorkoutExerciseResult({
@@ -679,9 +916,14 @@ export function App() {
     });
   }
 
+  const contextualHeader = getCurrentContextualHeader();
+  const bottomAction = getCurrentBottomAction();
+
   return (
     <AppShell
       activeScreen={activeScreen}
+      bottomAction={bottomAction}
+      contextualHeader={contextualHeader}
       floatingOverlay={
         activeRestTimer && restTimerExercise && restTimerRemainingSeconds !== null ? (
           <FloatingRestTimer
@@ -702,6 +944,20 @@ export function App() {
         tone={isPositiveWorkoutMessage(workoutMessage) ? "success" : "danger"}
       >
         {workoutMessage ?? ""}
+      </ConfirmationDialog>
+      <ConfirmationDialog
+        cancelLabel="Continuar treino"
+        confirmLabel="Finalizar treino"
+        isOpen={showFinishWorkoutConfirmation}
+        onCancel={() => setShowFinishWorkoutConfirmation(false)}
+        onConfirm={() => {
+          setShowFinishWorkoutConfirmation(false);
+          void handleFinishWorkout();
+        }}
+        title="Finalizar treino incompleto?"
+        tone="warning"
+      >
+        Ainda há exercícios sem registro. Finalize somente se o treino acabou por hoje.
       </ConfirmationDialog>
       <input
         accept="application/json,.json"
@@ -724,12 +980,6 @@ export function App() {
       return (
         <ActiveWorkoutScreen
           draft={activeWorkout}
-          onBackToDetail={() => {
-            navigateToMainTab("workout");
-          }}
-          onFinish={() => {
-            void handleFinishWorkout();
-          }}
           onOpenExercise={openWorkoutExercise}
         />
       );
@@ -740,16 +990,10 @@ export function App() {
         <ActiveExerciseScreen
           draft={activeWorkout}
           loadHistoryByExerciseId={workoutLoadHistory}
-          restTimer={
-            activeRestTimer?.exerciseIndex === activeWorkout.currentExerciseIndex
-              ? activeRestTimer
-              : null
-          }
-          onBackToList={() => setActiveScreen("active-workout")}
+          onBackToList={() => navigateBackFromContext()}
           onFinish={() => {
             void handleFinishWorkout();
           }}
-          onMarkSetCompleted={markWorkoutSetCompleted}
           onOpenExercise={openWorkoutExercise}
           onSaveExerciseResult={saveWorkoutExerciseResult}
           onUpdateExerciseResult={updateWorkoutExerciseResult}
@@ -802,9 +1046,18 @@ export function App() {
           cycleProgress={cycleProgress}
           loadSummaries={loadSummaries}
           recentSessions={recentSessions}
-          onLoadExerciseHistory={(exerciseId) =>
-            loadExerciseHistoryDetails(exerciseId)
-          }
+          onOpenExerciseHistory={(exerciseId) => {
+            void openHistoryExerciseDetails(exerciseId);
+          }}
+        />
+      );
+    }
+
+    if (activeScreen === "history-detail") {
+      return (
+        <ExerciseHistoryScreen
+          details={selectedHistoryExerciseDetails}
+          isLoading={isLoadingHistoryExerciseDetails}
         />
       );
     }
@@ -813,13 +1066,13 @@ export function App() {
       return (
         <SettingsScreen
           activePlan={activePlan}
-          appVersion={appVersionLabel}
+          appVersion={appVersion}
           healthConnectAdapter={healthConnectAdapter}
           isClearingLocalData={isClearingLocalData}
           getHealthConnectAutoExportEnabled={() =>
             pwaWorkoutPlanRepository.getHealthConnectAutoExportEnabled()
           }
-          onChooseImportFile={() => fileInputRef.current?.click()}
+          onChooseImportFile={() => requestImportFile("settings")}
           onClearLocalData={handleClearLocalData}
           onExportLocalBackup={handleExportLocalBackup}
           onRestoreLocalBackupFile={handleRestoreLocalBackupFile}
@@ -863,7 +1116,7 @@ export function App() {
         isLoadingActivePlan={isLoadingActivePlan}
         loadSummaries={loadSummaries}
         nextRecommendation={nextRecommendation}
-        onChooseImportFile={() => fileInputRef.current?.click()}
+        onChooseImportFile={() => requestImportFile("home")}
         onGoToHistory={() => navigateToMainTab("history")}
         onOpenWorkoutList={() => navigateToMainTab("workout")}
         onStartRecommendedWorkout={handleStartRecommendedWorkout}
@@ -884,6 +1137,18 @@ export function App() {
       repository: pwaWorkoutPlanRepository,
     });
   }
+
+  async function openHistoryExerciseDetails(exerciseId: string) {
+    setSelectedHistoryExerciseDetails(null);
+    setIsLoadingHistoryExerciseDetails(true);
+    openContextualScreen("history-detail");
+
+    try {
+      setSelectedHistoryExerciseDetails(await loadExerciseHistoryDetails(exerciseId));
+    } finally {
+      setIsLoadingHistoryExerciseDetails(false);
+    }
+  }
 }
 
 function isPositiveWorkoutMessage(message: string | null) {
@@ -892,6 +1157,24 @@ function isPositiveWorkoutMessage(message: string | null) {
     message?.startsWith("Dados de treino apagados") ||
     false
   );
+}
+
+function getContextualHash(screen: AppScreen) {
+  const hashByScreen: Partial<Record<AppScreen, string>> = {
+    "active-exercise": "#/treino/exercicio",
+    "active-workout": "#/treino/ativo",
+    "history-detail": "#/historico/exercicio",
+    "import-error": "#/importar/erro",
+    "import-preview": "#/importar/preview",
+    "workout-finished": "#/treino/concluido",
+  };
+
+  return hashByScreen[screen] ?? window.location.hash;
+}
+
+function getCompletedWorkoutExerciseCount(workout: WorkoutSessionDraft) {
+  return workout.exercises.filter((exercise) => exercise.result.completedAt !== null)
+    .length;
 }
 
 function getMainTabScreenFromHash(): MainTabScreen | null {

@@ -93,7 +93,6 @@ export function SettingsScreen({
       return;
     }
 
-    setActiveDialog(null);
     await handleRestoreBackup(pendingBackupFile);
     setPendingBackupFile(null);
   }
@@ -116,7 +115,7 @@ export function SettingsScreen({
 
         <div className="mt-5">
           <h3 className="font-medium">Tema do app</h3>
-          <p className="mt-1 text-sm leading-6 text-muted-foreground">
+          <p className="mt-1 text-body-md leading-6 text-md-on-surface-variant">
             A preferencia fica salva neste dispositivo e muda sem reiniciar.
           </p>
           <div className="mt-3">
@@ -138,12 +137,12 @@ export function SettingsScreen({
             label="Treino e JSON"
             title="Plano ativo"
           />
-          <p className="mt-4 text-sm leading-6 text-muted-foreground">
+          <p className="mt-4 text-body-md leading-6 text-md-on-surface-variant">
             Substitua o treino atual por outro JSON validado ou copie o prompt
             pronto para gerar um novo plano com IA.
           </p>
-          <div className="mt-4 rounded-md bg-muted p-3">
-            <p className="text-sm text-muted-foreground">Plano atual</p>
+          <div className="mt-4 rounded-md bg-md-surface-container-high p-3">
+            <p className="text-body-md text-md-on-surface-variant">Plano atual</p>
             <p className="mt-1 font-semibold">{activePlan.plan.name}</p>
           </div>
           <div className="mt-4 grid gap-3">
@@ -166,9 +165,9 @@ export function SettingsScreen({
           label="Dados locais"
           title="Armazenamento"
         />
-        <div className="mt-4 rounded-md bg-muted p-3">
+        <div className="mt-4 rounded-md bg-md-surface-container-high p-3">
           <p className="text-sm font-semibold">Backup local</p>
-          <p className="mt-1 text-sm leading-6 text-muted-foreground">
+          <p className="mt-1 text-body-md leading-6 text-md-on-surface-variant">
             Baixe um arquivo com plano ativo, sessoes, cargas e preferencias.
             Ao restaurar, os dados atuais deste dispositivo serao substituidos.
           </p>
@@ -235,9 +234,10 @@ export function SettingsScreen({
 
       <ConfirmationDialog
         cancelLabel="Cancelar"
-        confirmLabel="Restaurar backup"
+        confirmLabel={isRestoringBackup ? "Restaurando..." : "Restaurar backup"}
         isDestructive
         isOpen={activeDialog === "restore"}
+        isPending={isRestoringBackup}
         onCancel={() => {
           setPendingBackupFile(null);
           setActiveDialog(null);
@@ -257,14 +257,15 @@ export function SettingsScreen({
 
       <ConfirmationDialog
         cancelLabel="Cancelar"
-        confirmLabel={isClearingLocalData ? "Apagando…" : "Apagar dados"}
+        confirmLabel={isClearingLocalData ? "Apagando..." : "Apagar dados"}
         isDestructive
         isOpen={activeDialog === "clear"}
+        isPending={isClearingLocalData}
         onCancel={() => setActiveDialog(null)}
         onConfirm={() => {
           void confirmClearLocalData();
         }}
-        title="Apagar todos os dados?"
+        title="Apagar todos os dados de treino?"
         tone="danger"
       >
         Isso remove o plano ativo, o progresso, o histórico de treinos e as
@@ -305,11 +306,11 @@ function SectionHeader({
 }) {
   return (
     <div className="flex items-center gap-3">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-info">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-md-secondary-container text-md-on-secondary-container">
         <Icon className="h-5 w-5" aria-hidden="true" />
       </div>
       <div>
-        <p className="text-sm font-medium text-info">{label}</p>
+        <p className="text-label-lg font-medium text-md-secondary">{label}</p>
         <h3 className="text-xl font-semibold">{title}</h3>
       </div>
     </div>
@@ -318,8 +319,8 @@ function SectionHeader({
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between gap-3 rounded-md bg-muted p-3">
-      <dt className="text-sm text-muted-foreground">{label}</dt>
+    <div className="flex items-center justify-between gap-3 rounded-md bg-md-surface-container-high p-3">
+      <dt className="text-body-md text-md-on-surface-variant">{label}</dt>
       <dd className="text-right text-sm font-semibold">{value}</dd>
     </div>
   );

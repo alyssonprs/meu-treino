@@ -11,9 +11,11 @@ export type DialogProps = {
   children: ReactNode;
   className?: string;
   description?: ReactNode;
+  dismissible?: boolean;
   initialFocusRef?: RefObject<HTMLElement | null>;
   isOpen: boolean;
   onClose: () => void;
+  role?: "dialog" | "alertdialog";
   title: string;
 };
 
@@ -30,9 +32,11 @@ export function Dialog({
   children,
   className,
   description,
+  dismissible = true,
   initialFocusRef,
   isOpen,
   onClose,
+  role = "dialog",
   title,
 }: DialogProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -71,7 +75,9 @@ export function Dialog({
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         event.preventDefault();
-        onClose();
+        if (dismissible) {
+          onClose();
+        }
         return;
       }
 
@@ -107,7 +113,7 @@ export function Dialog({
     window.addEventListener("keydown", handleKeyDown);
 
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+  }, [dismissible, isOpen, onClose]);
 
   if (!isOpen) {
     return null;
@@ -119,14 +125,18 @@ export function Dialog({
       aria-labelledby={titleId}
       aria-modal="true"
       className="fixed inset-0 z-50 flex touch-manipulation items-center justify-center overscroll-contain bg-md-scrim/50 px-4 py-6 backdrop-blur-sm"
-      role="dialog"
+      role={role}
     >
-      <button
-        aria-label="Fechar janela"
-        className="absolute inset-0 cursor-default"
-        onClick={onClose}
-        type="button"
-      />
+      {dismissible ? (
+        <button
+          aria-label="Fechar janela"
+          className="absolute inset-0 cursor-default"
+          onClick={onClose}
+          type="button"
+        />
+      ) : (
+        <div className="absolute inset-0" aria-hidden="true" />
+      )}
       <div
         className={cn(
           "relative max-h-[calc(100dvh-3rem)] w-full max-w-md overflow-y-auto overscroll-contain rounded-xl bg-md-surface-container-high p-6 text-md-on-surface shadow-md-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",

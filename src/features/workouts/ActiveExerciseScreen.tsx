@@ -5,11 +5,10 @@ import {
   type KeyboardEvent,
   type Ref,
 } from "react";
-import { ArrowLeft, Check, Minus, Plus, Save } from "lucide-react";
+import { Check, Minus, Plus, Save } from "lucide-react";
 import { ModalDialog } from "@/components/ModalDialog";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { TopAppBar } from "@/components/ui/top-app-bar";
 import { cn } from "@/components/ui/utils";
 import {
   getNextPendingSetIndex,
@@ -18,7 +17,6 @@ import {
 } from "@/services/workoutSessionService";
 import type { ExerciseLoadHistoryRecord } from "@/storage/workoutPlanRepository";
 import { getExerciseGuide, type ExerciseGuide } from "./exerciseGuides";
-import type { ActiveRestTimer } from "./restTimer";
 import { formatLoad } from "./workoutFormatters";
 
 type EditableResultField = keyof Pick<
@@ -29,10 +27,8 @@ type EditableResultField = keyof Pick<
 type ActiveExerciseScreenProps = {
   draft: WorkoutSessionDraft;
   loadHistoryByExerciseId: Map<string, ExerciseLoadHistoryRecord>;
-  restTimer: ActiveRestTimer | null;
   onBackToList: () => void;
   onFinish: () => void;
-  onMarkSetCompleted: (input: { exerciseIndex: number; setIndex: number }) => void;
   onOpenExercise: (exerciseIndex: number) => void;
   onSaveExerciseResult: (input: {
     exerciseIndex: number;
@@ -48,10 +44,8 @@ type ActiveExerciseScreenProps = {
 export function ActiveExerciseScreen({
   draft,
   loadHistoryByExerciseId,
-  restTimer,
   onBackToList,
   onFinish,
-  onMarkSetCompleted,
   onOpenExercise,
   onSaveExerciseResult,
   onUpdateExerciseResult,
@@ -70,7 +64,6 @@ export function ActiveExerciseScreen({
   const loadHistory = currentExercise
     ? loadHistoryByExerciseId.get(currentExercise.exerciseId)
     : undefined;
-  const isRestingCurrentExercise = restTimer?.exerciseIndex === currentExerciseIndex;
   const [resultValues, setResultValues] = useState<
     Pick<WorkoutSetDraft, "loadKg" | "reps" | "rir" | "notes">
   >({
@@ -84,6 +77,12 @@ export function ActiveExerciseScreen({
     setIsResultSheetOpen(false);
     setShowCompletionActions(false);
   }, [currentExerciseIndex]);
+
+  useEffect(() => {
+    if (areAllSetsCompleted && !isCurrentExerciseRegistered && completedSetsCount > 0) {
+      setIsResultSheetOpen(true);
+    }
+  }, [areAllSetsCompleted, completedSetsCount, isCurrentExerciseRegistered]);
 
   useEffect(() => {
     setResultValues({
@@ -132,22 +131,6 @@ export function ActiveExerciseScreen({
     updateResultValue(field, formattedValue);
   }
 
-  function markSetCompleted(setIndex: number) {
-    if (
-      setIndex < 0 ||
-      setIndex >= currentExerciseDraft.completedSets.length ||
-      currentExerciseDraft.completedSets[setIndex]?.completedAt !== null
-    ) {
-      return;
-    }
-
-    onMarkSetCompleted({ exerciseIndex: currentExerciseIndex, setIndex });
-
-    if (setIndex + 1 >= currentExerciseDraft.completedSets.length) {
-      setIsResultSheetOpen(true);
-    }
-  }
-
   function saveCurrentExerciseResult() {
     if (!canSaveResult) {
       return;
@@ -171,38 +154,8 @@ export function ActiveExerciseScreen({
   }
 
   return (
-    <section className="flex min-h-[calc(100dvh-4.5rem)] flex-col pb-2 pt-1">
-      <TopAppBar
-        actions={
-          <span className="shrink-0 rounded-full bg-md-surface-container-high px-3 py-2 text-xs font-semibold tabular-nums">
-            {currentExerciseIndex + 1}/{draft.exercises.length}
-          </span>
-        }
-        className="-mx-4 px-4"
-        navigationIcon={
-          <Button
-            aria-label="Voltar para lista de exercícios"
-            className="h-11 w-11 p-0"
-            onClick={onBackToList}
-            type="button"
-            variant="ghost"
-          >
-            <ArrowLeft className="h-5 w-5" aria-hidden="true" />
-          </Button>
-        }
-        title={
-          <div className="min-w-0 text-center">
-            <p className="truncate text-label-md font-medium text-md-on-surface-variant">
-              {draft.routine.name}
-            </p>
-            <h2 className="truncate text-title-lg font-medium">
-              {currentExercise.name}
-            </h2>
-          </div>
-        }
-      />
-
-      <div className="mt-5 flex flex-1 flex-col">
+    <section className="flex flex-col pb-2 pt-1">
+      <div className="flex flex-1 flex-col">
         <div className="space-y-4">
           <div className="rounded-xl border border-md-outline-variant bg-md-surface-container-low p-3">
             <div className="flex items-center justify-between gap-3 text-xs">
@@ -234,22 +187,6 @@ export function ActiveExerciseScreen({
           </div>
         </div>
 
-        {!isCurrentExerciseRegistered && !areAllSetsCompleted ? (
-          <div className="sticky bottom-0 mt-auto -mx-4 bg-md-background/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-4 backdrop-blur">
-            <SetActionPanel
-              currentSetNumber={(currentSetIndex ?? 0) + 1}
-              onCompleteNextSet={() => {
-                const nextSet = isRestingCurrentExercise
-                  ? restTimer?.nextSetIndex
-                  : currentSetIndex;
-
-                if (nextSet !== undefined && nextSet !== null) {
-                  markSetCompleted(nextSet);
-                }
-              }}
-            />
-          </div>
-        ) : null}
       </div>
 
       <ExerciseResultSheet
@@ -372,17 +309,6 @@ function SetProgress({ completedSetsCount, targetReps, totalSets }: { completedS
           <span className={index < completedSetsCount ? "h-2 rounded-full bg-md-primary" : "h-2 rounded-full bg-md-outline-variant"} key={index} />
         ))}
       </div>
-    </div>
-  );
-}
-
-function SetActionPanel({ currentSetNumber, onCompleteNextSet }: { currentSetNumber: number; onCompleteNextSet: () => void }) {
-  return (
-    <div className="mt-4">
-      <Button aria-label={`Concluir série ${currentSetNumber}`} className="h-14 w-full gap-3 text-base" onClick={onCompleteNextSet} type="button">
-        <Check className="h-5 w-5" aria-hidden="true" />
-        Concluir série
-      </Button>
     </div>
   );
 }

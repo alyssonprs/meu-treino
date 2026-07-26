@@ -5,6 +5,7 @@ export type AppScreen =
   | "workout"
   | "history"
   | "settings"
+  | "history-detail"
   | "import-preview"
   | "import-error"
   | "active-workout"
@@ -20,4 +21,11 @@ export type NavItemDefinition = {
   screen: MainTabScreen;
   label: string;
   icon: LucideIcon;
+};
+
+export const mainTabHashByScreen: Record<MainTabScreen, string> = {
+  history: "#/historico",
+  home: "#/",
+  settings: "#/ajustes",
+  workout: "#/treino",
 };

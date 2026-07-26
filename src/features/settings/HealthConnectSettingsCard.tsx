@@ -186,20 +186,20 @@ export function HealthConnectSettingsCard({
   return (
     <Card className="mt-5" padding="lg" variant="outlined">
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-info">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-md-secondary-container text-md-on-secondary-container">
           <Activity className="h-5 w-5" aria-hidden="true" />
         </div>
         <div>
-          <p className="text-sm font-medium text-info">Health Connect</p>
+          <p className="text-label-lg font-medium text-md-secondary">Health Connect</p>
           <h3 className="text-xl font-semibold">Integracao Android</h3>
         </div>
       </div>
 
-      <div className="mt-4 rounded-md bg-muted p-3">
+      <div className="mt-4 rounded-md bg-md-surface-container-high p-3">
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-sm font-semibold">{content.title}</p>
-            <p className="mt-1 text-sm leading-6 text-muted-foreground">
+            <p className="mt-1 text-body-md leading-6 text-md-on-surface-variant">
               {content.description}
             </p>
           </div>
@@ -207,8 +207,8 @@ export function HealthConnectSettingsCard({
             className={cn(
               "rounded-full px-2.5 py-1 text-xs font-semibold",
               isConnected
-                ? "bg-primary text-primary-foreground"
-                : "bg-secondary text-secondary-foreground",
+                ? "bg-md-primary text-md-on-primary"
+                : "bg-md-secondary-container text-md-on-secondary-container",
             )}
           >
             {loadState === "loading" ? "Carregando" : content.label}
@@ -216,7 +216,7 @@ export function HealthConnectSettingsCard({
         </div>
       </div>
 
-      <p className="mt-4 text-sm leading-6 text-muted-foreground">
+      <p className="mt-4 text-body-md leading-6 text-md-on-surface-variant">
         Ao finalizar um treino, o app envia a sessao para o Health Connect.
         Frequencia cardiaca e calorias do relogio ficam para uma etapa futura.
       </p>
