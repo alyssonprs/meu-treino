@@ -83,7 +83,7 @@ export function AppShell({
       {showBottomNav ? (
         <NavigationBar
           aria-label="Navegação principal"
-          className="fixed inset-x-0 bottom-0 mx-auto max-w-md border-t border-md-outline-variant bg-md-surface-container/95 backdrop-blur"
+          className="fixed inset-x-4 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-30 mx-auto max-w-[calc(28rem-2rem)]"
         >
           {mainNavItems.map((item) => (
             <NavItem

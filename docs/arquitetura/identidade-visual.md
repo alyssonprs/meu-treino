@@ -61,8 +61,11 @@ rápido na academia.
 ### Navegação
 
 - A navegação inferior contém exatamente quatro destinos de primeiro nível:
-  `Início`, `Treino`, `Histórico` e `Ajustes`. O item ativo usa indicador em
-  pill e `aria-current="page"`.
+  `Início`, `Treino`, `Histórico` e `Ajustes`. Ela é um dock flutuante,
+  compacto, com superfície `surface-container` semitransparente, borda
+  `outline-variant`, elevação Material 3 moderada e desfoque de fundo. O item
+  ativo usa uma única superfície `secondary-container`, sem fundos empilhados,
+  e `aria-current="page"`.
 - `Início` mostra o próximo treino recomendado; `Treino` lista todas as
   rotinas; `Histórico` mostra progresso e cargas; `Ajustes` concentra tema,
   importação, backup e integrações locais.

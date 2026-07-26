@@ -7,7 +7,7 @@ const NavigationBar = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <nav
     className={cn(
-      "flex min-h-20 items-center justify-around gap-1 bg-md-surface-container px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 text-md-on-surface",
+      "flex min-h-[4.25rem] items-center justify-around gap-1 rounded-xl border border-md-outline-variant bg-md-surface-container/85 px-2 py-2 text-md-on-surface shadow-md-2 backdrop-blur-md",
       className,
     )}
     ref={ref}
@@ -30,9 +30,9 @@ const NavigationBarItem = React.forwardRef<
   <button
     aria-current={active ? "page" : undefined}
     className={cn(
-      "flex min-h-16 min-w-16 flex-1 flex-col items-center justify-center gap-1 rounded-2xl px-1 text-label-md font-medium text-md-on-surface-variant transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-md-primary disabled:pointer-events-none disabled:opacity-[var(--md-sys-state-disabled-opacity)]",
+      "flex min-h-12 min-w-12 flex-1 flex-col items-center justify-center gap-0.5 rounded-lg px-1 text-label-md font-medium text-md-on-surface-variant transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-md-primary disabled:pointer-events-none disabled:opacity-[var(--md-sys-state-disabled-opacity)]",
       "hover:bg-md-on-surface/[var(--md-sys-state-hover-opacity)]",
-      active && "bg-md-surface-container-high text-md-on-surface",
+      active && "bg-md-secondary-container/70 text-md-on-secondary-container",
       className,
     )}
     ref={ref}
@@ -41,8 +41,7 @@ const NavigationBarItem = React.forwardRef<
   >
     <span
       className={cn(
-        "flex h-8 min-w-16 items-center justify-center rounded-full px-5 transition-colors",
-        active && "bg-md-secondary-container",
+        "flex h-7 items-center justify-center transition-colors",
       )}
     >
       {icon}
